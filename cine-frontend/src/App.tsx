@@ -44,6 +44,7 @@ import Peliculas from './pages/peliculas'
 import DetallePelicula from './pages/detallepelicula'
 import Compra from './pages/compra'
 import Admin from './pages/admin'
+import Login from './pages/login'
 
 export default function App() {
   return (
@@ -56,6 +57,7 @@ export default function App() {
           <Route path="/pelicula/:id" element={<DetallePelicula />} />
           <Route path="/comprar/:funcionId" element={<Compra />} />
           <Route path="/admin/*" element={<Admin />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </main>
     </BrowserRouter>

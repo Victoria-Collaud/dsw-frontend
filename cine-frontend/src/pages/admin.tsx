@@ -118,7 +118,7 @@ export default function Admin() {
           <label style={{ display: 'block', marginBottom: '4px' }}>Tipo de Pantalla:</label>
           <input
             type="string"
-            placeholder="Ej: 120"
+            placeholder="Ej: IMAX"
             value={ TipoPantalla}
             onChange={(e) => setTipoPantalla (e.target.value)}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
@@ -128,7 +128,7 @@ export default function Admin() {
           <label style={{ display: 'block', marginBottom: '4px' }}>Tipo de Asiento:</label>
           <input
             type="string"
-            placeholder="Ej: 120"
+            placeholder="Ej: Reclinable"
             value={ TipoAsiento}
             onChange={(e) => setTipoAsiento (e.target.value)}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
