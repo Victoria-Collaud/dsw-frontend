@@ -8,11 +8,11 @@ export default function Admin() {
   const [salas, setSalas] = useState<Sala[]>([])
   
   // Estados para los campos del formulario
-  const [NumSala, setNumSala] = useState<string>('')
-  const [capacidad, setCapacidad] = useState<string>('')
-  const [precioSala, setPrecioSala] = useState<string>('')
+  const [NumSala, setNumSala] = useState<number | ''>('')
+  const [capacidad, setCapacidad] = useState<number | ''>('')
   const [TipoPantalla, setTipoPantalla] = useState<string>('')
-  const [TipoAsiento, setTipoAsiento] = useState<string>('')
+  const [TipoAsientos, setTipoAsientos] = useState<string>('')
+  const [precioSala, setPrecioSala] = useState<number | ''>('')
 
   // Estado para capturar errores de conexión o validación
   const [error, setError] = useState('')
@@ -47,9 +47,9 @@ export default function Admin() {
       await createSala({
           NumSala: Number(NumSala),
           Capacidad: Number(capacidad),
-          PrecioSala: Number(precioSala),
           TipoPantalla: TipoPantalla,
-          TipoAsiento: TipoAsiento
+          TipoAsientos: TipoAsientos,
+          PrecioSala: Number(precioSala)
       })
 
       // Limpiar el formulario y recargar la lista
@@ -57,7 +57,7 @@ export default function Admin() {
       setCapacidad('')
       setPrecioSala('')
       setTipoPantalla('')
-      setTipoAsiento('')
+      setTipoAsientos('')
       setError('')
       cargarSalas()
     } catch (error) {
@@ -66,11 +66,11 @@ export default function Admin() {
     }
   }
 
-  // Manejador para eliminar una sala por ID
-  async function handleDelete(id?: number) {
-    if (!id) return
+  // Manejador para eliminar una sala 
+  async function handleDelete(NumSala: number) {
+    if (!NumSala) return
     try {
-      await deleteSala(id)
+      await deleteSala(NumSala)
       cargarSalas()
     } catch (error) {
       console.log('Error al borrar la sala', error)
@@ -98,7 +98,7 @@ export default function Admin() {
             type="number"
             placeholder="Ej: 1"
             value={NumSala}
-            onChange={(e) => setNumSala(e.target.value)}
+            onChange={(e) => setNumSala(Number(e.target.value))}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
@@ -109,7 +109,7 @@ export default function Admin() {
             type="number"
             placeholder="Ej: 120"
             value={capacidad}
-            onChange={(e) => setCapacidad(e.target.value)}
+            onChange={(e) => setCapacidad(Number(e.target.value))}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
@@ -129,8 +129,8 @@ export default function Admin() {
           <input
             type="string"
             placeholder="Ej: Reclinable"
-            value={ TipoAsiento}
-            onChange={(e) => setTipoAsiento (e.target.value)}
+            value={ TipoAsientos}
+            onChange={(e) => setTipoAsientos (e.target.value)}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
@@ -141,7 +141,7 @@ export default function Admin() {
             type="number"
             placeholder="Ej: 4500"
             value={precioSala}
-            onChange={(e) => setPrecioSala(e.target.value)}
+            onChange={(e) => setPrecioSala(Number(e.target.value))}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
@@ -171,7 +171,7 @@ export default function Admin() {
               <div>
                 <strong>#{sala.NumSala} </strong>
                 <br />
-                <small>Capacidad: {sala.Capacidad} | Tipo de Pantalla: {sala.TipoPantalla} | Tipo de Asiento: {sala.TipoAsiento} | Precio: ${sala.PrecioSala}</small>
+                <small>Capacidad: {sala.Capacidad} | Tipo de Pantalla: {sala.TipoPantalla} | Tipo de Asiento: {sala.TipoAsientos} | Precio: ${sala.PrecioSala}</small>
               </div>
 
               <button

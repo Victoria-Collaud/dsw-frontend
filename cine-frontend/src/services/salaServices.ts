@@ -1,4 +1,4 @@
-// Define la URL base llamando a la variable de entorno de Vite (.env) y le agrega la ruta '/salas'
+// Define la URL base llamando a la variable de entorno de Vite (.env) 
 const API_URL = `${import.meta.env.VITE_API_URL}`
 
 const getHeaders = () => {
@@ -17,10 +17,10 @@ const getHeaders = () => {
 
 // Define la estructura de datos (tipo) que debe tener un objeto Sala en TypeScript
 export interface Sala {
-  NumSala?: number // El ID es opcional (?) porque al crear una sala todavía no existe en la BD
-  TipoPantalla: string
-  TipoAsiento: string   
+  NumSala: number // El ID es opcional (?) porque al crear una sala todavía no existe en la BD
   Capacidad: number    // Cantidad total de asientos
+  TipoPantalla: string
+  TipoAsientos: string  
   PrecioSala: number   // Precio base de la entrada para esa sala
 }
 
@@ -59,9 +59,9 @@ export async function createSala(sala: Sala): Promise<Sala> {
 }
 
 // Función para eliminar una sala específica mediante su ID
-export async function deleteSala(id: number): Promise<void> {
+export async function deleteSala(NumSala: number): Promise<void> {
   // Hace una petición DELETE adjuntando el ID a la URL (ej: http://localhost:3001/api/salas/5)
-  const res = await fetch(`${API_URL}/${id}`, {
+  const res = await fetch(`${API_URL}/salas/${NumSala}`, {
     method: 'DELETE',
     headers: getHeaders() // acá enviamos el token
   })

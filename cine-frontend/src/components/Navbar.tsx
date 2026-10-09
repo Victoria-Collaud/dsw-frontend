@@ -43,7 +43,7 @@ export default function Navbar() {
         </Link>
         <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Inicio</Link>
         <Link to="/peliculas" style={{ color: 'white', textDecoration: 'none' }}>Peliculas</Link>
-        <Link to="/admin" style={{ color: 'white', textDecoration: 'none' }}>Admin</Link>
+       {/* <Link to="/admin" style={{ color: 'white', textDecoration: 'none' }}>Admin</Link> */}
       </div>
 
       <div>
