@@ -43,8 +43,12 @@ import Inicio from './pages/inicio'
 import Peliculas from './pages/peliculas'
 import DetallePelicula from './pages/detallepelicula'
 import Compra from './pages/compra'
-import Admin from './pages/admin'
 import Login from './pages/login'
+
+import Admin from './pages/admin/admin';
+import AdminSalas from './pages/admin/adminsala';
+import AdminPeliculas from './pages/admin/adminpelicula';
+import AdminFunciones from './pages/admin/adminfunciones.tsx'
 
 export default function App() {
   return (
@@ -56,8 +60,15 @@ export default function App() {
           <Route path="/peliculas" element={<Peliculas />} />
           <Route path="/pelicula/:id" element={<DetallePelicula />} />
           <Route path="/comprar/:funcionId" element={<Compra />} />
-          <Route path="/admin/*" element={<Admin />} />
           <Route path="/login" element={<Login />} />
+       <Route path="/admin" element={<Admin />}>
+       <Route path="salas" element={<AdminSalas />} />
+       <Route path="peliculas" element={<AdminPeliculas />} />
+      <Route path="funciones" element={<AdminFunciones />} />
+      
+      <Route path="peliculas/:IdPelicula/funciones" element={<AdminFunciones />} />
+  </Route>
+          {/* <Route path="/admin/generos" element={<AdminGeneros />} /> */}
         </Routes>
       </main>
     </BrowserRouter>
