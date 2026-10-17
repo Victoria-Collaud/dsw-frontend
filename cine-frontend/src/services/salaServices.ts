@@ -65,7 +65,17 @@ export async function deleteSala(NumSala: number): Promise<void> {
     method: 'DELETE',
     headers: getHeaders() // acá enviamos el token
   })
-  
-  // Si ocurrió un problema al eliminar, lanza un error
+   // Si ocurrió un problema al eliminar, lanza un error
   if (!res.ok) throw new Error('Error al eliminar sala')
 }
+  
+export async function updateSala(NumSala: number, sala: Sala): Promise<Sala> {
+    const res = await fetch(`${API_URL}/salas/${NumSala}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(sala)
+    });
+    if (!res.ok) throw new Error('Error al actualizar sala');
+    return await res.json();
+  }
+

@@ -47,7 +47,7 @@ export default function AdminPeliculas() {
         Sinopsis: sinopsis,
         Duracion: Number(duracion),
         Clasificacion: clasificacion,
-        genero: Number(codGenero), // Se envía el ID del género asociado
+        genero: { CodGenero: Number(codGenero) },
         Cartelera: cartelera,
         Trailer: trailer
       })

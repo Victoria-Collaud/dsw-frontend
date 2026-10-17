@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react'
 import type { FormEvent } from 'react'
-import { getallSala, createSala, deleteSala} from '../../services/salaServices'
+import { getallSala, createSala, deleteSala, updateSala} from '../../services/salaServices'
 import type { Sala } from '../../services/salaServices'
 
 export default function AdminSalas() {
   // Estados para manejar la lista de salas
   const [salas, setSalas] = useState<Sala[]>([])
-  
   // Estados para los campos del formulario
   const [NumSala, setNumSala] = useState<number | ''>('')
   const [capacidad, setCapacidad] = useState<number | ''>('')
   const [TipoPantalla, setTipoPantalla] = useState<string>('')
   const [TipoAsientos, setTipoAsientos] = useState<string>('')
   const [precioSala, setPrecioSala] = useState<number | ''>('')
-
   // Estado para capturar errores de conexión o validación
   const [error, setError] = useState('')
+// NUEVO ESTADO POR UPDATE: Guarda el ID de la sala si estamos editando, o null si estamos creando
+  const [salaEditando, setSalaEditando] = useState<number | null>(null)
+
 
   // Cargar las salas al montar el componente
   useEffect(() => {
@@ -34,7 +35,29 @@ export default function AdminSalas() {
     }
   }
 
-  // Manejador del formulario para crear una sala
+ // 👇 FUNCIÓN PARA LIMPIAR EL FORMULARIO
+  function limpiarFormulario() {
+    setNumSala('')
+    setCapacidad('')
+    setPrecioSala('')
+    setTipoPantalla('')
+    setTipoAsientos('')
+    setSalaEditando(null) // Reseteamos el modo edición
+    setError('')
+  }
+
+  // 👇 FUNCIÓN PARA CARGAR LOS DATOS DE UNA SALA EN EL FORMULARIO
+  function handleEditar(sala: Sala) {
+    setNumSala(sala.NumSala)
+    setCapacidad(sala.Capacidad)
+    setPrecioSala(sala.PrecioSala)
+    setTipoPantalla(sala.TipoPantalla)
+    setTipoAsientos(sala.TipoAsientos)
+    setSalaEditando(sala.NumSala) // Guardamos el ID para saber que estamos editando
+    setError('')
+  }
+
+  // Manejador del formulario (sirve para crear y editar)
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
@@ -44,31 +67,35 @@ export default function AdminSalas() {
     }
 
     try {
-      await createSala({
-          NumSala: Number(NumSala),
-          Capacidad: Number(capacidad),
-          TipoPantalla: TipoPantalla,
-          TipoAsientos: TipoAsientos,
-          PrecioSala: Number(precioSala)
-      })
+      const salaData = {
+        NumSala: Number(NumSala),
+        Capacidad: Number(capacidad),
+        TipoPantalla: TipoPantalla,
+        TipoAsientos: TipoAsientos,
+        PrecioSala: Number(precioSala)
+      }
 
-      // Limpiar el formulario y recargar la lista
-      setNumSala('')
-      setCapacidad('')
-      setPrecioSala('')
-      setTipoPantalla('')
-      setTipoAsientos('')
-      setError('')
+      if (salaEditando) {
+        // MODO EDICIÓN
+        await updateSala(salaEditando, salaData)
+      } else {
+        // MODO CREACIÓN
+        await createSala(salaData)
+      }
+
+      limpiarFormulario()
       cargarSalas()
     } catch (error) {
-        console.log('Error al crear la sala', error)
-      setError('No se pudo crear la sala.')
+      console.log('Error al guardar la sala', error)
+      setError(salaEditando ? 'No se pudo actualizar la sala.' : 'No se pudo crear la sala.')
     }
   }
 
-  // Manejador para eliminar una sala 
-  async function handleDelete(NumSala: number) {
+async function handleDelete(NumSala: number) {
     if (!NumSala) return
+    // Confirmación antes de borrar
+    if (!window.confirm(`¿Seguro que querés eliminar la Sala #${NumSala}?`)) return
+
     try {
       await deleteSala(NumSala)
       cargarSalas()
@@ -78,7 +105,7 @@ export default function AdminSalas() {
     }
   }
 
-  return (
+ return (
     <div style={{ maxWidth: '600px', margin: '0 auto', fontFamily: 'sans-serif' }}>
       <h1>⚙️ Administración - Salas</h1>
 
@@ -87,10 +114,10 @@ export default function AdminSalas() {
           {error}
         </p>
       )}
-
-      {/* Formulario de Alta de Sala */}
+{/* Formulario de Alta/Edición de Sala */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '30px' }}>
-        <h3>Agregar Nueva Sala</h3>
+        {/* 👇 Título dinámico según el modo */}
+        <h3>{salaEditando ? `Editar Sala #${salaEditando}` : 'Agregar Nueva Sala'}</h3>
         
         <div>
           <label style={{ display: 'block', marginBottom: '4px' }}>Numero de sala:</label>
@@ -99,7 +126,9 @@ export default function AdminSalas() {
             placeholder="Ej: 1"
             value={NumSala}
             onChange={(e) => setNumSala(Number(e.target.value))}
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            // 👇 Deshabilitamos el ID si estamos editando (no se debe cambiar la PK)
+            disabled={salaEditando !== null} 
+            style={{ width: '100%', padding: '8px', boxSizing: 'border-box'}}
           />
         </div>
 
@@ -119,8 +148,8 @@ export default function AdminSalas() {
           <input
             type="string"
             placeholder="Ej: IMAX"
-            value={ TipoPantalla}
-            onChange={(e) => setTipoPantalla (e.target.value)}
+            value={TipoPantalla}
+            onChange={(e) => setTipoPantalla(e.target.value)}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
@@ -129,8 +158,8 @@ export default function AdminSalas() {
           <input
             type="string"
             placeholder="Ej: Reclinable"
-            value={ TipoAsientos}
-            onChange={(e) => setTipoAsientos (e.target.value)}
+            value={TipoAsientos}
+            onChange={(e) => setTipoAsientos(e.target.value)}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
@@ -145,10 +174,24 @@ export default function AdminSalas() {
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
+        
 
-        <button type="submit" style={{ padding: '10px', cursor: 'pointer', fontWeight: 'bold' }}>
-          Crear Sala
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button type="submit" style={{ flex: 1, padding: '10px', cursor: 'pointer', fontWeight: 'bold' }}>
+            {salaEditando ? 'Guardar Cambios' : 'Crear Sala'}
+          </button>
+          
+          {/* 👇 Botón de Cancelar (solo aparece en modo edición) */}
+          {salaEditando && (
+            <button 
+              type="button" 
+              onClick={limpiarFormulario}
+              style={{ padding: '10px', cursor: 'pointer', backgroundColor: '#d995cd', border: 'none', borderRadius: '4px' }}
+            >
+              Cancelar
+            </button>
+          )}
+        </div>
       </form>
 
       {/* Listado de Salas */}
@@ -174,12 +217,22 @@ export default function AdminSalas() {
                 <small>Capacidad: {sala.Capacidad} | Tipo de Pantalla: {sala.TipoPantalla} | Tipo de Asiento: {sala.TipoAsientos} | Precio: ${sala.PrecioSala}</small>
               </div>
 
-              <button
-                onClick={() => handleDelete(sala.NumSala)}
-                style={{ color: 'pink', padding: '5px 10px', cursor: 'pointer' }}
-              >
-                Eliminar
-              </button>
+              <div style={{ display: 'flex', gap: '5px' }}>
+                {/* 👇 Botón de Editar */}
+                <button
+                  onClick={() => handleEditar(sala)}
+                  style={{ color: '#3498db', padding: '5px 10px', cursor: 'pointer' }}
+                >
+                  Editar
+                </button>
+
+                <button
+                  onClick={() => handleDelete(sala.NumSala)}
+                  style={{ color: 'red', padding: '5px 10px', cursor: 'pointer' }}
+                >
+                  Eliminar
+                </button>
+              </div>
             </li>
           ))}
         </ul>
