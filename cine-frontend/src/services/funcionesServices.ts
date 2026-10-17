@@ -34,8 +34,11 @@ export async function getFuncionesDePelicula(idPelicula: number): Promise<Funcio
 
 export async function createFuncion(funcion: Funcion): Promise<Funcion> {
   const body = {
-    ...funcion,
-    Fecha: new Date(`${funcion.Fecha}T00:00:00`).toISOString()
+    Idioma: funcion.Idioma,
+    Fecha: new Date(`${funcion.Fecha}T00:00:00`).toISOString(),
+    Horario: funcion.Horario,
+    IdPelicula: funcion.pelicula.IdPelicula,
+    NumSala: funcion.sala.NumSala
   };
   const res = await fetch(`${API_URL}/funciones`, {
     method: 'POST',
