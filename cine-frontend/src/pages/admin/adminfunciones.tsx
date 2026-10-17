@@ -207,7 +207,6 @@ export default function AdminFunciones() {
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}>
             <option value="">-- Seleccioná --</option>
             <option value="Español">Español</option>
-            <option value="Inglés">Inglés</option>
             <option value="Subtitulada">Subtitulada</option>
           </select>
         </div>

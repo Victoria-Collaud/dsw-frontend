@@ -20,7 +20,7 @@ export interface Pelicula {
   Sinopsis: string
   Duracion: number
   Clasificacion: string
-  genero: number 
+  CodGenero: number 
   Cartelera: string
   Trailer: string
 }
@@ -31,7 +31,7 @@ export interface CreargroPelicula {
   Sinopsis: string;
   Duracion: number;
   Clasificacion: string;
-  genero: { CodGenero: number } | number; // 👈 Acepta el objeto o el ID directo
+   CodGenero: number;
   Cartelera: string;
   Trailer: string;
 }
@@ -66,3 +66,12 @@ export async function deletePelicula(id: number): Promise<void> {
   if (!res.ok) throw new Error('Error al eliminar película')
 }
 
+export async function updatePelicula(id: number, pelicula: Pelicula): Promise<Pelicula> {
+  const res = await fetch(`${API_URL}/peliculas/${id}`, {
+    method: 'PUT',
+    headers: getHeaders(),
+    body: JSON.stringify(pelicula)
+  });
+  if (!res.ok) throw new Error('Error al actualizar película');
+  return await res.json();
+}
