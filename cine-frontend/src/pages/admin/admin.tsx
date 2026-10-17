@@ -68,6 +68,19 @@ export default function Admin() {
         >
           Generos
         </NavLink>
+        <NavLink 
+          to="/admin/compras"
+          style={({ isActive }) => ({
+            padding: '8px 16px',
+            textDecoration: 'none',
+            color: isActive ? 'white' : '#333',
+            backgroundColor: isActive ? '#9b59b6' : 'transparent',
+            borderRadius: '4px',
+            fontWeight: 'bold'
+          })}
+        >
+          Compras
+        </NavLink>
       </nav>
 
       {/* Acá se renderiza la sub-página (AdminSalas, AdminPeliculas, etc.) */}

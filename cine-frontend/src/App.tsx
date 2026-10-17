@@ -49,6 +49,8 @@ import Admin from './pages/admin/admin';
 import AdminSalas from './pages/admin/adminsala';
 import AdminPeliculas from './pages/admin/adminpelicula';
 import AdminFunciones from './pages/admin/adminfunciones.tsx'
+import AdminCompras from './pages/admin/admincompra.tsx'
+import AdminGeneros from './pages/admin/admingenero.tsx'
 
 export default function App() {
   return (
@@ -67,8 +69,10 @@ export default function App() {
       <Route path="funciones" element={<AdminFunciones />} />
       
       <Route path="peliculas/:IdPelicula/funciones" element={<AdminFunciones />} />
+      <Route path="generos" element={<AdminGeneros />} />
+        <Route path="compras" element={<AdminCompras />} />
   </Route>
-          {/* <Route path="/admin/generos" element={<AdminGeneros />} /> */}
+      
         </Routes>
       </main>
     </BrowserRouter>
