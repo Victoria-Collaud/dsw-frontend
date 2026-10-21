@@ -71,6 +71,7 @@ export default function App() {
       <Route path="peliculas/:IdPelicula/funciones" element={<AdminFunciones />} />
       <Route path="generos" element={<AdminGeneros />} />
         <Route path="compras" element={<AdminCompras />} />
+    
   </Route>
       
         </Routes>

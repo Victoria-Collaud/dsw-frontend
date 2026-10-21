@@ -20,7 +20,7 @@ export interface Pelicula {
   Sinopsis: string
   Duracion: number
   Clasificacion: string
-  CodGenero: number 
+  genero: number 
   Cartelera: string
   Trailer: string
 }
@@ -31,7 +31,7 @@ export interface CreargroPelicula {
   Sinopsis: string;
   Duracion: number;
   Clasificacion: string;
-   CodGenero: number;
+  genero: number;
   Cartelera: string;
   Trailer: string;
 }

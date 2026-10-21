@@ -20,6 +20,7 @@ export interface Funcion {
   Horario: string;
   pelicula: Pelicula;
   sala: Sala;
+  CapacidadDisponible?: number; // Este campo es opcional, ya que puede no estar presente en la respuesta del backend
 }
 
 // Único método de lectura: funciones de una película específica

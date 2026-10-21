@@ -54,7 +54,7 @@ export default function AdminPeliculas() {
     setSinopsis(pelicula.Sinopsis)
     setDuracion(String(pelicula.Duracion))
     setClasificacion(pelicula.Clasificacion)
-    setCodGenero(String(pelicula.CodGenero))
+    setCodGenero(String(pelicula.genero))
     setCartelera(pelicula.Cartelera)
     setTrailer(pelicula.Trailer)
     setPeliculaEditando(pelicula.IdPelicula!) // Guardamos el ID
@@ -75,7 +75,7 @@ export default function AdminPeliculas() {
       Sinopsis: sinopsis,
       Duracion: Number(duracion),
       Clasificacion: clasificacion,
-      CodGenero: Number(codGenero),
+      genero: Number(codGenero),
       Cartelera: cartelera,
       Trailer: trailer
     }
