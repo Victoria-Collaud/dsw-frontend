@@ -14,7 +14,7 @@ export default function AdminPeliculas() {
   const [codGenero, setCodGenero] = useState<string>('')
   const [cartelera, setCartelera] = useState('')
   const [trailer, setTrailer] = useState('')
- // 👇 NUEVO ESTADO: Guarda el ID si estamos editando, o null si creamos
+ // NUEVO ESTADO: Guarda el ID si estamos editando, o null si creamos
   const [peliculaEditando, setPeliculaEditando] = useState<number | null>(null)
   // Estado para la barra de búsqueda
   const [busqueda, setBusqueda] = useState('')
@@ -115,8 +115,9 @@ export default function AdminPeliculas() {
   )
 
   return (
-    <div style={{ maxWidth: '650px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h1>🎬 Administración - Películas</h1>
+    <div style={{ maxWidth: '650px', margin: '0 auto', fontFamily: 'sans-serif', lineHeight: 1  }}>
+      <h1>🎬 Administración <br />
+                Películas</h1>
 
       {error && (
         <p style={{ color: 'red', backgroundColor: '#ffe6e6', padding: '10px', borderRadius: '4px' }}>

@@ -48,16 +48,6 @@ const obtenerNombreGenero = (idGenero: number) => {
         <p style={{ fontSize: '1rem', color: '#666', marginBottom: '20px' }}>
           Disfrutá de la mejor cartelera. ¡Compra tus entradas ahora!
         </p>
-        <Link 
-          to="/peliculas"
-          style={{
-            display: 'inline-block', padding: '12px 30px', backgroundColor: '#ea5098',
-            color: 'white', textDecoration: 'none', borderRadius: '25px',
-            fontWeight: 'bold', fontSize: '1.1rem'
-          }}
-        >
-          Ver todas las películas
-        </Link>
       </div>
 
       {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}

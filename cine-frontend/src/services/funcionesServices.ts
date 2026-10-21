@@ -1,4 +1,4 @@
-// src/services/funcionesServices.ts
+import { fetchApi } from '../utils/fetchApi';
 import type { Pelicula } from './peliculaServices';
 import type { Sala } from './salaServices';
 
@@ -25,7 +25,7 @@ export interface Funcion {
 
 // Único método de lectura: funciones de una película específica
 export async function getFuncionesDePelicula(idPelicula: number): Promise<Funcion[]> {
-  const res = await fetch(`${API_URL}/funciones/peliculas/${idPelicula}`, {
+  const res = await fetchApi(`${API_URL}/funciones/peliculas/${idPelicula}`, {
     headers: getHeaders()
   });
   if (!res.ok) throw new Error('Error al obtener funciones');
@@ -41,7 +41,7 @@ export async function createFuncion(funcion: Funcion): Promise<Funcion> {
     IdPelicula: funcion.pelicula.IdPelicula,
     NumSala: funcion.sala.NumSala
   };
-  const res = await fetch(`${API_URL}/funciones`, {
+  const res = await fetchApi(`${API_URL}/funciones`, {
     method: 'POST',
     headers: getHeaders(),
     body: JSON.stringify(body)
@@ -54,7 +54,7 @@ export async function createFuncion(funcion: Funcion): Promise<Funcion> {
 }
 
 export async function deleteFuncion(id: number): Promise<void> {
-  const res = await fetch(`${API_URL}/funciones/${id}`, {
+  const res = await fetchApi(`${API_URL}/funciones/${id}`, {
     method: 'DELETE',
     headers: getHeaders()
   });
@@ -63,7 +63,7 @@ export async function deleteFuncion(id: number): Promise<void> {
 
 // Obtener una película por ID creo que va aca?
 export async function getPeliculaPorId(id: number): Promise<Pelicula> {
-  const res = await fetch(`${API_URL}/peliculas/${id}`, {
+  const res = await fetchApi(`${API_URL}/peliculas/${id}`, {
     headers: getHeaders()
   });
   if (!res.ok) throw new Error('Error al obtener película');

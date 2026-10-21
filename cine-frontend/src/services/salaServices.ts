@@ -1,3 +1,5 @@
+import { fetchApi } from '../utils/fetchApi';
+
 // Define la URL base llamando a la variable de entorno de Vite (.env) 
 const API_URL = `${import.meta.env.VITE_API_URL}`
 
@@ -27,9 +29,8 @@ export interface Sala {
 // Función asíncrona para obtener todas las salas guardadas en la base de datos
 export async function getallSala(): Promise<Sala[]> {
   // Hace una petición GET a http://localhost:3001/api/salas
-  const res = await fetch(`${API_URL}/salas`, {
-    method: 'GET',
-    headers: getHeaders() // acá enviamos el token
+  const res = await fetchApi(`${API_URL}/salas`, {
+    method: 'GET'
   });
   
   // Si la respuesta del backend no es OK (código 200), lanza un error
@@ -45,7 +46,7 @@ export async function getallSala(): Promise<Sala[]> {
 // Función para enviar una nueva sala al servidor. 'Omit<Sala, 'CodSala'>' indica que mandamos todo excepto el ID
 export async function createSala(sala: Sala): Promise<Sala> {
   // Hace una petición POST enviando los datos de la nueva sala
-  const res = await fetch(`${API_URL}/salas`, {
+  const res = await fetchApi(`${API_URL}/salas`, {
     method: 'POST', // Método HTTP para creación
     headers: getHeaders(), // acá enviamos el token
     body: JSON.stringify(sala) // Transforma el objeto JavaScript a un string JSON para enviarlo por la red
@@ -61,7 +62,7 @@ export async function createSala(sala: Sala): Promise<Sala> {
 // Función para eliminar una sala específica mediante su ID
 export async function deleteSala(NumSala: number): Promise<void> {
   // Hace una petición DELETE adjuntando el ID a la URL (ej: http://localhost:3001/api/salas/5)
-  const res = await fetch(`${API_URL}/salas/${NumSala}`, {
+  const res = await fetchApi(`${API_URL}/salas/${NumSala}`, {
     method: 'DELETE',
     headers: getHeaders() // acá enviamos el token
   })
@@ -70,7 +71,7 @@ export async function deleteSala(NumSala: number): Promise<void> {
 }
   
 export async function updateSala(NumSala: number, sala: Sala): Promise<Sala> {
-    const res = await fetch(`${API_URL}/salas/${NumSala}`, {
+    const res = await fetchApi(`${API_URL}/salas/${NumSala}`, {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify(sala)

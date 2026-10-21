@@ -40,7 +40,6 @@ export default App
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Inicio from './pages/inicio'
-import Peliculas from './pages/peliculas'
 import DetallePelicula from './pages/detallepelicula'
 import Compra from './pages/compra'
 import Login from './pages/login'
@@ -59,7 +58,6 @@ export default function App() {
       <main style={{ padding: '20px' }}>
         <Routes>
           <Route path="/" element={<Inicio />} />
-          <Route path="/peliculas" element={<Peliculas />} />
           <Route path="/pelicula/:id" element={<DetallePelicula />} />
           <Route path="/comprar/:funcionId" element={<Compra />} />
           <Route path="/login" element={<Login />} />

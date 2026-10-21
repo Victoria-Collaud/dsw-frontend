@@ -1,3 +1,5 @@
+import { fetchApi } from '../utils/fetchApi';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export interface LoginCredentials {
@@ -15,7 +17,7 @@ export interface LoginResponse {
 }
 
 export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-  const response = await fetch(`${API_URL}/usuarios/login`, { //creo que es solo /login y no /usuarios/login
+  const response = await fetchApi(`${API_URL}/usuarios/login`, { 
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials)

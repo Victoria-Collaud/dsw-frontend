@@ -1,3 +1,5 @@
+import { fetchApi } from '../utils/fetchApi';
+
 const API_URL = `${import.meta.env.VITE_API_URL}`
 
 const getHeaders = () => {
@@ -29,7 +31,7 @@ export interface Compra {
 }
 
 export async function crearCompra(compra: Compra): Promise<Compra> {
-  const res = await fetch(`${API_URL}/compras`, {
+  const res = await fetchApi(`${API_URL}/compras`, {
     method: 'POST',
     headers: getHeaders(),
     body: JSON.stringify(compra)
@@ -39,7 +41,7 @@ export async function crearCompra(compra: Compra): Promise<Compra> {
 }
 
 export async function getCompras(): Promise<Compra[]> {
-  const res = await fetch(`${API_URL}/compras`, {
+  const res = await fetchApi(`${API_URL}/compras`, {
     headers: getHeaders()
   })
   if (!res.ok) throw new Error('Error al obtener las compras')

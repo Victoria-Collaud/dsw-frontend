@@ -1,3 +1,5 @@
+import { fetchApi } from '../utils/fetchApi';
+
 const API_URL = `${import.meta.env.VITE_API_URL}`
 
 const getHeaders = () => {
@@ -19,7 +21,7 @@ export interface Genero {
 
 // Obtener todos los géneros
 export async function getGeneros(): Promise<Genero[]> {
-  const res = await fetch(`${API_URL}/generos`, {
+  const res = await fetchApi(`${API_URL}/generos`, {
     headers: getHeaders()
   })
   if (!res.ok) throw new Error('Error al obtener géneros')
@@ -29,7 +31,7 @@ export async function getGeneros(): Promise<Genero[]> {
 
 // Crear un nuevo género
 export async function createGenero(genero: Genero): Promise<Genero> {
-  const res = await fetch(`${API_URL}/generos`, {
+  const res = await fetchApi(`${API_URL}/generos`, {
     method: 'POST',
     headers: getHeaders(),
     body: JSON.stringify(genero)
@@ -40,7 +42,7 @@ export async function createGenero(genero: Genero): Promise<Genero> {
 
 // Eliminar un género por ID
 export async function deleteGenero(id: number): Promise<void> {
-  const res = await fetch(`${API_URL}/generos/${id}`, {
+  const res = await fetchApi(`${API_URL}/generos/${id}`, {
     method: 'DELETE',
     headers: getHeaders()
   })
@@ -48,7 +50,7 @@ export async function deleteGenero(id: number): Promise<void> {
 }
 
 export async function updateGenero(id: number, genero: Genero): Promise<Genero> {
-  const res = await fetch(`${API_URL}/generos/${id}`, {
+  const res = await fetchApi(`${API_URL}/generos/${id}`, {
     method: 'PUT',
     headers: getHeaders(),
     body: JSON.stringify(genero)
