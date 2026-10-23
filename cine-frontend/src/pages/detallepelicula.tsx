@@ -17,13 +17,13 @@ export default function DetallePelicula() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    async function cargar() {
+   async function cargar() {
       setCargando(true);
       setError('');
       try {
-        const [todasPelis, funcsData, generosData] = await Promise.all([
+        // 1. Cargamos películas y géneros en paralelo
+        const [todasPelis, generosData] = await Promise.all([
           getPeliculas(),
-          getFuncionesDePelicula(idPelicula),
           getGeneros() 
         ]);
         
@@ -31,12 +31,20 @@ export default function DetallePelicula() {
         if (!peliEncontrada) throw new Error('Película no encontrada');
 
         setPelicula(peliEncontrada);
-        setFunciones(funcsData);
 
         const idGen = peliEncontrada.genero; 
         const gen = generosData.find(g => Number(g.CodGenero) === Number(idGen));
         if (gen) {
           setGeneroNombre(gen.NombreGenero);
+        }
+
+        // 2. Intentamos cargar las funciones por separado para que si falla/no hay, no rompa la página
+        try {
+          const funcsData = await getFuncionesDePelicula(idPelicula);
+          setFunciones(funcsData || []);
+        } catch (funcErr) {
+          console.warn('No hay funciones o la API devolvió error:', funcErr);
+          setFunciones([]); // Dejamos el array vacío para que active el mensaje de "No hay funciones"
         }
 
       } catch (err) {
@@ -143,57 +151,70 @@ export default function DetallePelicula() {
 
       <hr style={{ margin: '30px 0', borderColor: '#333' }} />
 
-      <h3>🎟️ Funciones Disponibles</h3>
-      {funciones.length === 0 ? (
-        <p style={{ color: '#aaa' }}>No hay funciones programadas para esta película por el momento.</p>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
-          {funciones.map(func => {
-            const fechaStr = new Date(func.Fecha).toLocaleDateString('es-AR', { timeZone: 'UTC' });
-            
-            return (
-              <div key={func.IdFuncion} style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '15px', 
-                border: '1px solid #444', 
-                borderRadius: '8px',
-                backgroundColor: '#1e1e1e',
-                flexWrap: 'wrap',
-                gap: '15px'
-              }}>
-                <div>
-                  <strong style={{ fontSize: '1.1em', display: 'block', marginBottom: '5px' }}>
-                    📅 {fechaStr} - 🕒 {func.Horario}
-                  </strong>
-                  <small style={{ color: '#aaa' }}>
-                    🗣️ {func.Idioma} | 🏛️ Sala #{func.sala.NumSala} | 💺 {func.CapacidadDisponible} disponibles
-                  </small>
+     <h3>🎟️ Funciones Disponibles</h3>
+      {(() => {
+        // Obtenemos la fecha de hoy en formato 'YYYY-MM-DD' local
+        const hoyStr = new Date().toISOString().split('T')[0];
+
+        const funcionesVigentes = funciones.filter(func => {
+          // Extraemos la parte de la fecha (YYYY-MM-DD) tal como viene de la base
+          const fechaFuncStr = new Date(func.Fecha).toISOString().split('T')[0];
+          // Comparamos cadenas de texto directamente (ej: "2026-06-15" >= "2026-10-23")
+          return fechaFuncStr >= hoyStr;
+        });
+if (!funciones || funciones.length === 0) {
+          return <p style={{ color: '#aaa', fontStyle: 'italic', marginTop: '10px' }}>No hay funciones programadas para esta película por el momento.</p>;
+        }
+
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
+            {funcionesVigentes.map(func => {
+              const fechaStr = new Date(func.Fecha).toLocaleDateString('es-AR', { timeZone: 'UTC' });
+              
+              return (
+                <div key={func.IdFuncion} style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '15px', 
+                  border: '1px solid #444', 
+                  borderRadius: '8px',
+                  backgroundColor: '#1e1e1e',
+                  flexWrap: 'wrap',
+                  gap: '15px'
+                }}>
+                  <div>
+                    <strong style={{ fontSize: '1.1em', display: 'block', marginBottom: '5px' }}>
+                      📅 {fechaStr} 🕒 {func.Horario}
+                    </strong>
+                    <small style={{ color: '#aaa' }}>
+                      🗣️ {func.Idioma} | 🏛️ Sala #{func.sala.NumSala} | 💺 {func.CapacidadDisponible} disponibles
+                    </small>
+                  </div>
+                  
+                  <Link 
+                    to={`/comprar/${func.IdFuncion}`}
+                    style={{ 
+                      padding: '10px 25px', 
+                      backgroundColor: '#2ecc71', 
+                      color: 'white', 
+                      textDecoration: 'none', 
+                      borderRadius: '5px',
+                      fontWeight: 'bold',
+                      display: 'inline-block',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#27ae60'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2ecc71'}
+                  >
+                    Comprar Entrada
+                  </Link>
                 </div>
-                
-                <Link 
-                  to={`/comprar/${func.IdFuncion}`}
-                  style={{ 
-                    padding: '10px 25px', 
-                    backgroundColor: '#2ecc71', 
-                    color: 'white', 
-                    textDecoration: 'none', 
-                    borderRadius: '5px',
-                    fontWeight: 'bold',
-                    display: 'inline-block',
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#27ae60'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2ecc71'}
-                >
-                  Comprar Entrada
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        );
+      })()}
     </div>
   );
 }

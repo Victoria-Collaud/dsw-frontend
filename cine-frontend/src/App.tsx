@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import RutaProtegida from './components/RutaProtegida';
 import Inicio from './pages/inicio'
 import DetallePelicula from './pages/detallepelicula'
+import Peliculas from './pages/peliculas'
 import Compra from './pages/compra'
 import Login from './pages/login'
 import Admin from './pages/admin/admin';
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/" element={<Inicio />} />
           <Route path="/pelicula/:id" element={<DetallePelicula />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/peliculas" element={<Peliculas />} />
           
           <Route element={<RutaProtegida />}>
            <Route path="/comprar/:funcionId" element={<Compra />} />

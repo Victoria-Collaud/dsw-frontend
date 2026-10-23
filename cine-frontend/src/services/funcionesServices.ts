@@ -20,7 +20,7 @@ export interface Funcion {
   Horario: string;
   pelicula: Pelicula;
   sala: Sala;
-  CapacidadDisponible: number; 
+  CapacidadDisponible?: number; 
 }
 
 // Único método de lectura: funciones de una película específica

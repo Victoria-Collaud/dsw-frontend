@@ -62,9 +62,10 @@ export default function Compra() {
     setError('No se encontró la función.');
     return;
   }
-     if (cantidad > funcionActual.CapacidadDisponible) {
-    setError(`Solo quedan ${funcionActual.CapacidadDisponible} entradas disponibles para esta función.`);
-    return;
+  const capacidadMaxima = funcionActual.CapacidadDisponible ?? 0;
+     if (cantidad > capacidadMaxima) {
+  setError(`Solo quedan ${capacidadMaxima} entradas disponibles para esta función.`);
+  return;
   }
     try {
       // 4. Enviamos EXACTAMENTE lo que espera el backend

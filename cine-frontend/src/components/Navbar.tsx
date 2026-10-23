@@ -1,8 +1,11 @@
-import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { getGeneros } from '../services/generosServices';
+import type { Genero } from '../services/generosServices';
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [busqueda, setBusqueda] = useState('');
   const [mostrarInfo, setMostrarInfo] = useState(false); // Estado para el modal de info
 
@@ -12,6 +15,18 @@ export default function Navbar() {
   
   const [menuAbierto, setMenuAbierto] = useState(false);
 
+  const [generos, setGeneros] = useState<Genero[]>([]);
+  const [generoSeleccionado, setGeneroSeleccionado] = useState('');
+
+  const esPaginaPeliculas = location.pathname === '/peliculas';
+
+
+  useEffect(() => {
+    getGeneros()
+      .then(setGeneros)
+      .catch((err) => console.error('Error al cargar géneros', err));
+  }, []);
+
   function cerrarSesion() {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
@@ -19,14 +34,19 @@ export default function Navbar() {
     window.location.reload();
   }
 
-  function handleBuscar(e: FormEvent) {
-    e.preventDefault();
-    if (busqueda.trim()) {
-      // Redirigimos a /peliculas y le pasamos el texto por el state
-      navigate('/peliculas', { state: { busquedaInicial: busqueda.trim() } });
-      setBusqueda('');
-    }
+
+function handleBuscar(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+
+  if (busqueda.trim() || generoSeleccionado) {
+   navigate('/peliculas', {
+  state: {
+    busquedaInicial: busqueda.trim(),
+    generoInicial: generoSeleccionado,
+  },
+});
   }
+}
 
   return (
     <>
@@ -44,7 +64,7 @@ export default function Navbar() {
             onClick={() => setMostrarInfo(true)}
             style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1rem', padding: 0 }}
           >
-            ℹ️ Info
+            Más info
           </button>
         </div>
 
@@ -54,29 +74,44 @@ export default function Navbar() {
   </Link>
 )}
 
-{/* Centro: Barra de Búsqueda y Mini Filtro Integrado */}
-<form onSubmit={handleBuscar} style={{ display: 'flex', alignItems: 'center', flex: 1, maxWidth: '450px', margin: '0 20px', backgroundColor: 'white', borderRadius: '20px', padding: '2px 4px' }}>
-  
-  {/* Selector de Género Disimulado */}
-  <select 
-    style={{ 
-      padding: '6px 8px', 
-      borderRadius: '16px 0 0 16px', 
-      border: 'none', 
-      outline: 'none', 
-      backgroundColor: 'transparent',
-      color: '#666',
-      cursor: 'pointer',
-      fontSize: '0.8rem',
-      maxWidth: '120px'
-    }}
-  >
-    <option value="">Género</option>
-    <option value="accion">Acción</option>
-    <option value="comedia">Comedia</option>
-    <option value="terror">Terror</option>
-    <option value="drama">Drama</option>
-  </select>
+  {/*  CENTRO: BARRA DE BÚSQUEDA CONDICIONAL */}
+        {!esPaginaPeliculas && (
+          <form 
+            onSubmit={handleBuscar} 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              flex: 1, 
+              maxWidth: '450px', 
+              margin: '0 20px', 
+              backgroundColor: 'white', 
+              borderRadius: '20px', 
+              padding: '2px 4px' 
+            }}
+          >
+            {/* Selector de Género */}
+            <select
+              value={generoSeleccionado}
+              onChange={(e) => setGeneroSeleccionado(e.target.value)}
+              style={{
+                padding: '6px 8px',
+                borderRadius: '16px 0 0 16px',
+                border: 'none',
+                outline: 'none',
+                backgroundColor: 'transparent',
+                color: '#666',
+                cursor: 'pointer',
+                fontSize: '0.8rem',
+                maxWidth: '120px',
+              }}
+            >
+              <option value="">Todos los géneros</option>
+              {generos.map((genero) => (
+                <option key={genero.CodGenero} value={genero.CodGenero}>
+                  {genero.NombreGenero}
+                </option>
+              ))}
+            </select>
 
   {/* Input de Búsqueda */}
   <input 
@@ -103,7 +138,8 @@ export default function Navbar() {
     🔍
   </button>
 </form>
-
+        )}
+        
     {/* Lado Derecho: Usuario / Login */}
     <div style={{ position: 'relative', display: 'inline-block' }}>
       {usuario ? (

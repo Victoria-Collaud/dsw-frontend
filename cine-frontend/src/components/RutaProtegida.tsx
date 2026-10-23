@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 interface RutaProtegidaProps {
-  rolRequerido?: string; // Opcional: si querés restringir a un rol específico (ej: 'ADMIN')
+  rolRequerido?: string; 
 }
 
 export default function RutaProtegida({ rolRequerido }: RutaProtegidaProps) {
