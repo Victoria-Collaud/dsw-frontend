@@ -48,6 +48,12 @@ export default function Navbar() {
           </button>
         </div>
 
+{usuario?.rol === 'ADMIN' && (
+  <Link to="/admin" style={{ color: 'white', textDecoration: 'none' }}>
+    Admin
+  </Link>
+)}
+
 {/* Centro: Barra de Búsqueda y Mini Filtro Integrado */}
 <form onSubmit={handleBuscar} style={{ display: 'flex', alignItems: 'center', flex: 1, maxWidth: '450px', margin: '0 20px', backgroundColor: 'white', borderRadius: '20px', padding: '2px 4px' }}>
   
@@ -182,25 +188,38 @@ export default function Navbar() {
 
       </nav>
 
-      {/* Modal de Información (Opcional, aparece sobre la pantalla) */}
-      {mostrarInfo && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
-        }}>
-          <div style={{ backgroundColor: '#fff', color: '#333', padding: '30px', borderRadius: '10px', maxWidth: '400px', textAlign: 'center' }}>
-            <h2>🍿 Sobre Nosotros</h2>
-            <p>Somos tu cine favorito. Disfrutá de la mejor cartelera, las mejores salas y la mejor atención.</p>
-            <p>📍 Dirección: Calle Falsa 123</p>
-            <p>📞 Teléfono: 555-1234</p>
-            <button 
-              onClick={() => setMostrarInfo(false)}
-              style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#9b59b6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
+{/* Modal de Información */}
+{mostrarInfo && (
+  <div style={{
+    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+  }}>
+    <div style={{ 
+      backgroundColor: '#ffffff', 
+      padding: '30px', 
+      borderRadius: '10px', 
+      maxWidth: '400px', 
+      textAlign: 'center',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.2)' 
+    }}>
+      
+      {/* ACÁ FORZAMOS EL COLOR OSCURO AL TÍTULO */}
+      <h2 style={{ marginTop: 0, color: '#333333' }}>🍿 Sobre Nosotros</h2>
+      
+      {/* Y TAMBIÉN A LOS PÁRRAFOS */}
+      <p style={{ color: '#333333' }}>Somos tu cine favorito. Disfrutá de la mejor cartelera, las mejores salas y la mejor atención.</p>
+      <p style={{ color: '#333333' }}>📍 Dirección: Calle Falsa 123</p>
+      <p style={{ color: '#333333' }}>📞 Teléfono: 555-1234</p>
+      
+      <button 
+        onClick={() => setMostrarInfo(false)}
+        style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#9b59b6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
       )}
     </>
   );

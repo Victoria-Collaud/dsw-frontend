@@ -20,7 +20,7 @@ export interface Funcion {
   Horario: string;
   pelicula: Pelicula;
   sala: Sala;
-  CapacidadDisponible?: number; // Este campo es opcional, ya que puede no estar presente en la respuesta del backend
+  CapacidadDisponible: number; 
 }
 
 // Único método de lectura: funciones de una película específica
@@ -61,11 +61,12 @@ export async function deleteFuncion(id: number): Promise<void> {
   if (!res.ok) throw new Error('Error al eliminar función');
 }
 
-// Obtener una película por ID creo que va aca?
-export async function getPeliculaPorId(id: number): Promise<Pelicula> {
-  const res = await fetchApi(`${API_URL}/peliculas/${id}`, {
+
+export async function getFuncionPorId(id: number): Promise<Funcion> {
+  const res = await fetchApi(`${API_URL}/funciones/${id}`, {
     headers: getHeaders()
   });
-  if (!res.ok) throw new Error('Error al obtener película');
-  return await res.json();
+  if (!res.ok) throw new Error('Error al obtener la función');
+  const json = await res.json();
+  return json.data || json;
 }

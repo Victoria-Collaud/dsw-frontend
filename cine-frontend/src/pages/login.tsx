@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { login } from '../services/authServices';
 
 export default function Login() {
@@ -10,6 +10,8 @@ export default function Login() {
   const [cargando, setCargando] = useState(false);
   
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -18,13 +20,11 @@ export default function Login() {
 
     try {
       const data = await login({ email, contrasena });
-      
-      // 1. Guardamos el token y los datos del usuario en el navegador
+      //guardamos el token y los datos del usuario en el navegador
       localStorage.setItem('token', data.token);
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
-      
-      // 2. Redirigimos al admin
-      navigate('/admin');
+      //redirigimos a donde estaba
+      navigate(from, { replace: true });
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al iniciar sesión');

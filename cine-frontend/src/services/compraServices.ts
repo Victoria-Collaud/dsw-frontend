@@ -1,50 +1,56 @@
 import { fetchApi } from '../utils/fetchApi';
+import type { Funcion } from './funcionesServices'; // 👈 Importamos la interfaz de Función
+import type { Usuario } from './usuarioServices';   // 👈 Importamos la de Usuario
 
-const API_URL = `${import.meta.env.VITE_API_URL}`
 
-const getHeaders = () => {
-  const token = localStorage.getItem('token')
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  }
-}
+const API_URL = `${import.meta.env.VITE_API_URL}`;
 
 export const Metodopago = {
   TARJETA_CREDITO: 'TARJETA_CREDITO',
   TARJETA_DEBITO: 'TARJETA_DEBITO',
   TRANSFERENCIA: 'TRANSFERENCIA',
   MERCADO_PAGO: 'MERCADO_PAGO',
-} as const
+} as const;
 
-export type Metodopago = typeof Metodopago[keyof typeof Metodopago]
+export type Metodopago = typeof Metodopago[keyof typeof Metodopago];
 
+//interfaz para leer
 export interface Compra {
-  IdCompra?: number
-  MetodoPago: Metodopago
-  Fecha: string | Date
-  CantEntradas: number
-  Precio: number
-  QREntradas: string
-  usuario: number | { idUsuario?: number }
-  funcion: number | { IdFuncion?: number }
+  IdCompra?: number;
+  MetodoPago: Metodopago;
+  Fecha: string | Date;
+  CantEntradas: number;
+  Precio: number;
+  QREntradas: string; 
+  usuario: number | Usuario;   
+  funcion: number | Funcion;  
 }
 
-export async function crearCompra(compra: Compra): Promise<Compra> {
+// interfaz para crear
+export interface CrearCompraDTO {
+  MetodoPago: Metodopago;
+  CantEntradas: number;
+  IdUsuario: number;
+  IdFuncion: number;
+}
+
+export async function crearCompra(compra: CrearCompraDTO): Promise<Compra> {
   const res = await fetchApi(`${API_URL}/compras`, {
     method: 'POST',
-    headers: getHeaders(),
     body: JSON.stringify(compra)
-  })
-  if (!res.ok) throw new Error('Error al procesar la compra')
-  return await res.json()
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.mensaje || 'Error al procesar la compra');
+  }
+  return await res.json();
 }
 
 export async function getCompras(): Promise<Compra[]> {
-  const res = await fetchApi(`${API_URL}/compras`, {
-    headers: getHeaders()
-  })
-  if (!res.ok) throw new Error('Error al obtener las compras')
-  const json = await res.json()
-  return json.data || json
+  const res = await fetchApi(`${API_URL}/compras`);
+  
+  if (!res.ok) throw new Error('Error al obtener las compras');
+  
+  const json = await res.json();
+  return json.data || json;
 }
