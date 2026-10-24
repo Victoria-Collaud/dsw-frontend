@@ -12,6 +12,7 @@ import AdminPeliculas from './pages/admin/adminpelicula';
 import AdminFunciones from './pages/admin/adminfunciones.tsx'
 import AdminCompras from './pages/admin/admincompra.tsx'
 import AdminGeneros from './pages/admin/admingenero.tsx'
+import Registro from './pages/registro.tsx';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/pelicula/:id" element={<DetallePelicula />} />
           <Route path="/login" element={<Login />} />
           <Route path="/peliculas" element={<Peliculas />} />
+          <Route path="/registro" element={<Registro />} />
           
           <Route element={<RutaProtegida />}>
            <Route path="/comprar/:funcionId" element={<Compra />} />

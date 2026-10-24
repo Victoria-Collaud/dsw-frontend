@@ -9,6 +9,13 @@ export interface Usuario {
  
 }
 
+export interface RegistroUsuarioDTO {
+  EmailUsuario: string;
+  Contrasena: string;
+  FechaNacimiento: string;
+  rol: string;
+}
+
 // Función para iniciar sesión
 export async function login(EmailUsuario: string, ContrasenaHash: string): Promise<{ token: string; usuario: Usuario }> {
   const res = await fetchApi(`${API_URL}/auth/login`, {
@@ -56,3 +63,19 @@ export function cerrarSesion() {
   window.location.href = '/login'
 }
 
+export async function registrarUsuario(usuario: RegistroUsuarioDTO) {
+  const res = await fetchApi(`${API_URL}/usuarios/registro`, {
+    method: 'POST',
+    body: JSON.stringify(usuario)
+  });
+  
+  if (!res.ok) {
+    const err: unknown = await res.json().catch(() => ({}));
+    const mensaje = (err && typeof err === 'object' && 'mensaje' in err) 
+      ? String((err as { mensaje: string }).mensaje) 
+      : 'Error al registrar usuario';
+    throw new Error(mensaje);
+  }
+  
+  return await res.json();
+}
