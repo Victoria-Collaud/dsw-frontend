@@ -23,6 +23,14 @@ export interface Funcion {
   CapacidadDisponible?: number; 
 }
 
+export interface CrearFuncionDTO {
+  Idioma: string;
+  Fecha: string;
+  Horario: string;
+  pelicula: Pelicula;
+  sala: Sala;
+}
+
 // Único método de lectura: funciones de una película específica
 export async function getFuncionesDePelicula(idPelicula: number): Promise<Funcion[]> {
   const res = await fetchApi(`${API_URL}/funciones/peliculas/${idPelicula}`, {
@@ -61,6 +69,26 @@ export async function deleteFuncion(id: number): Promise<void> {
   if (!res.ok) throw new Error('Error al eliminar función');
 }
 
+export async function updateFuncion(id: number, funcion: CrearFuncionDTO): Promise<Funcion> {
+  // Formateamos la fecha para que el backend la entienda
+  const body = {
+    ...funcion,
+    Fecha: new Date(`${funcion.Fecha}T00:00:00`).toISOString()
+  };
+  const res = await fetchApi(`${API_URL}/funciones/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err: unknown = await res.json().catch(() => ({}));
+    // Verificamos si el error tiene la propiedad 'mensaje'
+    const mensaje = (err && typeof err === 'object' && 'mensaje' in err) 
+      ? String((err as { mensaje: string }).mensaje) 
+      : 'Error al actualizar función';
+    throw new Error(mensaje);
+  }
+  return await res.json();
+}
 
 export async function getFuncionPorId(id: number): Promise<Funcion> {
   const res = await fetchApi(`${API_URL}/funciones/${id}`, {
