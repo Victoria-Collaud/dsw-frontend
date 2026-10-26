@@ -35,6 +35,14 @@ export interface CrearCompraDTO {
 }
 
 export async function crearCompra(compra: CrearCompraDTO): Promise<Compra> {
+  // 🛑 Validación del límite de entradas en el cliente
+  if (!compra.CantEntradas || compra.CantEntradas < 1) {
+    throw new Error('Debes seleccionar al menos 1 entrada.');
+  }
+
+  if (compra.CantEntradas > 5) {
+    throw new Error('Solo puedes comprar un máximo de 5 entradas por transacción.');
+  }
   const res = await fetchApi(`${API_URL}/compras`, {
     method: 'POST',
     body: JSON.stringify(compra)

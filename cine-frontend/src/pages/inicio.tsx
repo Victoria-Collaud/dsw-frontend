@@ -16,7 +16,6 @@ export default function Inicio() {
   useEffect(() => {
     async function cargar() {
       try {
-        // Traemos películas y géneros en paralelo
         const [pelisData, generosData] = await Promise.all([
           getPeliculas(),
           getGeneros()
@@ -24,19 +23,17 @@ export default function Inicio() {
         setPeliculas(pelisData);
         setGeneros(generosData);
 
-        // 2. Traemos las funciones de cada película
         const funcionesPromesas = pelisData.map(peli => 
           getFuncionesDePelicula(peli.IdPelicula!)
             .then(funcs => ({ id: peli.IdPelicula, funcs }))
-            .catch(() => ({ id: peli.IdPelicula, funcs: [] })) // Si falla, asumimos que no tiene
+            .catch(() => ({ id: peli.IdPelicula, funcs: [] }))
         );
         const resultados = await Promise.all(funcionesPromesas);
-      // 3. Armamos el diccionario { 1: [...], 2: [] }
         const dict: Record<number, Funcion[]> = {}; 
-      resultados.forEach(r => {
-      if (r.id !== undefined) dict[r.id] = r.funcs;
-      });
-      setFuncionesPorPelicula(dict);
+        resultados.forEach(r => {
+          if (r.id !== undefined) dict[r.id] = r.funcs;
+        });
+        setFuncionesPorPelicula(dict);
 
       } catch (err) {
         console.error(err);
@@ -48,42 +45,41 @@ export default function Inicio() {
     cargar();
   }, []);
 
-  // Función para obtener el nombre del género a partir de su ID
-const obtenerNombreGenero = (idGenero: number) => {
-  const gen = generos.find(g => g.CodGenero === idGenero);
-  return gen ? gen.NombreGenero : 'Género desconocido';
-}; 
+  const obtenerNombreGenero = (idGenero: number) => {
+    const gen = generos.find(g => g.CodGenero === idGenero);
+    return gen ? gen.NombreGenero : 'Género desconocido';
+  }; 
 
-  if (cargando) return <p style={{ padding: '50px', textAlign: 'center' }}>Cargando cartelera...</p>;
+  if (cargando) return <p style={{ padding: '50px', textAlign: 'center', color: '#aaa' }}>Cargando cartelera...</p>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+    <div style={{ padding: '40px 20px', width: '100%', maxWidth: '1400px', margin: '0 auto', boxSizing: 'border-box', backgroundColor: '#0b0c10', color: '#fff', minHeight: '100vh' }}>
       
       {/* Hero Section */}
-      <div style={{ textAlign: 'center', margin: '40px 0' }}>
-        <h1 style={{ fontSize: '2.5rem', margin: '0 0 10px 0', color: '#9b59b6' }}>🍿 Bienvenido a mi Cine!</h1>
-        <p style={{ fontSize: '1rem', color: '#666', marginBottom: '20px' }}>
-          Disfrutá de la mejor cartelera. ¡Compra tus entradas ahora!
+      <div style={{ textAlign: 'left', margin: '10px 0 30px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
+        <h1 style={{ fontSize: '2rem', letterSpacing: '2px', margin: '0 0 8px 0', color: '#ffffff', textTransform: 'uppercase', fontWeight: '700', fontFamily: 'system-ui, sans-serif' }}>
+          🍿 ¡Bienvenido a NewCine!
+        </h1>
+        <p style={{ fontSize: '1rem', color: '#888', margin: 0 }}>
+          Disfrutá de la mejor cartelera. ¡Comprá tus entradas ahora!
         </p>
       </div>
 
-      {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
+      {error && <p style={{ color: '#ff4d4d', textAlign: 'center' }}>{error}</p>}
 
-      <h2 style={{ marginBottom: '20px', borderBottom: '2px solid #eee', paddingBottom: '10px' }}>
-        🌟 Cartelera:
+      <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '20px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
+        ESTRENOS
       </h2>
 
       {peliculas.length === 0 ? (
-        <p>No hay películas disponibles en este momento ¡Vuelva pronto!</p>
+        <p style={{ color: '#888', padding: '20px 0' }}>No hay películas disponibles en este momento ¡Vuelva pronto!</p>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '25px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '25px', marginTop: '15px' }}>
           {peliculas.slice(0, 8).map((peli) => {
             
-            // 👇 1. VERIFICAMOS SI LA PELÍCULA TIENE FUNCIONES
             const tieneFunciones = funcionesPorPelicula[peli.IdPelicula!] && funcionesPorPelicula[peli.IdPelicula!].length > 0;
 
             return (
-              // ENVOLVEMOS TODA LA TARJETA EN UN LINK
               <Link 
                 key={peli.IdPelicula} 
                 to={`/pelicula/${peli.IdPelicula}`}
@@ -91,23 +87,28 @@ const obtenerNombreGenero = (idGenero: number) => {
               >
                 <div 
                   style={{ 
-                    borderRadius: '10px', 
+                    borderRadius: '4px', 
                     overflow: 'hidden',
-                    backgroundColor: '#1e1e1e',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
-                    transition: 'transform 0.2s',
+                    backgroundColor: '#141414',
+                    border: '1px solid #222',
+                    transition: 'transform 0.2s ease, border-color 0.2s ease',
                     display: 'flex',
                     flexDirection: 'column',
                     height: '100%',
                     cursor: 'pointer',
-                    // 👇 Si no tiene funciones, bajamos la opacidad para que se note
-                    opacity: tieneFunciones ? 1 : 0.7
+                    opacity: tieneFunciones ? 1 : 0.6
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.03)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.borderColor = '#e50914';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0px)';
+                    e.currentTarget.style.borderColor = '#222';
+                  }}
                 >
                   {/* Imagen */}
-                  <div style={{ height: '300px', backgroundColor: '#333', position: 'relative' }}>
+                  <div style={{ height: '320px', backgroundColor: '#000', position: 'relative' }}>
                     {peli.Cartelera ? (
                       <img 
                         src={peli.Cartelera} 
@@ -115,30 +116,30 @@ const obtenerNombreGenero = (idGenero: number) => {
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>
                         Sin imagen
                       </div>
                     )}
                   </div>
 
-                  <div style={{ padding: '15px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <h3 style={{ margin: '0 0 5px 0', fontSize: '1.1rem' }}>{peli.TituloPelicula}</h3>
-                    <p style={{ margin: '0 0 15px 0', color: '#aaa', fontSize: '0.9rem' }}>
+                  <div style={{ padding: '14px', flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#141414' }}>
+                    <h3 style={{ margin: '0 0 4px 0', fontSize: '1rem', color: '#fff', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{peli.TituloPelicula}</h3>
+                    <p style={{ margin: '0 0 12px 0', color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       {obtenerNombreGenero(peli.genero)} | {peli.Clasificacion}
                     </p>
                     
                     <div style={{ marginTop: 'auto' }}>
                       
-                      {/* 👇 2. CARTEL DE AGOTADA / SIN FUNCIONES */}
                       {!tieneFunciones && (
                         <div style={{ 
-                          color: '#ff4d4d', 
+                          color: '#e50914', 
                           fontWeight: 'bold', 
                           textAlign: 'center', 
                           marginBottom: '8px',
-                          fontSize: '0.85rem'
+                          fontSize: '0.75rem',
+                          letterSpacing: '0.5px'
                         }}>
-                           SIN FUNCIONES DISPONIBLES
+                            SIN FUNCIONES DISPONIBLES
                         </div>
                       )}
 
@@ -147,12 +148,14 @@ const obtenerNombreGenero = (idGenero: number) => {
                         style={{
                           display: 'block',
                           textAlign: 'center',
-                          padding: '10px',
-                          // 👇 Cambia a gris si no hay funciones
-                          backgroundColor: tieneFunciones ? '#ea5098' : '#555', 
+                          padding: '8px',
+                          backgroundColor: tieneFunciones ? '#e50914' : '#333', 
                           color: 'white',
-                          borderRadius: '5px',
-                          fontWeight: 'bold'
+                          borderRadius: '2px',
+                          fontWeight: 'bold',
+                          fontSize: '0.85rem',
+                          letterSpacing: '0.5px',
+                          textTransform: 'uppercase'
                         }}
                       >
                         Ver Película

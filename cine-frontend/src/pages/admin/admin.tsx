@@ -1,30 +1,35 @@
-/* export default function PanelAdmin() {
-  return <h1>Página de Admin</h1>
-}
-  import { Link } from 'react-router-dom'
-
-export default function Admin() {
-*/
-
-// src/pages/admin/AdminLayout.tsx
 import { NavLink, Outlet } from 'react-router-dom';
 
 export default function Admin() {
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <h1>⚙️ Panel de Administración</h1>
+    <div style={{ padding: '40px 20px', width: '100%', maxWidth: '1400px', margin: '0 auto', boxSizing: 'border-box', backgroundColor: '#0b0c10', color: '#fff', minHeight: '100vh' }}>
+      
+      {/* Título del Panel */}
+      <div style={{ textAlign: 'left', margin: '10px 0 30px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
+        <h1 style={{ fontSize: '2rem', letterSpacing: '2px', margin: '0 0 8px 0', color: '#ffffff', textTransform: 'uppercase', fontWeight: '700', fontFamily: 'system-ui, sans-serif' }}>
+          ⚙️ Panel de Administración
+        </h1>
+        <p style={{ fontSize: '1rem', color: '#888', margin: 0 }}>
+          Gestión de salas, películas, funciones, géneros y compras del sistema.
+        </p>
+      </div>
 
       {/* Menú de pestañas */}
-      <nav style={{ display: 'flex', gap: '10px', borderBottom: '2px solid #ccc', marginBottom: '30px', paddingBottom: '10px' }}>
+      <nav style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #222', marginBottom: '30px', paddingBottom: '15px', flexWrap: 'wrap' }}>
         <NavLink 
           to="/admin/salas" 
           style={({ isActive }) => ({
             padding: '8px 16px',
             textDecoration: 'none',
-            color: isActive ? 'white' : '#333',
-            backgroundColor: isActive ? '#9b59b6' : 'transparent',
-            borderRadius: '4px',
-            fontWeight: 'bold'
+            color: isActive ? 'white' : '#aaa',
+            backgroundColor: isActive ? '#e50914' : '#141414',
+            border: '1px solid',
+            borderColor: isActive ? '#e50914' : '#222',
+            borderRadius: '2px',
+            fontWeight: 'bold',
+            fontSize: '0.9rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           })}
         >
           Salas
@@ -34,10 +39,15 @@ export default function Admin() {
           style={({ isActive }) => ({
             padding: '8px 16px',
             textDecoration: 'none',
-            color: isActive ? 'white' : '#333',
-            backgroundColor: isActive ? '#9b59b6' : 'transparent',
-            borderRadius: '4px',
-            fontWeight: 'bold'
+            color: isActive ? 'white' : '#aaa',
+            backgroundColor: isActive ? '#e50914' : '#141414',
+            border: '1px solid',
+            borderColor: isActive ? '#e50914' : '#222',
+            borderRadius: '2px',
+            fontWeight: 'bold',
+            fontSize: '0.9rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           })}
         >
           Películas
@@ -47,10 +57,15 @@ export default function Admin() {
           style={({ isActive }) => ({
             padding: '8px 16px',
             textDecoration: 'none',
-            color: isActive ? 'white' : '#333',
-            backgroundColor: isActive ? '#9b59b6' : 'transparent',
-            borderRadius: '4px',
-            fontWeight: 'bold'
+            color: isActive ? 'white' : '#aaa',
+            backgroundColor: isActive ? '#e50914' : '#141414',
+            border: '1px solid',
+            borderColor: isActive ? '#e50914' : '#222',
+            borderRadius: '2px',
+            fontWeight: 'bold',
+            fontSize: '0.9rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           })}
         >
           Funciones
@@ -60,10 +75,15 @@ export default function Admin() {
           style={({ isActive }) => ({
             padding: '8px 16px',
             textDecoration: 'none',
-            color: isActive ? 'white' : '#333',
-            backgroundColor: isActive ? '#9b59b6' : 'transparent',
-            borderRadius: '4px',
-            fontWeight: 'bold'
+            color: isActive ? 'white' : '#aaa',
+            backgroundColor: isActive ? '#e50914' : '#141414',
+            border: '1px solid',
+            borderColor: isActive ? '#e50914' : '#222',
+            borderRadius: '2px',
+            fontWeight: 'bold',
+            fontSize: '0.9rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           })}
         >
           Generos
@@ -73,10 +93,15 @@ export default function Admin() {
           style={({ isActive }) => ({
             padding: '8px 16px',
             textDecoration: 'none',
-            color: isActive ? 'white' : '#333',
-            backgroundColor: isActive ? '#9b59b6' : 'transparent',
-            borderRadius: '4px',
-            fontWeight: 'bold'
+            color: isActive ? 'white' : '#aaa',
+            backgroundColor: isActive ? '#e50914' : '#141414',
+            border: '1px solid',
+            borderColor: isActive ? '#e50914' : '#222',
+            borderRadius: '2px',
+            fontWeight: 'bold',
+            fontSize: '0.9rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           })}
         >
           Compras

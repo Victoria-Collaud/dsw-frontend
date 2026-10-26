@@ -1,3 +1,17 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #121212; 
+  font-family: sans-serif;
+}
+
+* {
+  box-sizing: border-box; /* Asegura que los paddings no rompan los anchos */
+}
+
+
+
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -16,6 +30,7 @@
     outline-offset: 2px;
   }
 }
+
 
 .hero {
   position: relative;

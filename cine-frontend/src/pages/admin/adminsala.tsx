@@ -65,7 +65,13 @@ export default function AdminSalas() {
       setError('Por favor completá todos los campos.')
       return
     }
-
+    if (salaEditando === null) {
+      const salaExistente = salas.some(s => s.NumSala === Number(NumSala))
+      if (salaExistente) {
+        setError(`Ya existe una sala registrada con el número #${NumSala}. Por favor elegí otro número.`)
+        return
+      }
+    }
     try {
       const salaData = {
         NumSala: Number(NumSala),
@@ -106,87 +112,95 @@ async function handleDelete(NumSala: number) {
   }
 
  return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h1>⚙️ Administración - Salas</h1>
+   <div style={{ maxWidth: '1000px', margin: '0 auto', fontFamily: 'system-ui, sans-serif', color: '#fff' }}>
+      
+      <div style={{ margin: '20px 0 30px 0' }}>
+        <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
+          ⚙️ Administración - Salas
+        </h2>
+      </div>
 
       {error && (
-        <p style={{ color: 'red', backgroundColor: '#ffe6e6', padding: '10px', borderRadius: '4px' }}>
+        <p style={{ color: '#ff4d4d', backgroundColor: '#2d1515', border: '1px solid #e50914', padding: '12px', borderRadius: '4px', marginBottom: '20px' }}>
           {error}
         </p>
       )}
-{/* Formulario de Alta/Edición de Sala */}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '30px' }}>
-        {/* 👇 Título dinámico según el modo */}
-        <h3>{salaEditando ? `Editar Sala #${salaEditando}` : 'Agregar Nueva Sala'}</h3>
+
+      {/* Formulario de Alta/Edición de Sala */}
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: '#141414', border: '1px solid #222', padding: '25px', borderRadius: '4px', marginBottom: '30px' }}>
+        <h3 style={{ fontSize: '1.1rem', color: '#fff', margin: '0 0 10px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          {salaEditando ? `✏️ Editar Sala #${salaEditando}` : '➕ Agregar Nueva Sala'}
+        </h3>
         
         <div>
-          <label style={{ display: 'block', marginBottom: '4px' }}>Numero de sala:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Número de sala:</label>
           <input
             type="number"
             placeholder="Ej: 1"
             value={NumSala}
             onChange={(e) => setNumSala(Number(e.target.value))}
-            // 👇 Deshabilitamos el ID si estamos editando (no se debe cambiar la PK)
             disabled={salaEditando !== null} 
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box'}}
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '4px' }}>Capacidad:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Capacidad:</label>
           <input
             type="number"
             placeholder="Ej: 120"
             value={capacidad}
             onChange={(e) => setCapacidad(Number(e.target.value))}
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
           />
         </div>
         
         <div>
-          <label style={{ display: 'block', marginBottom: '4px' }}>Tipo de Pantalla:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Tipo de Pantalla:</label>
           <input
-            type="string"
+            type="text"
             placeholder="Ej: IMAX"
             value={TipoPantalla}
             onChange={(e) => setTipoPantalla(e.target.value)}
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-          />
-        </div>
-          <div>
-          <label style={{ display: 'block', marginBottom: '4px' }}>Tipo de Asiento:</label>
-          <input
-            type="string"
-            placeholder="Ej: Reclinable"
-            value={TipoAsientos}
-            onChange={(e) => setTipoAsientos(e.target.value)}
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '4px' }}>Precio de las entradas de la sala ($):</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Tipo de Asiento:</label>
+          <input
+            type="text"
+            placeholder="Ej: Reclinable"
+            value={TipoAsientos}
+            onChange={(e) => setTipoAsientos(e.target.value)}
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
+          />
+        </div>
+
+        <div>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Precio de las entradas de la sala ($):</label>
           <input
             type="number"
             placeholder="Ej: 4500"
             value={precioSala}
             onChange={(e) => setPrecioSala(Number(e.target.value))}
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
           />
         </div>
         
-
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button type="submit" style={{ flex: 1, padding: '10px', cursor: 'pointer', fontWeight: 'bold' }}>
+        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+          <button 
+            type="submit" 
+            style={{ flex: 1, padding: '12px', cursor: 'pointer', fontWeight: 'bold', backgroundColor: '#e50914', color: '#fff', border: 'none', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}
+          >
             {salaEditando ? 'Guardar Cambios' : 'Crear Sala'}
           </button>
           
-          {/* 👇 Botón de Cancelar (solo aparece en modo edición) */}
           {salaEditando && (
             <button 
               type="button" 
               onClick={limpiarFormulario}
-              style={{ padding: '10px', cursor: 'pointer', backgroundColor: '#d995cd', border: 'none', borderRadius: '4px' }}
+              style={{ padding: '12px 20px', cursor: 'pointer', backgroundColor: '#333', color: '#fff', border: 'none', borderRadius: '4px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}
             >
               Cancelar
             </button>
@@ -195,11 +209,14 @@ async function handleDelete(NumSala: number) {
       </form>
 
       {/* Listado de Salas */}
-      <h3>Salas Creadas</h3>
+      <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        Salas Creadas
+      </h3>
+
       {salas.length === 0 ? (
-        <p>No hay salas registradas aún.</p>
+        <p style={{ color: '#888' }}>No hay salas registradas aún.</p>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {salas.map((sala) => (
             <li
               key={sala.NumSala}
@@ -207,28 +224,31 @@ async function handleDelete(NumSala: number) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '10px',
-                borderBottom: '1px solid #ccc'
+                padding: '16px',
+                backgroundColor: '#141414',
+                border: '1px solid #222',
+                borderRadius: '4px'
               }}
             >
               <div>
-                <strong>#{sala.NumSala} </strong>
+                <strong style={{ color: '#fff', fontSize: '1rem' }}>#{sala.NumSala}</strong>
                 <br />
-                <small>Capacidad: {sala.Capacidad} | Tipo de Pantalla: {sala.TipoPantalla} | Tipo de Asiento: {sala.TipoAsientos} | Precio: ${sala.PrecioSala}</small>
+                <small style={{ color: '#888', fontSize: '0.85rem' }}>
+                  Capacidad: {sala.Capacidad} | Pantalla: {sala.TipoPantalla} | Asientos: {sala.TipoAsientos} | Precio: ${sala.PrecioSala}
+                </small>
               </div>
 
-              <div style={{ display: 'flex', gap: '5px' }}>
-                {/* 👇 Botón de Editar */}
+              <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   onClick={() => handleEditar(sala)}
-                  style={{ color: '#3498db', padding: '5px 10px', cursor: 'pointer' }}
+                  style={{ color: '#fff', padding: '6px 12px', cursor: 'pointer', border: '1px solid #333', borderRadius: '4px', backgroundColor: '#222', fontWeight: 'bold', fontSize: '0.85rem' }}
                 >
                   Editar
                 </button>
 
                 <button
                   onClick={() => handleDelete(sala.NumSala)}
-                  style={{ color: 'red', padding: '5px 10px', cursor: 'pointer' }}
+                  style={{ color: '#ff4d4d', padding: '6px 12px', cursor: 'pointer', border: '1px solid #552222', borderRadius: '4px', backgroundColor: '#2a1212', fontWeight: 'bold', fontSize: '0.85rem' }}
                 >
                   Eliminar
                 </button>
