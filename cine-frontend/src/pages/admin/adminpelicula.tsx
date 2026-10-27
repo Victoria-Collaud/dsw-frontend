@@ -44,11 +44,15 @@ export default function AdminPeliculas() {
   }
 
   function handleEditar(pelicula: Pelicula) {
+    const idGenero = typeof pelicula.genero === 'object' 
+    ? (pelicula.genero as { CodGenero: number }).CodGenero 
+    : pelicula.genero;
+
     setTituloPelicula(pelicula.TituloPelicula)
     setSinopsis(pelicula.Sinopsis)
     setDuracion(String(pelicula.Duracion))
     setClasificacion(pelicula.Clasificacion)
-    setCodGenero(String(pelicula.genero))
+    setCodGenero(String(idGenero))
     setCartelera(pelicula.Cartelera)
     setTrailer(pelicula.Trailer)
     setPeliculaEditando(pelicula.IdPelicula!)
