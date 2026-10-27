@@ -33,50 +33,68 @@ export default function Login() {
     }
   }
 
-  return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', fontFamily: 'sans-serif' }}>
-      <h1>🎬 Iniciar Sesión</h1>
+ return (
+    <div style={{ maxWidth: '420px', margin: '60px auto', fontFamily: 'system-ui, sans-serif', padding: '30px', backgroundColor: '#141414', border: '1px solid #222', borderRadius: '4px', color: '#fff' }}>
+      
+      <div style={{ margin: '0 0 25px 0', textAlign: 'center' }}>
+        <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
+          🎬 Iniciar Sesión
+        </h2>
+      </div>
       
       {error && (
-        <p style={{ color: 'red', backgroundColor: '#ffe6e6', padding: '10px', borderRadius: '4px' }}>
+        <p style={{ color: '#ff4d4d', backgroundColor: '#2d1515', border: '1px solid #e50914', padding: '12px', borderRadius: '4px', marginBottom: '20px', fontSize: '0.9rem' }}>
           {error}
         </p>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div>
-          <label style={{ display: 'block', marginBottom: '4px' }}>Email:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Email:</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            placeholder="ejemplo@correo.com"
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '4px' }}>Contraseña:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Contraseña:</label>
           <input
             type="password"
             value={contrasena}
             onChange={(e) => setContrasena(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            placeholder="••••••••"
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
           />
         </div>
 
         <button 
           type="submit" 
           disabled={cargando}
-          style={{ padding: '10px', cursor: 'pointer', fontWeight: 'bold' }}
+          style={{ 
+            padding: '14px', 
+            backgroundColor: cargando ? '#333' : '#e50914', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '4px', 
+            fontWeight: 'bold', 
+            fontSize: '1rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            cursor: cargando ? 'not-allowed' : 'pointer' 
+          }}
         >
           {cargando ? 'Ingresando...' : 'Ingresar'}
         </button>
       </form>
 
-      <p style={{ marginTop: '20px', textAlign: 'center' }}>
-        ¿No tenés cuenta? <Link to="/registro">Registrate acá</Link>
+      <p style={{ marginTop: '25px', textAlign: 'center', fontSize: '0.9rem', color: '#888' }}>
+        ¿No tenés cuenta? <Link to="/registro" style={{ color: '#e50914', textDecoration: 'none', fontWeight: 'bold' }}>Registrate acá</Link>
       </p>
     </div>
   );

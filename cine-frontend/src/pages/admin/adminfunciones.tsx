@@ -74,7 +74,14 @@ export default function AdminFunciones() {
     e.preventDefault();
     if (!Idioma || !Fecha || !Horario || !peliculaSeleccionada || !salaSeleccionada) {
       setError('Por favor completá todos los campos.');
-      return;
+      return; 
+    }
+    // Juntamos la fecha y el horario en un solo objeto Date
+    const fechaHoraFuncion = new Date(`${Fecha}T${Horario}`);
+    const ahora = new Date();
+    if (fechaHoraFuncion < ahora) {
+      setError('No puedes crear una función con una fecha u horario que ya pasó.');
+      return; 
     }
     try {
       const funcionData = {
@@ -98,10 +105,13 @@ export default function AdminFunciones() {
       if (peliculaBuscada?.IdPelicula !== undefined) {
         await buscarFunciones(peliculaBuscada.IdPelicula);
       }
-    } catch (error) {
-      console.log('Error al guardar la función', error);
-      setError(funcionEditando ? 'No se pudo actualizar la función.' : 'No se pudo crear la función.');
-    }
+    }catch (err) {
+  console.error('Error al guardar la función', err);
+  if (err instanceof Error) {
+    setError(err.message); 
+  } else {
+    setError('No se pudo crear la función.');
+  } }
   }
       //borra funcion 
   async function handleDelete(IdFuncion?: number) {
@@ -112,10 +122,14 @@ export default function AdminFunciones() {
       if (peliculaBuscada?.IdPelicula !== undefined) {
       await getFuncionesDePelicula(peliculaBuscada.IdPelicula);
     }
-    } catch (error) {
-      console.log('Error al borrar la función', error);
-      setError('No se pudo eliminar la función.');
-    }
+    } catch (err) {
+  console.error('Error al guardar la función', err);
+  if (err instanceof Error) {
+    setError(err.message); 
+  } else {
+    setError('No se pudo crear la función.');
+  }
+ }
   }
 
    async function buscarFunciones(idPelicula: number) {

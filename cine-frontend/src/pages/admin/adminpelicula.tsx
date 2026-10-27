@@ -57,7 +57,6 @@ export default function AdminPeliculas() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-
     if (!tituloPelicula.trim() || !duracion || !codGenero) {
       setError('Por favor completá los campos obligatorios (Título, Duración y Género).')
       return
@@ -68,7 +67,7 @@ export default function AdminPeliculas() {
         Sinopsis: sinopsis,
         Duracion: Number(duracion),
         Clasificacion: clasificacion,
-        genero: Number(codGenero),
+        CodGenero: Number(codGenero),
         Cartelera: cartelera,
         Trailer: trailer
       }
@@ -79,9 +78,12 @@ export default function AdminPeliculas() {
       }
       limpiarFormulario()
       cargarPeliculas()
-    } catch (error) {
-      console.error(error)
-      setError(peliculaEditando ? 'Error al actualizar la película.' : 'Error al crear la película.')
+    } catch (err) {
+       if (err instanceof Error) {
+        setError(err.message); 
+      } else {
+        setError('Error al crear la película.');
+      }
     }
   }
 
@@ -93,10 +95,15 @@ export default function AdminPeliculas() {
       await deletePelicula(id)
       cargarPeliculas()
       if (peliculaEditando === id) limpiarFormulario()
-    } catch  {
-      setError('Error al eliminar la película.')
+    }  catch (err) {
+    console.error(err);
+    if (err instanceof Error) {
+      setError(err.message);
+    } else {
+      setError('Error al eliminar la película.');
     }
-  }
+  } 
+}
 
   const peliculasFiltradas = peliculas.filter((p) =>
     p.TituloPelicula?.toLowerCase().includes(busqueda.toLowerCase())

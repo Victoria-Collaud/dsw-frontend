@@ -63,9 +63,13 @@ export default function AdminGeneros() {
       await deleteGenero(CodGenero)
       cargarGeneros()
       if (generoEditando === CodGenero) limpiarFormulario()
-    } catch {
-      setError('No se pudo eliminar el género. Verificá que no tenga películas asociadas.')
-    }
+    } catch (err) {
+  console.error('Error al guardar la función', err);
+  if (err instanceof Error) {
+    setError(err.message); 
+  } else {
+    setError('No se pudo Eliminar el género.');
+  } }
   }
 
   return (

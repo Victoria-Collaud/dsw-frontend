@@ -45,64 +45,87 @@ export default function Registro() {
   }
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', fontFamily: 'sans-serif', border: '1px solid #444', borderRadius: '10px', backgroundColor: '#1e1e1e', color: '#fff' }}>
-      <h2 style={{ textAlign: 'center' }}>🎬 Crear Cuenta</h2>
+    <div style={{ maxWidth: '420px', margin: '50px auto', padding: '30px', fontFamily: 'system-ui, sans-serif', backgroundColor: '#141414', border: '1px solid #222', borderRadius: '4px', color: '#fff' }}>
+      
+      <div style={{ margin: '0 0 25px 0', textAlign: 'center' }}>
+        <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
+          🎬 Crear Cuenta
+        </h2>
+      </div>
 
-      {error && <p style={{ color: 'red', backgroundColor: '#ffe6e6', padding: '10px', borderRadius: '5px' }}>{error}</p>}
-      {exito && <p style={{ color: 'green', backgroundColor: '#e6ffe6', padding: '10px', borderRadius: '5px' }}>¡Cuenta creada con éxito! Redirigiendo al login...</p>}
+      {error && <p style={{ color: '#ff4d4d', backgroundColor: '#2d1515', border: '1px solid #e50914', padding: '12px', borderRadius: '4px', marginBottom: '20px', fontSize: '0.9rem' }}>{error}</p>}
+      {exito && <p style={{ color: '#4ade80', backgroundColor: '#14291c', border: '1px solid #4ade80', padding: '12px', borderRadius: '4px', marginBottom: '20px', fontSize: '0.9rem' }}>¡Cuenta creada con éxito! Redirigiendo al login...</p>}
 
-      <form onSubmit={handleRegistro} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <form onSubmit={handleRegistro} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Email:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Email:</label>
           <input 
             type="email" 
             value={email} 
             onChange={e => setEmail(e.target.value)} 
             required 
-            style={{ width: '100%', padding: '10px', borderRadius: '5px', border: 'none', outline: 'none' }}
+            placeholder="ejemplo@correo.com"
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Contraseña:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Contraseña:</label>
           <input 
             type="password" 
             value={contrasena} 
             onChange={e => setContrasena(e.target.value)} 
             required 
-            style={{ width: '100%', padding: '10px', borderRadius: '5px', border: 'none', outline: 'none' }}
+            placeholder="Mínimo 6 caracteres"
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Confirmar Contraseña:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Confirmar Contraseña:</label>
           <input 
             type="password" 
             value={confirmarContrasena} 
             onChange={e => setConfirmarContrasena(e.target.value)} 
             required 
-            style={{ width: '100%', padding: '10px', borderRadius: '5px', border: 'none', outline: 'none' }}
+            placeholder="Repetí tu contraseña"
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Fecha de Nacimiento:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Fecha de Nacimiento:</label>
           <input 
             type="date" 
             value={fechaNacimiento} 
             onChange={e => setFechaNacimiento(e.target.value)} 
             required 
-            style={{ width: '100%', padding: '10px', borderRadius: '5px', border: 'none', outline: 'none' }}
+            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box', colorScheme: 'dark' }}
           />
         </div>
 
-        <button type="submit" style={{ padding: '12px', backgroundColor: '#9b59b6', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' }}>
+        <button 
+          type="submit" 
+          style={{ 
+            padding: '14px', 
+            backgroundColor: '#e50914', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '4px', 
+            fontWeight: 'bold', 
+            fontSize: '1rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            cursor: 'pointer', 
+            marginTop: '5px' 
+          }}
+        >
           Registrarse
         </button>
       </form>
 
-      <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.9rem' }}>
-        ¿Ya tenés cuenta? <Link to="/login" style={{ color: '#ea5098', textDecoration: 'none' }}>Iniciá sesión</Link>
+      <p style={{ textAlign: 'center', marginTop: '25px', fontSize: '0.9rem', color: '#888' }}>
+        ¿Ya tenés cuenta? <Link to="/login" style={{ color: '#e50914', textDecoration: 'none', fontWeight: 'bold' }}>Iniciá sesión</Link>
       </p>
     </div>
   );

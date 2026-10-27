@@ -21,9 +21,10 @@ export default function DetallePelicula() {
       setCargando(true);
       setError('');
       try {
-        // 1. Cargamos películas y géneros en paralelo
-        const [todasPelis, generosData] = await Promise.all([
+        // Cargamos películas y géneros en paralelo
+        const [todasPelis, funcsData, generosData] = await Promise.all([
           getPeliculas(),
+          getFuncionesDePelicula(idPelicula),
           getGeneros() 
         ]);
         
@@ -31,6 +32,7 @@ export default function DetallePelicula() {
         if (!peliEncontrada) throw new Error('Película no encontrada');
 
         setPelicula(peliEncontrada);
+        setFunciones(funcsData); 
 
         const idGen = peliEncontrada.genero; 
         const gen = generosData.find(g => Number(g.CodGenero) === Number(idGen));
@@ -38,7 +40,7 @@ export default function DetallePelicula() {
           setGeneroNombre(gen.NombreGenero);
         }
 
-        // 2. Intentamos cargar las funciones por separado para que si falla/no hay, no rompa la página
+        // Intentamos cargar las funciones por separado para que si falla/no hay, no rompa la página
         try {
           const funcsData = await getFuncionesDePelicula(idPelicula);
           setFunciones(funcsData || []);
@@ -76,14 +78,14 @@ export default function DetallePelicula() {
   };
 
   if (cargando) {
-    return <p style={{ padding: '40px', textAlign: 'center' }}>Cargando detalle...</p>;
+    return <p style={{ padding: '60px', textAlign: 'center', color: '#888' }}>Cargando detalle...</p>;
   }
 
   if (error || !pelicula) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <p style={{ color: 'red', marginBottom: '20px' }}>{error || 'Película no encontrada.'}</p>
-        <Link to="/" style={{ color: '#9b59b6' }}>Volver al inicio</Link>
+      <div style={{ padding: '60px', textAlign: 'center', backgroundColor: '#0b0c10', minHeight: '100vh', color: '#fff' }}>
+        <p style={{ color: '#ff4d4d', marginBottom: '20px' }}>{error || 'Película no encontrada.'}</p>
+        <Link to="/" style={{ color: '#e50914', textDecoration: 'none', fontWeight: 'bold' }}>Volver al inicio</Link>
       </div>
     );
   }
@@ -91,45 +93,54 @@ export default function DetallePelicula() {
   const trailerEmbedUrl = obtenerUrlEmbed(pelicula.Trailer);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif', color: '#fff' }}>
-      <Link to="/" style={{ color: '#9b59b6', textDecoration: 'none', fontWeight: 'bold' }}>
+    <div style={{ padding: '40px 20px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'system-ui, sans-serif', color: '#fff', backgroundColor: '#0b0c10', minHeight: '100vh' }}>
+      
+      <Link to="/" style={{ color: '#888', textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem', display: 'inline-block', marginBottom: '25px', transition: 'color 0.2s' }}
+        onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+        onMouseLeave={(e) => e.currentTarget.style.color = '#888'}
+      >
         ← Volver a la cartelera
       </Link>
       
-      <div style={{ display: 'flex', gap: '30px', marginTop: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
-        {pelicula.Cartelera && (
+      <div style={{ display: 'flex', gap: '35px', marginBottom: '40px', flexWrap: 'wrap' }}>
+        {pelicula.Cartelera ? (
           <img 
             src={pelicula.Cartelera} 
             alt={`Póster de ${pelicula.TituloPelicula}`} 
-            style={{ width: '200px', borderRadius: '10px', objectFit: 'cover' }}
+            style={{ width: '220px', height: '330px', borderRadius: '4px', objectFit: 'cover', border: '1px solid #222' }}
           />
+        ) : (
+          <div style={{ width: '220px', height: '330px', backgroundColor: '#141414', border: '1px solid #222', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>
+            Sin imagen
+          </div>
         )}
         
-        <div style={{ flex: 1, minWidth: '250px' }}>
-          <h1 style={{ marginTop: 0, marginBottom: '10px' }}>{pelicula.TituloPelicula}</h1>
+        <div style={{ flex: 1, minWidth: '280px' }}>
+          <h1 style={{ marginTop: 0, marginBottom: '12px', fontSize: '2rem', fontWeight: '700', letterSpacing: '1px' }}>{pelicula.TituloPelicula}</h1>
           
-          <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', color: '#aaa', fontSize: '0.9em' }}>
+          <div style={{ display: 'flex', gap: '15px', marginBottom: '25px', color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             <span>🎭 {generoNombre}</span>
             <span>⏱️ {pelicula.Duracion} min</span>
-            <span>⚠️ {pelicula.Clasificacion}</span>
+            <span>⚠️ {pelicula.Clasificacion || pelicula.Clasificacion}</span>
           </div>
 
-          <h3 style={{ borderBottom: '1px solid #444', paddingBottom: '10px', marginTop: '20px' }}>Sinopsis</h3>
-          <p style={{ lineHeight: '1.6', color: '#ddd', marginBottom: '0' }}>{pelicula.Sinopsis}</p>
+          <h3 style={{ fontSize: '1.1rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '10px', color: '#fff', borderBottom: '1px solid #222', paddingBottom: '6px' }}>Sinopsis</h3>
+          <p style={{ lineHeight: '1.7', color: '#aaa', fontSize: '0.95rem', margin: 0 }}>{pelicula.Sinopsis}</p>
         </div>
       </div>
 
       {/* SECCIÓN DEL TRAILER */}
       {trailerEmbedUrl && (
         <div style={{ marginBottom: '40px' }}>
-          <h3 style={{ borderBottom: '1px solid #444', paddingBottom: '10px' }}>🎬 Trailer</h3>
+          <h3 style={{ fontSize: '1.1rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '15px', color: '#fff', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block' }}>🎬 Trailer</h3>
           <div style={{ 
             position: 'relative', 
-            paddingBottom: '56.25%', // Esto mantiene la proporción 16:9 del video
+            paddingBottom: '56.25%', 
             height: 0, 
             overflow: 'hidden', 
-            borderRadius: '10px',
-            marginTop: '15px'
+            borderRadius: '4px',
+            border: '1px solid #222',
+            backgroundColor: '#141414'
           }}>
             <iframe 
               src={trailerEmbedUrl}
@@ -149,25 +160,26 @@ export default function DetallePelicula() {
         </div>
       )}
 
-      <hr style={{ margin: '30px 0', borderColor: '#333' }} />
+      <div style={{ margin: '40px 0 20px 0' }}>
+        <h3 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
+          🎟️ Funciones Disponibles
+        </h3>
+      </div>
 
-     <h3>🎟️ Funciones Disponibles</h3>
       {(() => {
-        // Obtenemos la fecha de hoy en formato 'YYYY-MM-DD' local
         const hoyStr = new Date().toISOString().split('T')[0];
 
         const funcionesVigentes = funciones.filter(func => {
-          // Extraemos la parte de la fecha (YYYY-MM-DD) tal como viene de la base
           const fechaFuncStr = new Date(func.Fecha).toISOString().split('T')[0];
-          // Comparamos cadenas de texto directamente (ej: "2026-06-15" >= "2026-10-23")
           return fechaFuncStr >= hoyStr;
         });
-if (!funciones || funciones.length === 0) {
-          return <p style={{ color: '#aaa', fontStyle: 'italic', marginTop: '10px' }}>No hay funciones programadas para esta película por el momento.</p>;
+
+        if (!funciones || funciones.length === 0 || funcionesVigentes.length === 0) {
+          return <p style={{ color: '#888', fontStyle: 'italic', marginTop: '10px' }}>No hay funciones programadas para esta película por el momento.</p>;
         }
 
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             {funcionesVigentes.map(func => {
               const fechaStr = new Date(func.Fecha).toLocaleDateString('es-AR', { timeZone: 'UTC' });
               
@@ -176,36 +188,40 @@ if (!funciones || funciones.length === 0) {
                   display: 'flex', 
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  padding: '15px', 
-                  border: '1px solid #444', 
-                  borderRadius: '8px',
-                  backgroundColor: '#1e1e1e',
+                  padding: '20px', 
+                  backgroundColor: '#141414', 
+                  border: '1px solid #222', 
+                  borderRadius: '4px',
                   flexWrap: 'wrap',
-                  gap: '15px'
-                }}>
+                  gap: '15px',
+                  transition: 'border-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.borderColor = '#e50914'}
+                onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                >
                   <div>
-                    <strong style={{ fontSize: '1.1em', display: 'block', marginBottom: '5px' }}>
-                      📅 {fechaStr} 🕒 {func.Horario}
+                    <strong style={{ fontSize: '1.05rem', display: 'block', marginBottom: '6px', color: '#fff' }}>
+                      📅 {fechaStr} &nbsp;|&nbsp; 🕒 {func.Horario}
                     </strong>
-                    <small style={{ color: '#aaa' }}>
-                      🗣️ {func.Idioma} | 🏛️ Sala #{func.sala.NumSala} | 💺 {func.CapacidadDisponible} disponibles
+                    <small style={{ color: '#888', fontSize: '0.85rem' }}>
+                      🗣️ {func.Idioma} &nbsp;|&nbsp; 🏛️ Sala #{func.sala.NumSala} &nbsp;|&nbsp; <span style={{ color: '#e50914', fontWeight: 'bold' }}>💺 {func.CapacidadDisponible} disponibles</span>
                     </small>
                   </div>
                   
                   <Link 
                     to={`/comprar/${func.IdFuncion}`}
                     style={{ 
-                      padding: '10px 25px', 
-                      backgroundColor: '#2ecc71', 
+                      padding: '10px 22px', 
+                      backgroundColor: '#e50914', 
                       color: 'white', 
                       textDecoration: 'none', 
-                      borderRadius: '5px',
+                      borderRadius: '2px',
                       fontWeight: 'bold',
-                      display: 'inline-block',
-                      transition: 'background-color 0.2s'
+                      fontSize: '0.85rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      display: 'inline-block'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#27ae60'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2ecc71'}
                   >
                     Comprar Entrada
                   </Link>

@@ -78,7 +78,12 @@ export default function Compra() {
 
     } catch (err) {
       console.error(err);
-      setError('Hubo un error al procesar la compra.');
+      // 👇 CAMBIÁ ESTO: Usar el mensaje del error
+      if (err instanceof Error) {
+        setError(err.message); // Muestra "Solo puedes comprar un máximo de 5..."
+      } else {
+        setError('Hubo un error al procesar la compra.');
+      }
     }
   }
 
@@ -96,7 +101,8 @@ export default function Compra() {
         <h3 style={{ margin: '0 0 12px 0', color: '#fff', fontSize: '1.2rem' }}>{funcion.pelicula.TituloPelicula}</h3>
         <p style={{ margin: '0 0 6px 0', color: '#aaa', fontSize: '0.9rem' }}>📅 Fecha: {new Date(funcion.Fecha).toLocaleDateString('es-AR')}</p>
         <p style={{ margin: '0 0 6px 0', color: '#aaa', fontSize: '0.9rem' }}>🕒 Horario: {funcion.Horario}</p>
-        <p style={{ margin: '0 0 6px 0', color: '#aaa', fontSize: '0.9rem' }}>🏛️ Sala #{funcion.sala.NumSala} - {funcion.sala.TipoPantalla}</p>
+        <p style={{ margin: '0 0 5px 0' }}> 🏛️ Sala #{funcion.sala.NumSala} - {funcion.sala.TipoPantalla} |🖥️ Pantalla: {funcion.sala.TipoPantalla} | 💺 Asientos: {funcion.sala.TipoAsientos}
+</p>
         <p style={{ margin: '0', fontWeight: 'bold', color: '#e50914', fontSize: '0.9rem' }}>💺 Asientos disponibles: {funcion.CapacidadDisponible}</p>
       </div>
 

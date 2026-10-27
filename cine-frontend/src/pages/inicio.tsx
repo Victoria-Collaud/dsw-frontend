@@ -50,26 +50,28 @@ export default function Inicio() {
     return gen ? gen.NombreGenero : 'Género desconocido';
   }; 
 
-  if (cargando) return <p style={{ padding: '50px', textAlign: 'center', color: '#aaa' }}>Cargando cartelera...</p>;
+  if (cargando) return <p style={{ padding: '60px', textAlign: 'center', color: '#888', backgroundColor: '#0b0c10', minHeight: '100vh', margin: 0 }}>Cargando cartelera...</p>;
 
   return (
     <div style={{ padding: '40px 20px', width: '100%', maxWidth: '1400px', margin: '0 auto', boxSizing: 'border-box', backgroundColor: '#0b0c10', color: '#fff', minHeight: '100vh' }}>
       
       {/* Hero Section */}
-      <div style={{ textAlign: 'left', margin: '10px 0 30px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
-        <h1 style={{ fontSize: '2rem', letterSpacing: '2px', margin: '0 0 8px 0', color: '#ffffff', textTransform: 'uppercase', fontWeight: '700', fontFamily: 'system-ui, sans-serif' }}>
+      <div style={{ textAlign: 'left', margin: '10px 0 35px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
+        <h1 style={{ fontSize: '1.75rem', letterSpacing: '1px', margin: '0 0 8px 0', color: '#ffffff', textTransform: 'uppercase', fontWeight: '700', fontFamily: 'system-ui, sans-serif' }}>
           🍿 ¡Bienvenido a NewCine!
         </h1>
-        <p style={{ fontSize: '1rem', color: '#888', margin: 0 }}>
+        <p style={{ fontSize: '0.95rem', color: '#888', margin: 0 }}>
           Disfrutá de la mejor cartelera. ¡Comprá tus entradas ahora!
         </p>
       </div>
 
-      {error && <p style={{ color: '#ff4d4d', textAlign: 'center' }}>{error}</p>}
+      {error && <p style={{ color: '#ff4d4d', backgroundColor: '#2d1515', border: '1px solid #e50914', padding: '12px', borderRadius: '4px', marginBottom: '20px' }}>{error}</p>}
 
-      <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '20px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
-        ESTRENOS
-      </h2>
+      <div style={{ margin: '0 0 25px 0' }}>
+        <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
+          ESTRENOS
+        </h2>
+      </div>
 
       {peliculas.length === 0 ? (
         <p style={{ color: '#888', padding: '20px 0' }}>No hay películas disponibles en este momento ¡Vuelva pronto!</p>
@@ -122,24 +124,24 @@ export default function Inicio() {
                     )}
                   </div>
 
-                  <div style={{ padding: '14px', flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#141414' }}>
-                    <h3 style={{ margin: '0 0 4px 0', fontSize: '1rem', color: '#fff', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{peli.TituloPelicula}</h3>
-                    <p style={{ margin: '0 0 12px 0', color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      {obtenerNombreGenero(peli.genero)} | {peli.Clasificacion}
+                  <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#141414' }}>
+                    <h3 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#fff', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{peli.TituloPelicula}</h3>
+                    <p style={{ margin: '0 0 15px 0', color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {obtenerNombreGenero(peli.genero)} | {peli.Clasificacion || peli.Clasificacion}
                     </p>
                     
                     <div style={{ marginTop: 'auto' }}>
                       
                       {!tieneFunciones && (
                         <div style={{ 
-                          color: '#e50914', 
+                          color: '#ff4d4d', 
                           fontWeight: 'bold', 
                           textAlign: 'center', 
-                          marginBottom: '8px',
+                          marginBottom: '10px',
                           fontSize: '0.75rem',
                           letterSpacing: '0.5px'
                         }}>
-                            SIN FUNCIONES DISPONIBLES
+                          SIN FUNCIONES DISPONIBLES
                         </div>
                       )}
 
@@ -148,8 +150,8 @@ export default function Inicio() {
                         style={{
                           display: 'block',
                           textAlign: 'center',
-                          padding: '8px',
-                          backgroundColor: tieneFunciones ? '#e50914' : '#333', 
+                          padding: '10px',
+                          backgroundColor: tieneFunciones ? '#e50914' : '#222', 
                           color: 'white',
                           borderRadius: '2px',
                           fontWeight: 'bold',

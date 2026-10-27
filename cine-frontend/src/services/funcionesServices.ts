@@ -36,6 +36,7 @@ export async function getFuncionesDePelicula(idPelicula: number): Promise<Funcio
   const res = await fetchApi(`${API_URL}/funciones/peliculas/${idPelicula}`, {
     headers: getHeaders()
   });
+  if (res.status === 404) return [];
   if (!res.ok) throw new Error('Error al obtener funciones');
    const json = await res.json();
   return json.data || json; 
