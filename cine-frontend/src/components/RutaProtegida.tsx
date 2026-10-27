@@ -19,6 +19,6 @@ export default function RutaProtegida({ rolRequerido }: RutaProtegidaProps) {
   if (rolRequerido && usuario.rol !== rolRequerido) {
     return <Navigate to="/" replace />; // O a una página de "No autorizado"
   }
-  // 4. Si pasa todo, mostramos el componente hijo
+  // Si pasa todo, mostramos el componente hijo
   return <Outlet />;
 }

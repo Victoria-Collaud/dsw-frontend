@@ -35,7 +35,7 @@ export default function AdminSalas() {
     }
   }
 
- // 👇 FUNCIÓN PARA LIMPIAR EL FORMULARIO
+ //  LIMPIAR EL FORMULARIO
   function limpiarFormulario() {
     setNumSala('')
     setCapacidad('')
@@ -46,7 +46,7 @@ export default function AdminSalas() {
     setError('')
   }
 
-  // 👇 FUNCIÓN PARA CARGAR LOS DATOS DE UNA SALA EN EL FORMULARIO
+  // CARGAR LOS DATOS DE UNA SALA EN EL FORMULARIO
   function handleEditar(sala: Sala) {
     setNumSala(sala.NumSala)
     setCapacidad(sala.Capacidad)
@@ -57,7 +57,7 @@ export default function AdminSalas() {
     setError('')
   }
 
-  // Manejador del formulario (sirve para crear y editar)
+  // Manejador del formulario 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
@@ -82,10 +82,10 @@ export default function AdminSalas() {
       }
 
       if (salaEditando) {
-        // MODO EDICIÓN
+        
         await updateSala(salaEditando, salaData)
       } else {
-        // MODO CREACIÓN
+       
         await createSala(salaData)
       }
 
@@ -125,8 +125,7 @@ async function handleDelete(NumSala: number) {
           {error}
         </p>
       )}
-
-      {/* Formulario de Alta/Edición de Sala */}
+{/* Formulario de Alta/Edición de Sala */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: '#141414', border: '1px solid #222', padding: '25px', borderRadius: '4px', marginBottom: '30px' }}>
         <h3 style={{ fontSize: '1.1rem', color: '#fff', margin: '0 0 10px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {salaEditando ? `✏️ Editar Sala #${salaEditando}` : '➕ Agregar Nueva Sala'}
@@ -208,7 +207,7 @@ async function handleDelete(NumSala: number) {
         </div>
       </form>
 
-      {/* Listado de Salas */}
+{/* Listado de Salas */}
       <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
         Salas Creadas
       </h3>

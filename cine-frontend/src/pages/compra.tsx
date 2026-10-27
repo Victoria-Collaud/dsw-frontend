@@ -78,9 +78,9 @@ export default function Compra() {
 
     } catch (err) {
       console.error(err);
-      // 👇 CAMBIÁ ESTO: Usar el mensaje del error
+     
       if (err instanceof Error) {
-        setError(err.message); // Muestra "Solo puedes comprar un máximo de 5..."
+        setError(err.message); 
       } else {
         setError('Hubo un error al procesar la compra.');
       }
@@ -96,7 +96,7 @@ export default function Compra() {
         </h2>
       </div>
 
-      {/* Resumen de la Función seleccionada */}
+{/* Resumen de la Función seleccionada */}
       <div style={{ backgroundColor: '#0b0c10', border: '1px solid #222', padding: '20px', borderRadius: '4px', marginBottom: '25px' }}>
         <h3 style={{ margin: '0 0 12px 0', color: '#fff', fontSize: '1.2rem' }}>{funcion.pelicula.TituloPelicula}</h3>
         <p style={{ margin: '0 0 6px 0', color: '#aaa', fontSize: '0.9rem' }}>📅 Fecha: {new Date(funcion.Fecha).toLocaleDateString('es-AR')}</p>

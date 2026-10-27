@@ -4,10 +4,10 @@ import { fetchApi } from '../utils/fetchApi';
 const API_URL = `${import.meta.env.VITE_API_URL}`
 
 const getHeaders = () => {
-  // 1. Obtenemos el token del localStorage
+  //  Obtenemos el token del localStorage
   const token = localStorage.getItem('token'); 
   
-  // 2. Si no hay token, avisamos (esto ayudará a debuggear)
+  // Si no hay token, avisamos
   if (!token) {
     console.warn('No hay token en el localStorage. El usuario no está logueado.');
   }
@@ -19,7 +19,7 @@ const getHeaders = () => {
 
 // Define la estructura de datos (tipo) que debe tener un objeto Sala en TypeScript
 export interface Sala {
-  NumSala: number // El ID es opcional (?) porque al crear una sala todavía no existe en la BD
+  NumSala: number 
   Capacidad: number    // Cantidad total de asientos
   TipoPantalla: string
   TipoAsientos: string  

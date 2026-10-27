@@ -74,7 +74,7 @@ export default function AdminCompras() {
                 onMouseEnter={(e) => e.currentTarget.style.borderColor = '#e50914'}
                 onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
               >
-                {/* Columna Izquierda: Info de la Película y la Compra */}
+{/* Columna Izquierda: Info de la Película y la Compra */}
                 <div>
                   <h3 style={{ margin: '0 0 6px 0', color: '#fff', fontSize: '1.1rem', fontWeight: '600' }}>
                     🎬 {typeof c.funcion === 'object' ? c.funcion.pelicula?.TituloPelicula : 'Película Desconocida'}
@@ -86,7 +86,7 @@ export default function AdminCompras() {
                   <small style={{ color: '#666', fontSize: '0.85rem' }}>📅 {fechaFormateada}</small>
                 </div>
 
-                {/* Columna Derecha: Detalles Financieros y QR */}
+{/* Columna Derecha: Detalles Financieros y QR */}
                 <div style={{ textAlign: 'right' }}>
                   <p style={{ margin: '0 0 6px 0', fontSize: '1.2rem', fontWeight: 'bold', color: '#e50914' }}>
                     ${c.Precio}

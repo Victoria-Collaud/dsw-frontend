@@ -55,7 +55,7 @@ export default function Inicio() {
   return (
     <div style={{ padding: '40px 20px', width: '100%', maxWidth: '1400px', margin: '0 auto', boxSizing: 'border-box', backgroundColor: '#0b0c10', color: '#fff', minHeight: '100vh' }}>
       
-      {/* Hero Section */}
+{/* Hero Section */}
       <div style={{ textAlign: 'left', margin: '10px 0 35px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
         <h1 style={{ fontSize: '1.75rem', letterSpacing: '1px', margin: '0 0 8px 0', color: '#ffffff', textTransform: 'uppercase', fontWeight: '700', fontFamily: 'system-ui, sans-serif' }}>
           🍿 ¡Bienvenido a NewCine!
@@ -109,7 +109,7 @@ export default function Inicio() {
                     e.currentTarget.style.borderColor = '#222';
                   }}
                 >
-                  {/* Imagen */}
+{/* Imagen */}
                   <div style={{ height: '320px', backgroundColor: '#000', position: 'relative' }}>
                     {peli.Cartelera ? (
                       <img 

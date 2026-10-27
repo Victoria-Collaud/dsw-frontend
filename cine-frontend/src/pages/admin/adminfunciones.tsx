@@ -186,7 +186,7 @@ export default function AdminFunciones() {
         </p>
       )}
 
-      {/* ============ FORMULARIO DE CREACIÓN / EDICIÓN ============ */}
+{/*FORMULARIO DE CREACIÓN / EDICIÓN*/}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: '#141414', border: '1px solid #222', padding: '25px', borderRadius: '4px', marginBottom: '30px' }}>
         <h3 style={{ fontSize: '1.1rem', color: '#fff', margin: '0 0 10px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {funcionEditando ? `✏️ Editar Función #${funcionEditando}` : '➕ Agregar Nueva Función'}
@@ -305,7 +305,7 @@ export default function AdminFunciones() {
           </button>
         </div>
 
-        {/* ============ LISTADO DE RESULTADOS ============ */}
+{/* LISTADO DE RESULTADOS*/}
         {peliculaBuscada && (
           <div style={{ marginTop: '25px' }}>
             <h4 style={{ color: '#fff', fontSize: '1rem', marginBottom: '15px' }}>Funciones de: {peliculaBuscada.TituloPelicula}</h4>

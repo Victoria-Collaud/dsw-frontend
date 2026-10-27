@@ -15,14 +15,14 @@ export async function fetchApi(url: string, options: RequestInit = {}) {
     
     //si el error viene del propio login, no redirigimos
     if (!url.includes('/login')) {
-      // 1. Limpiamos la sesión
+      //  Limpiamos la sesión
       localStorage.removeItem('token');
       localStorage.removeItem('usuario');
-      // 2. Avisamos al usuario
+      //  Avisamos al usuario
       alert(' La sesión ha expirado por inactividad. Por favor, volvé a iniciar sesión.');
-      // 3. Redirigimos al login forzando la recarga
+      // Redirigimos al login forzando la recarga
       window.location.href = '/login';
-      // 4. Cortamos la ejecución
+      // Cortamos la ejecución
       throw new Error('Sesión expirada');
     }
   }

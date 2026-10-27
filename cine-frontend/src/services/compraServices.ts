@@ -1,6 +1,6 @@
 import { fetchApi } from '../utils/fetchApi';
-import type { Funcion } from './funcionesServices'; // 👈 Importamos la interfaz de Función
-import type { Usuario } from './usuarioServices';   // 👈 Importamos la de Usuario
+import type { Funcion } from './funcionesServices';
+import type { Usuario } from './usuarioServices';   
 
 
 const API_URL = `${import.meta.env.VITE_API_URL}`;

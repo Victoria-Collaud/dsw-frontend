@@ -8,7 +8,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [busqueda, setBusqueda] = useState('');
-  const [mostrarInfo, setMostrarInfo] = useState(false); // Estado para el modal de info
+  const [mostrarInfo, setMostrarInfo] = useState(false); // Estado para info
 
   // Leemos el usuario del localStorage
   const usuarioStr = localStorage.getItem('usuario');
@@ -28,6 +28,9 @@ export default function Navbar() {
       .catch((err) => console.error('Error al cargar géneros', err));
   }, []);
 
+ 
+ 
+ 
   function cerrarSesion() {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
@@ -48,6 +51,8 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
 });
   }
 }
+
+
 
  return (
     <>
@@ -72,14 +77,14 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
         <div style={{ display: 'flex', gap: '25px', alignItems: 'center' }}>
           <Link to="/" style={{ color: '#e50914', textDecoration: 'none', fontWeight: '900', fontSize: '1.6rem', letterSpacing: '1px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <img 
-  src="/logo.png" 
-  alt="Logo New Cine" 
-  style={{ 
-    height: '60px', 
-    width: 'auto', 
-    marginTop: '-4px' 
-  }} 
-/>
+              src="/logo.png" 
+              alt="Logo New Cine" 
+              style={{ 
+                height: '60px', 
+                width: 'auto', 
+                marginTop: '-4px' 
+              }} 
+            />
             <span style={{ lineHeight: '1' }}>Cine</span>
           </Link>
           
@@ -118,7 +123,8 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
             </Link>
           )}
         </div>
-        {/* CENTRO: BARRA DE BÚSQUEDA CONDICIONAL */}
+{/* CENTRO: BARRA DE BÚSQUEDA CONDICIONAL */}
+       
         {!esPaginaPeliculas && (
           <form 
             onSubmit={handleBuscar} 
@@ -190,7 +196,8 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
           </form>
         )}
         
-    {/* Lado Derecho: Usuario / Login */}
+{/* Lado Derecho: Usuario / Login */}
+       
         <div style={{ position: 'relative', display: 'inline-block' }}>
           {usuario ? (
             <>
@@ -280,7 +287,8 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
 
       </nav>
 
-{/* Modal de Información */}
+{/* Información */}
+     
       {mostrarInfo && (
         <div style={{
           position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',

@@ -4,7 +4,7 @@ export default function Admin() {
   return (
     <div style={{ padding: '40px 20px', width: '100%', maxWidth: '1400px', margin: '0 auto', boxSizing: 'border-box', backgroundColor: '#0b0c10', color: '#fff', minHeight: '100vh' }}>
       
-      {/* Título del Panel */}
+{/* Título del Panel */}
       <div style={{ textAlign: 'left', margin: '10px 0 30px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
         <h1 style={{ fontSize: '2rem', letterSpacing: '2px', margin: '0 0 8px 0', color: '#ffffff', textTransform: 'uppercase', fontWeight: '700', fontFamily: 'system-ui, sans-serif' }}>
           ⚙️ Panel de Administración
@@ -14,7 +14,7 @@ export default function Admin() {
         </p>
       </div>
 
-      {/* Menú de pestañas */}
+{/* Menú de pestañas */}
       <nav style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #222', marginBottom: '30px', paddingBottom: '15px', flexWrap: 'wrap' }}>
         <NavLink 
           to="/admin/salas" 
@@ -107,8 +107,7 @@ export default function Admin() {
           Compras
         </NavLink>
       </nav>
-
-      {/* Acá se renderiza la sub-página (AdminSalas, AdminPeliculas, etc.) */}
+      
       <Outlet />
     </div>
   );

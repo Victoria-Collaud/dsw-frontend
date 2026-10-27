@@ -129,7 +129,7 @@ export default function DetallePelicula() {
         </div>
       </div>
 
-      {/* SECCIÓN DEL TRAILER */}
+{/* SECCIÓN DEL TRAILER */}
       {trailerEmbedUrl && (
         <div style={{ marginBottom: '40px' }}>
           <h3 style={{ fontSize: '1.1rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '15px', color: '#fff', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block' }}>🎬 Trailer</h3>

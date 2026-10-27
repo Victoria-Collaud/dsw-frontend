@@ -230,7 +230,7 @@ export default function AdminPeliculas() {
         </div>
       </form>
 
-      {/* Búsqueda */}
+{/* Búsqueda */}
       <div style={{ marginBottom: '20px' }}>
         <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           🔍 Buscar Película
@@ -244,7 +244,7 @@ export default function AdminPeliculas() {
         />
       </div>
 
-      {/* Lista de Películas */}
+{/* Lista de Películas */}
       <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
         Listado de Películas
       </h3>
