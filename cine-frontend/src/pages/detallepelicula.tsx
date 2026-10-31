@@ -106,7 +106,7 @@ export default function DetallePelicula() {
         {pelicula.Cartelera ? (
           <img 
             src={pelicula.Cartelera} 
-            alt={`Póster de ${pelicula.TituloPelicula}`} 
+            alt={`Póster de ${pelicula.TituloPelicula}`} loading="lazy"
             style={{ width: '220px', height: '330px', borderRadius: '4px', objectFit: 'cover', border: '1px solid #222' }}
           />
         ) : (

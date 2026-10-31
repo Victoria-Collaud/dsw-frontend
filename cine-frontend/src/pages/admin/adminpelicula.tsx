@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import { getPeliculas, createPelicula, deletePelicula, updatePelicula } from '../../services/peliculaServices.ts'
 import type { Pelicula } from '../../services/peliculaServices.ts'
 import type { FormEvent } from 'react'
+import Loader from '../../components/Loader';
 
 export default function AdminPeliculas() {
   const [peliculas, setPeliculas] = useState<Pelicula[]>([])
-  
   const [tituloPelicula, setTituloPelicula] = useState('')
   const [sinopsis, setSinopsis] = useState('')
   const [duracion, setDuracion] = useState<string>('')
@@ -16,6 +16,7 @@ export default function AdminPeliculas() {
   const [peliculaEditando, setPeliculaEditando] = useState<number | null>(null)
   const [busqueda, setBusqueda] = useState('')
   const [error, setError] = useState('')
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
     cargarPeliculas()
@@ -23,13 +24,15 @@ export default function AdminPeliculas() {
 
   async function cargarPeliculas() {
     setError('')
+    setCargando(true);
     try {
       const data = await getPeliculas()
       setPeliculas(data)
     } catch  {
       setError('No se pudieron obtener las películas.')
-    }
-  }
+    } finally {
+      setCargando(false); 
+  } }
 
   function limpiarFormulario() {
     setTituloPelicula('')
@@ -112,6 +115,10 @@ export default function AdminPeliculas() {
   const peliculasFiltradas = peliculas.filter((p) =>
     p.TituloPelicula?.toLowerCase().includes(busqueda.toLowerCase())
   )
+
+  if (cargando) {
+      return <Loader mensaje="Cargando funciones..." />;
+    }
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', fontFamily: 'system-ui, sans-serif', color: '#fff' }}>

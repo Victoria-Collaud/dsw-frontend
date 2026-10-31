@@ -10,9 +10,11 @@ export default function Registro() {
   const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [error, setError] = useState('');
   const [exito, setExito] = useState(false);
+  const [cargando, setCargando] = useState(false);
 
   async function handleRegistro(e: FormEvent) {
     e.preventDefault();
+    setCargando(true);
     setError('');
 
     // Validaciones
@@ -41,7 +43,9 @@ export default function Registro() {
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : 'Error al crear la cuenta.');
-    }
+    }  finally {
+      setCargando(false);
+  }
   }
 
   return (
@@ -106,6 +110,7 @@ export default function Registro() {
 
         <button 
           type="submit" 
+          disabled={cargando} 
           style={{ 
             padding: '14px', 
             backgroundColor: '#e50914', 

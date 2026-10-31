@@ -1,12 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { getGeneros, createGenero, updateGenero, deleteGenero } from '../../services/generosServices'
 import { type Genero } from '../../services/generosServices'
+import Loader from '../../components/Loader';
 
 export default function AdminGeneros() {
   const [generos, setGeneros] = useState<Genero[]>([])
   const [nombreGenero, setNombreGenero] = useState('')
   const [generoEditando, setGeneroEditando] = useState<number | null>(null)
   const [error, setError] = useState('')
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
     cargarGeneros()
@@ -14,11 +16,14 @@ export default function AdminGeneros() {
 
   async function cargarGeneros() {
     setError('')
+    setCargando(true);
     try {
       const data = await getGeneros()
       setGeneros(data)
     } catch {
       setError('No se pudieron obtener los géneros.')
+    } finally {
+      setCargando(false); 
     }
   }
 
@@ -70,6 +75,10 @@ export default function AdminGeneros() {
   } else {
     setError('No se pudo Eliminar el género.');
   } }
+  }
+
+   if (cargando) {
+    return <Loader mensaje="Cargando funciones..." />;
   }
 
   return (

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { crearCompra, Metodopago } from '../services/compraServices';
 import { getFuncionPorId } from '../services/funcionesServices';
+import Loader from '../components/Loader';
 import type { Funcion } from '../services/funcionesServices';
 
 export default function Compra() {
@@ -36,7 +37,7 @@ export default function Compra() {
   }, [funcionId]);
 
   if (cargando) {
-    return <p style={{ textAlign: 'center', marginTop: '40px', color: '#888' }}>Cargando datos de la función...</p>;
+    return <Loader mensaje="Cargando..." />
   }
 
   if (!funcion) {

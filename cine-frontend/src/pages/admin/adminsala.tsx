@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import type { FormEvent } from 'react'
 import { getallSala, createSala, deleteSala, updateSala} from '../../services/salaServices'
 import type { Sala } from '../../services/salaServices'
+import Loader from '../../components/Loader';
 
 export default function AdminSalas() {
   // Estados para manejar la lista de salas
@@ -16,7 +17,8 @@ export default function AdminSalas() {
   const [error, setError] = useState('')
 // NUEVO ESTADO POR UPDATE: Guarda el ID de la sala si estamos editando, o null si estamos creando
   const [salaEditando, setSalaEditando] = useState<number | null>(null)
-
+  
+  const [cargando, setCargando] = useState(true);
 
   // Cargar las salas al montar el componente
   useEffect(() => {
@@ -26,14 +28,16 @@ export default function AdminSalas() {
   // Función para obtener las salas desde el backend
   async function cargarSalas() {
     setError('')
+    setCargando(true);
     try {
       const data = await getallSala()
       setSalas(data)
     }catch (error) {
       console.log('Error al buscar las salas', error)
       setError('No se pudieron obtener las salas del servidor.')
-    }
-  }
+    } finally {
+      setCargando(false); 
+  } }
 
  //  LIMPIAR EL FORMULARIO
   function limpiarFormulario() {
@@ -111,6 +115,10 @@ async function handleDelete(NumSala: number) {
     }
   }
 
+if (cargando) {
+      return <Loader mensaje="Cargando funciones..." />;
+    }
+    
  return (
    <div style={{ maxWidth: '1000px', margin: '0 auto', fontFamily: 'system-ui, sans-serif', color: '#fff' }}>
       

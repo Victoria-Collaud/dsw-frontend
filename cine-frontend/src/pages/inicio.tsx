@@ -5,6 +5,7 @@ import type { Pelicula } from '../services/peliculaServices';
 import { getGeneros } from '../services/generosServices';
 import type { Genero } from '../services/generosServices';
 import { getFuncionesDePelicula, type Funcion } from '../services/funcionesServices.ts';
+import Loader from '../components/Loader';
 
 export default function Inicio() {
   const [peliculas, setPeliculas] = useState<Pelicula[]>([]);
@@ -50,7 +51,7 @@ export default function Inicio() {
     return gen ? gen.NombreGenero : 'Género desconocido';
   }; 
 
-  if (cargando) return <p style={{ padding: '60px', textAlign: 'center', color: '#888', backgroundColor: '#0b0c10', minHeight: '100vh', margin: 0 }}>Cargando cartelera...</p>;
+  if (cargando) return <Loader mensaje="Cargando cartelera..." />
 
   return (
     <div style={{ padding: '40px 20px', width: '100%', maxWidth: '1400px', margin: '0 auto', boxSizing: 'border-box', backgroundColor: '#0b0c10', color: '#fff', minHeight: '100vh' }}>
@@ -114,7 +115,7 @@ export default function Inicio() {
                     {peli.Cartelera ? (
                       <img 
                         src={peli.Cartelera} 
-                        alt={`Póster de ${peli.TituloPelicula}`} 
+                        alt={`Póster de ${peli.TituloPelicula}`} loading="lazy"
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     ) : (

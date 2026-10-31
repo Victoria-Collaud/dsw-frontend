@@ -4,6 +4,7 @@ import { getPeliculas, buscarPeliculaPorTitulo } from '../services/peliculaServi
 import type { Pelicula } from '../services/peliculaServices';
 import { getGeneros } from '../services/generosServices';
 import type { Genero } from '../services/generosServices';
+import Loader from '../components/Loader';
 
 export default function Peliculas() {
   const location = useLocation();
@@ -135,7 +136,7 @@ export default function Peliculas() {
       </div>
 
       {cargando ? (
-        <p style={{ textAlign: 'center', marginTop: '60px', color: '#888' }}>Buscando películas...</p>
+        <Loader mensaje="Cargando cartelera..." />
       ) : peliculasMostradas.length === 0 ? (
         <div style={{ textAlign: 'center', marginTop: '60px' }}>
           <p style={{ fontSize: '1.1rem', color: '#888' }}>No se encontraron películas con esos filtros.</p>
@@ -167,7 +168,7 @@ export default function Peliculas() {
               >
                 <div style={{ height: '320px', backgroundColor: '#000', position: 'relative' }}>
                   {peli.Cartelera ? (
-                    <img src={peli.Cartelera} alt={peli.TituloPelicula} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={peli.Cartelera} alt={peli.TituloPelicula} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>Sin imagen</div>
                   )}

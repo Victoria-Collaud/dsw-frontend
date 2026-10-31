@@ -19,7 +19,8 @@ export default function Navbar() {
   const [generos, setGeneros] = useState<Genero[]>([]);
   const [generoSeleccionado, setGeneroSeleccionado] = useState('');
 
-  const esPaginaPeliculas = location.pathname === '/peliculas';
+  const rutasSinBuscador = ['/peliculas', '/login'];
+  const ocultarBuscador = rutasSinBuscador.includes(location.pathname);
 
 
   useEffect(() => {
@@ -125,7 +126,7 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
         </div>
 {/* CENTRO: BARRA DE BÚSQUEDA CONDICIONAL */}
        
-        {!esPaginaPeliculas && (
+        {!ocultarBuscador && (
           <form 
             onSubmit={handleBuscar} 
             style={{ 

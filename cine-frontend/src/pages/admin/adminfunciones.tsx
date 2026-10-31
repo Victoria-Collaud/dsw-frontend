@@ -6,6 +6,7 @@ import type { Pelicula } from '../../services/peliculaServices';
 import { getallSala } from '../../services/salaServices';
 import type { Sala } from '../../services/salaServices';
 import { getPeliculas } from '../../services/peliculaServices';
+import Loader from '../../components/Loader';
 
 export default function AdminFunciones() {
 
@@ -24,25 +25,27 @@ export default function AdminFunciones() {
 
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');  
-
+  const [cargando, setCargando] = useState(true);
 
  useEffect(() => {
-  async function cargarBase() {
-    setError('');
-    try {
-      const [pelis, salasData] = await Promise.all([
-        getPeliculas(),
-        getallSala()
-      ]);
-      setPeliculas(pelis);
-      setSalas(salasData);
-    } catch (err) {
-      console.log('Error al cargar base', err);
-      setError('No se pudieron obtener los datos iniciales.');
+    async function cargarBase() {
+      setError('');
+      try {
+        const [pelis, salasData] = await Promise.all([
+          getPeliculas(),
+          getallSala()
+        ]);
+        setPeliculas(pelis);
+        setSalas(salasData);
+      } catch (err) {
+        console.log('Error al cargar base', err);
+        setError('No se pudieron obtener los datos iniciales.');
+      } finally {
+        setCargando(false); 
+      }
     }
-  }
-  cargarBase();
-}, []);
+    cargarBase();
+  }, []);
 
   // Función para limpiar el formulario
   function limpiarFormulario() {
@@ -121,13 +124,14 @@ export default function AdminFunciones() {
       await deleteFuncion(IdFuncion);
       if (peliculaBuscada?.IdPelicula !== undefined) {
       await getFuncionesDePelicula(peliculaBuscada.IdPelicula);
-    }
+    } 
+      setExito('Función eliminada correctamente.');
     } catch (err) {
-  console.error('Error al guardar la función', err);
+  console.error('Error al borrar la función', err);
   if (err instanceof Error) {
     setError(err.message); 
   } else {
-    setError('No se pudo crear la función.');
+    setError('No se pudo borrar la función.');
   }
  }
   }
@@ -164,7 +168,9 @@ export default function AdminFunciones() {
     } catch { return f; }
   };
 
-
+   if (cargando) {
+    return <Loader mensaje="Cargando funciones..." />;
+  }
 
    return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', fontFamily: 'system-ui, sans-serif', color: '#fff' }}>
