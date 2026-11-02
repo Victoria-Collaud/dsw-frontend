@@ -14,7 +14,7 @@ export interface Pelicula {
   Trailer: string
 }
 
-// Interfaz para CREAR (lo que envías al backend)
+// 2. Interfaz para CREAR (lo que envías al backend)
 export interface CreargroPelicula {
   TituloPelicula: string;
   Sinopsis: string;
