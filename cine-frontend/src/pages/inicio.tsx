@@ -23,19 +23,38 @@ export default function Inicio() {
         ]);
         setPeliculas(pelisData);
         setGeneros(generosData);
+          const funcionesPromesas = pelisData.map(async (peli) => {
+          try {
+            const funcs = await getFuncionesDePelicula(peli.IdPelicula!);
+            // FILTRAMOS SOLO LAS FUNCIONES FUTURAS Y CON CAPACIDAD
+            const ahora = new Date();
+            const funcionesValidas = funcs.filter(func => {
+              // Combinamos fecha y horario para comparar
+              const fechaHora = new Date(`${func.Fecha.split('T')[0]}T${func.Horario}`);
+              
+              // Condición A: La función debe ser en el futuro
+              const esFutura = fechaHora > ahora;
+              
+              // Condición B: Debe haber asientos disponibles (mayor a 0)
+              const tieneCapacidad = (func.CapacidadDisponible ?? 0) > 0;
 
-        const funcionesPromesas = pelisData.map(peli => 
-          getFuncionesDePelicula(peli.IdPelicula!)
-            .then(funcs => ({ id: peli.IdPelicula, funcs }))
-            .catch(() => ({ id: peli.IdPelicula, funcs: [] }))
-        );
+              // Solo la guardamos si cumple AMBAS condiciones
+              return esFutura && tieneCapacidad;
+            });
+            return { id: peli.IdPelicula!, funcs: funcionesValidas };
+          } catch {
+            // Si falla la petición de esta película, guardamos un array vacío
+            return { id: peli.IdPelicula!, funcs: [] as Funcion[] };
+          }
+        });
         const resultados = await Promise.all(funcionesPromesas);
         const dict: Record<number, Funcion[]> = {}; 
         resultados.forEach(r => {
-          if (r.id !== undefined) dict[r.id] = r.funcs;
+          if (r.id !== undefined) {
+            dict[r.id] = r.funcs;
+          }
         });
         setFuncionesPorPelicula(dict);
-
       } catch (err) {
         console.error(err);
         setError('No se pudo cargar la cartelera.');
