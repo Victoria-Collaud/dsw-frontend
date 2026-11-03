@@ -13,6 +13,7 @@ import AdminFunciones from './pages/admin/adminfunciones.tsx'
 import AdminCompras from './pages/admin/admincompra.tsx'
 import AdminGeneros from './pages/admin/admingenero.tsx'
 import Registro from './pages/registro.tsx';
+import MisCompras from './pages/miscompras.tsx';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           
           <Route element={<RutaProtegida />}>
            <Route path="/comprar/:funcionId" element={<Compra />} />
+           <Route path="/miscompras" element={<MisCompras />} />
           </Route>
           
           <Route element={<RutaProtegida rolRequerido="ADMIN" />}></Route>

@@ -61,3 +61,15 @@ export async function getCompras(): Promise<Compra[]> {
   const json = await res.json();
   return json.data || json;
 }
+
+export async function getMisCompras(): Promise<Compra[]> {
+  const res = await fetchApi(`${API_URL}/compras/miscompras`);
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.mensaje || 'Error al obtener tus compras');
+  }
+
+  const json = await res.json();
+  return json.data || json;
+}

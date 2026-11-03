@@ -243,7 +243,8 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
                     <strong style={{ color: '#fff' }}>{usuario.EmailUsuario}</strong>
                   </p>
                   
-                  <div style={{ padding: '8px 0', fontSize: '0.9rem', cursor: 'pointer', color: '#ccc', transition: 'color 0.2s' }}
+                  <div onClick={() => { setMenuAbierto(false); navigate('/miscompras'); }}
+                  style={{ padding: '8px 0', fontSize: '0.9rem', cursor: 'pointer', color: '#ccc', transition: 'color 0.2s' }}
                     onMouseEnter={(e) => e.currentTarget.style.color = '#e50914'}
                     onMouseLeave={(e) => e.currentTarget.style.color = '#ccc'}
                   >
