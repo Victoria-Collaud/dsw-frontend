@@ -152,15 +152,20 @@ if (cargando) {
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Capacidad:</label>
-          <input
-            type="number"
-            placeholder="Ej: 120"
-            value={capacidad}
-            onChange={(e) => setCapacidad(Number(e.target.value))}
-            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
-        </div>
+  <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Capacidad:</label>
+  <select
+    value={capacidad}
+    onChange={(e) => setCapacidad(Number(e.target.value))}
+    style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
+  >
+    <option value="">-- Seleccioná la capacidad --</option>
+    <option value="24">VIP (24 asientos - 4x6)</option>
+    <option value="40">Chica (40 asientos - 5x8)</option>
+    <option value="64">Mediana (64 asientos - 8x8)</option>
+    <option value="100">Grande (100 asientos - 10x10)</option>
+    <option value="150">Plus (150 asientos - 10x15)</option>
+  </select>
+</div>
         
         <div>
           <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Tipo de Pantalla:</label>

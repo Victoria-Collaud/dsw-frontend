@@ -19,6 +19,7 @@ export interface Compra {
   IdCompra?: number;
   MetodoPago: Metodopago;
   Fecha: string | Date;
+  AsientosElegidos: string; 
   CantEntradas: number;
   Precio: number;
   QREntradas: string; 
@@ -29,6 +30,7 @@ export interface Compra {
 // interfaz para crear
 export interface CrearCompraDTO {
   MetodoPago: Metodopago;
+  AsientosElegidos: string[];
   CantEntradas: number;
   IdUsuario: number;
   IdFuncion: number;
@@ -70,6 +72,13 @@ export async function getMisCompras(): Promise<Compra[]> {
     throw new Error(errorData.mensaje || 'Error al obtener tus compras');
   }
 
+  const json = await res.json();
+  return json.data || json;
+}
+
+export async function getAsientosOcupados(IdFuncion: number): Promise<string[]> {
+  const res = await fetchApi(`${API_URL}/compras/funcion/${IdFuncion}/asientos`);
+  if (!res.ok) throw new Error('Error al obtener asientos ocupados');
   const json = await res.json();
   return json.data || json;
 }

@@ -41,18 +41,9 @@ export default function App() {
             <Route path="generos" element={<AdminGeneros />} />
             <Route path="compras" element={<AdminCompras />} />
           </Route>
-
-      {/* <Route path="/admin" element={<Admin />}>
-       <Route path="salas" element={<AdminSalas />} />
-       <Route path="peliculas" element={<AdminPeliculas />} />
-      <Route path="funciones" element={<AdminFunciones />} />
-      
-      <Route path="peliculas/:IdPelicula/funciones" element={<AdminFunciones />} />
-      <Route path="generos" element={<AdminGeneros />} />
-        <Route path="compras" element={<AdminCompras />} /> 
-    
-  </Route>
-      */}
+        
+        <Route path="*" element={<p style={{ textAlign: 'center', marginTop: '20px' }}>404 - Página no encontrada</p>} />
+        
         </Routes>
       </main>
     </BrowserRouter>

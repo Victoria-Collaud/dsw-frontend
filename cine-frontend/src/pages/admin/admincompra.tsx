@@ -7,7 +7,7 @@ export default function AdminCompras() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
-  // 👇 Estados para los filtros de fecha
+  //  Estados para los filtros de fecha
   const [fechaDesde, setFechaDesde] = useState('');
   const [fechaHasta, setFechaHasta] = useState('');
 
@@ -119,6 +119,9 @@ export default function AdminCompras() {
                   <p style={{ margin: '0 0 5px 0', fontSize: '0.9rem', color: '#ccc' }}>
                     🏛️ Sala: {typeof c.funcion === 'object' ? c.funcion.sala?.NumSala : '-'} | 
                     👤 Cliente: {typeof c.usuario === 'object' ? c.usuario.EmailUsuario : `ID ${c.usuario}`}
+                    🪑 Asientos: Asientos: {c.AsientosElegidos ? c.AsientosElegidos.split(',').join(', ') : 'N/A'}
+
+
                   </p>
                   <small style={{ color: '#888' }}>📅 {fechaFormateada}</small>
                 </div>

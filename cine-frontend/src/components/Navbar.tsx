@@ -19,7 +19,7 @@ export default function Navbar() {
   const [generos, setGeneros] = useState<Genero[]>([]);
   const [generoSeleccionado, setGeneroSeleccionado] = useState('');
 
-  const rutasSinBuscador = ['/peliculas', '/login'];
+  const rutasSinBuscador = ['/peliculas', '/login', '/miscompras', '/admin', '/compra', '/admin/funciones', '/admin/peliculas', '/admin/salas', '/admin/compras', 'admin/generos'];
   const ocultarBuscador = rutasSinBuscador.includes(location.pathname);
 
 

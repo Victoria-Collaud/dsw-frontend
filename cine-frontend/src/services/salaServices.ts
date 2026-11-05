@@ -80,3 +80,9 @@ export async function updateSala(NumSala: number, sala: Sala): Promise<Sala> {
     return await res.json();
   }
 
+export async function getAsientosDeSala(NumSala: number): Promise<string[]> {
+  const res = await fetchApi(`${API_URL}/salas/${NumSala}/asientos`);
+  if (!res.ok) throw new Error('Error al obtener asientos');
+  const json = await res.json();
+  return json.data || json;
+}

@@ -1,10 +1,11 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { crearCompra, Metodopago } from '../services/compraServices';
+import { crearCompra, getAsientosOcupados, Metodopago } from '../services/compraServices';
 import { getFuncionPorId } from '../services/funcionesServices';
 import Loader from '../components/Loader';
 import type { Funcion } from '../services/funcionesServices';
+import { getAsientosDeSala } from '../services/salaServices.ts';
 
 export default function Compra() {
   const { funcionId } = useParams<{ funcionId: string }>();
@@ -19,6 +20,10 @@ export default function Compra() {
 
   const usuarioStr = localStorage.getItem('usuario');
   const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+   //  Estados para los asientos
+  const [asientosDisponibles, setAsientosDisponibles] = useState<string[]>([]);
+  const [asientosOcupados, setAsientosOcupados] = useState<string[]>([]);
+  const [asientosSeleccionados, setAsientosSeleccionados] = useState<string[]>([]);
 
   useEffect(() => {
     async function cargarFuncion() {
@@ -26,6 +31,15 @@ export default function Compra() {
       try {
         const data = await getFuncionPorId(Number(funcionId));
         setFuncion(data);
+
+        // Traemos los asientos de la sala y los ocupados de la función
+        const [asientos, ocupados] = await Promise.all([
+          getAsientosDeSala(data.sala.NumSala),
+          getAsientosOcupados(Number(funcionId))
+        ]);
+        setAsientosDisponibles(asientos);
+        setAsientosOcupados(ocupados);
+
       } catch (err) {
         console.error(err);
         setError('No se pudo cargar la función seleccionada.');
@@ -35,6 +49,20 @@ export default function Compra() {
     }
     cargarFuncion();
   }, [funcionId]);
+
+    function toggleAsiento(asiento: string) { //!!
+    if (asientosOcupados.includes(asiento)) return;
+    
+    if (asientosSeleccionados.includes(asiento)) {
+      setAsientosSeleccionados(asientosSeleccionados.filter(a => a !== asiento));
+    } else {
+      if (asientosSeleccionados.length >= 5) {
+        setError('Solo podés seleccionar hasta 5 asientos.');
+        return;
+      }
+      setAsientosSeleccionados([...asientosSeleccionados, asiento]);
+    }
+  }
 
   if (cargando) {
     return <Loader mensaje="Cargando..." />
@@ -54,6 +82,10 @@ export default function Compra() {
       setError('Tenés que iniciar sesión para comprar.');
       return;
     }
+    if (asientosSeleccionados.length === 0) {
+      setError('Seleccioná al menos un asiento.');
+      return;
+    }
     const funcionActual = funcion;
     if (!funcionActual) {
       setError('No se encontró la función.');
@@ -67,6 +99,7 @@ export default function Compra() {
     try {
       await crearCompra({
         MetodoPago: metodoPago,
+        AsientosElegidos: asientosSeleccionados, //!!
         CantEntradas: cantidad,
         IdUsuario: usuario.IdUsuario, 
         IdFuncion: Number(funcionId)    
@@ -109,6 +142,54 @@ export default function Compra() {
 
       {error && <p style={{ color: '#ff4d4d', backgroundColor: '#2d1515', border: '1px solid #e50914', padding: '12px', borderRadius: '4px', marginBottom: '20px' }}>{error}</p>}
       {exito && <p style={{ color: '#4ade80', backgroundColor: '#14291c', border: '1px solid #4ade80', padding: '12px', borderRadius: '4px', marginBottom: '20px' }}>¡Compra exitosa! Redirigiendo...</p>}
+
+      {/* MAPA DE ASIENTOS */}
+      <div style={{ marginBottom: '20px' }}>
+        <h3>Seleccioná tus asientos:</h3>
+        
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <div style={{ backgroundColor: '#e50914', height: '8px', width: '60%', margin: '0 auto', borderRadius: '5px' }}></div>
+          <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '5px' }}>PANTALLA</p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          {Array.from(new Set(asientosDisponibles.map(a => a[0]))).map(fila => (
+            <div key={fila} style={{ display: 'flex', gap: '8px' }}>
+              <span style={{ color: '#888', width: '20px' }}>{fila}</span>
+              {asientosDisponibles.filter(a => a[0] === fila).map(asiento => {
+                const ocupado = asientosOcupados.includes(asiento);
+                const seleccionado = asientosSeleccionados.includes(asiento);
+                return (
+                  <button
+                    key={asiento}
+                    type="button"
+                    onClick={() => toggleAsiento(asiento)}
+                    disabled={ocupado}
+                    style={{
+                      width: '35px', height: '35px', borderRadius: '4px',
+                      backgroundColor: ocupado ? '#333' : seleccionado ? '#4ade80' : '#222',
+                      color: ocupado ? '#555' : seleccionado ? '#000' : '#fff',
+                      border: '1px solid #444',
+                      cursor: ocupado ? 'not-allowed' : 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {asiento.slice(1)}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        
+        <div style={{ marginTop: '15px', textAlign: 'center', color: '#4ade80' }}>
+          {asientosSeleccionados.length > 0 
+            ? `Seleccionados: ${asientosSeleccionados.join(', ')}` 
+            : 'Ningún asiento seleccionado'}
+        </div>
+      </div>
+
+
 
       <form onSubmit={handleComprar} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div>

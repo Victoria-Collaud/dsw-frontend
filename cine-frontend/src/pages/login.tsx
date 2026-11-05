@@ -38,7 +38,7 @@ export default function Login() {
       
       <div style={{ margin: '0 0 25px 0', textAlign: 'center' }}>
         <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
-          🎬 Iniciar Sesión
+          Iniciar Sesión
         </h2>
       </div>
       
