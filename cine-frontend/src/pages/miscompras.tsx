@@ -34,10 +34,9 @@ export default function MisCompras() {
 
   if (cargando) return <Loader mensaje="Cargando tus compras..." />;
 
-  return (
-
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px', color: '#fff', fontFamily: 'system-ui, sans-serif' }}>
-      <h1 style={{ borderBottom: '2px solid #e50914', paddingBottom: '15px', marginBottom: '30px' }}>
+  return (<div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px', color: '#fff', fontFamily: 'system-ui, sans-serif' }}>
+      
+      <h1 style={{ borderBottom: '2px solid #e50914', paddingBottom: '15px', marginBottom: '30px', color: '#fff' }}>
         Mis Compras:
       </h1>
 
@@ -120,87 +119,88 @@ export default function MisCompras() {
   <div
     onClick={() => setQrSeleccionado(null)}
     style={{
-      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-      backgroundColor: 'rgba(0,0,0,0.9)', 
-      display: 'flex', 
-      justifyContent: 'center',
-      alignItems: 'center', 
-      zIndex: 2000, 
-      padding: '20px', 
-      boxSizing: 'border-box' //  Importante para que el padding no sume al 100%
-    }}
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.85)', 
+            display: 'flex', 
+            justifyContent: 'center',
+            alignItems: 'center', 
+            zIndex: 2000, 
+            padding: '20px', 
+            boxSizing: 'border-box'
+          }}
   >
     <div
       onClick={(e) => e.stopPropagation()}
-      style={{ 
-        backgroundColor: '#fff', 
-        padding: '30px', 
-        borderRadius: '10px', 
-        textAlign: 'center', 
-        maxWidth: '800px', 
-        width: '100%',
-        maxHeight: '90vh', // No ocupa más del 90% de la pantalla
-        display: 'flex',   // Usamos flex para separar el header, la grilla y el footer
-        flexDirection: 'column'
-      }}
+     style={{ 
+              backgroundColor: '#141414', 
+              border: '1px solid #222',
+              padding: '30px', 
+              borderRadius: '10px', 
+              textAlign: 'center', 
+              maxWidth: '800px', 
+              width: '100%',
+              maxHeight: '90vh',
+              display: 'flex', 
+              flexDirection: 'column'
+            }}
     >
       {/* HEADER: Título y Fecha (Siempre visible) */}
       <div style={{ flexShrink: 0 }}>
-        <h3 style={{ margin: '0 0 10px 0', color: '#333', fontSize: '1.5rem' }}>
-           {qrSeleccionado.pelicula}
-        </h3>
-        <p style={{ margin: '0 0 20px 0', color: '#666', fontSize: '0.95rem' }}>
-          📅 {qrSeleccionado.fecha} | 🕒 {qrSeleccionado.horario}
-        </p>
-      </div>
+              <h3 style={{ margin: '0 0 10px 0', color: '#fff', fontSize: '1.5rem' }}>
+                 {qrSeleccionado.pelicula}
+              </h3>
+              <p style={{ margin: '0 0 20px 0', color: '#aaa', fontSize: '0.95rem' }}>
+                📅 {qrSeleccionado.fecha} | 🕒 {qrSeleccionado.horario}
+              </p>
+            </div>
 
       {/* GRILLA CON SCROLL (Solo esta parte scrollea) */}
       <div style={{ 
-        overflowY: 'auto', // El scroll aparece solo acá
-        flex: 1,           //  Ocupa el espacio restante
-        paddingRight: '10px', // Para que la barra de scroll no tape el contenido
-        marginBottom: '20px'
-      }}>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-          gap: '20px'
-        }}>
-          {qrSeleccionado.urls.map((url, index) => (
-            <div key={index} style={{ 
-              padding: '15px', 
-              border: '1px solid #ddd', 
-              borderRadius: '8px',
-              backgroundColor: '#f9f9f9',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
+              overflowY: 'auto', 
+              flex: 1, 
+              paddingRight: '10px', 
+              marginBottom: '20px'
             }}>
-              <p style={{ margin: '0 0 10px 0', color: '#333', fontWeight: 'bold' }}>
-                Entrada {index + 1}
-              </p>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                gap: '20px'
+              }}>
+                {qrSeleccionado.urls.map((url, index) => (
+                  <div key={index} style={{ 
+                    padding: '15px', 
+                    border: '1px solid #333', 
+                    borderRadius: '8px',
+                    backgroundColor: '#1f1f1f',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                  }}>
+                    <p style={{ margin: '0 0 10px 0', color: '#fff', fontWeight: 'bold' }}>
+                      Entrada {index + 1}
+                    </p>
               <img 
-                src={url} 
-                alt={`QR de la entrada ${index + 1}`} 
-                style={{ width: '100%', maxWidth: '200px', display: 'block' }} 
-              />
+                      src={url} 
+                      alt={`QR de la entrada ${index + 1}`} 
+                      style={{ width: '100%', maxWidth: '200px', display: 'block', backgroundColor: '#fff', padding: '8px', borderRadius: '4px' }} 
+                    />
             </div>
           ))}
         </div>
       </div>
 
       {/* FOOTER: Botón Cerrar (Siempre visible) */}
-      <div style={{ flexShrink: 0, borderTop: '1px solid #eee', paddingTop: '20px' }}>
-        <p style={{ color: '#666', fontSize: '0.9rem', margin: '0 0 15px 0' }}>
-          Presentá cada código en la entrada del cine
-        </p>
-        <button
-          onClick={() => setQrSeleccionado(null)}
-          style={{ padding: '12px 30px', backgroundColor: '#e50914', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}
-        >
-          Cerrar
-        </button>
-      </div>
+     <div style={{ flexShrink: 0, borderTop: '1px solid #222', paddingTop: '20px' }}>
+              <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0 0 15px 0' }}>
+                Presentá cada código en la entrada del cine
+              </p>
+              <button
+                onClick={() => setQrSeleccionado(null)}
+                style={{ padding: '12px 30px', backgroundColor: '#e50914', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}
+              >
+                Cerrar
+              </button>
+            </div>
     </div>
   </div>
       )}

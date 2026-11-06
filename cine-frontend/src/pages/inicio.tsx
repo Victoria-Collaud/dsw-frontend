@@ -7,7 +7,11 @@ import type { Genero } from '../services/generosServices';
 import { getFuncionesDePelicula, type Funcion } from '../services/funcionesServices.ts';
 import Loader from '../components/Loader';
 
+
+
+
 export default function Inicio() {
+  
   const [peliculas, setPeliculas] = useState<Pelicula[]>([]);
   const [generos, setGeneros] = useState<Genero[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -15,6 +19,7 @@ export default function Inicio() {
   const [funcionesPorPelicula, setFuncionesPorPelicula] = useState<Record<number, Funcion[]>>({});
 
   useEffect(() => {
+
     async function cargar() {
       try {
         const [pelisData, generosData] = await Promise.all([
@@ -71,10 +76,15 @@ export default function Inicio() {
   }; 
 
   if (cargando) return <Loader mensaje="Cargando cartelera..." />
+ 
+
+
+
 
   return (
     <div style={{ padding: '40px 20px', width: '100%', maxWidth: '1400px', margin: '0 auto', boxSizing: 'border-box', backgroundColor: '#0b0c10', color: '#fff', minHeight: '100vh' }}>
-      
+      {/* Poné este botoncito temporal en el HTML de tu página de Inicio para probar */}
+
 {/* Hero Section */}
       <div style={{ textAlign: 'left', margin: '10px 0 35px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
         <h1 style={{ fontSize: '1.75rem', letterSpacing: '1px', margin: '0 0 8px 0', color: '#ffffff', textTransform: 'uppercase', fontWeight: '700', fontFamily: 'system-ui, sans-serif' }}>

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import type { FormEvent } from 'react'
 import { getallSala, createSala, deleteSala, updateSala} from '../../services/salaServices'
 import type { Sala } from '../../services/salaServices'
-import Loader from '../../components/Loader';
+import Loader from '../../components/Loader'
+import Swal from 'sweetalert2'
 
 export default function AdminSalas() {
   // Estados para manejar la lista de salas
@@ -102,18 +103,46 @@ export default function AdminSalas() {
   }
 
 async function handleDelete(NumSala: number) {
-    if (!NumSala) return
-    // Confirmación antes de borrar
-    if (!window.confirm(`¿Seguro que querés eliminar la Sala #${NumSala}?`)) return
+  if (!NumSala) return;
 
-    try {
-      await deleteSala(NumSala)
-      cargarSalas()
-    } catch (error) {
-      console.log('Error al borrar la sala', error)
-      setError('No se pudo eliminar la sala.')
-    }
+  // 🛡️ Ventana modal profesional con SweetAlert2
+  const result = await Swal.fire({
+    title: '¿Estás seguro?',
+    text: `¿Seguro que querés eliminar la Sala #${NumSala}?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e50914', // El rojo de tu cine
+    cancelButtonColor: '#222',     // Fondo oscuro para cancelar
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    background: '#141414',         // Fondo oscuro a juego
+    color: '#fff'                  // Texto blanco
+  });
+
+  // Si el usuario cancela, no hacemos nada
+  if (!result.isConfirmed) return;
+
+  try {
+    await deleteSala(NumSala);
+    
+    // Alerta de éxito elegante
+    Swal.fire({
+      title: '¡Eliminado!',
+      text: 'La sala ha sido eliminada correctamente.',
+      icon: 'success',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff',
+      timer: 1500,
+      showConfirmButton: false
+    });
+
+    cargarSalas();
+  } catch (error) {
+    console.log('Error al borrar la sala', error);
+    setError('No se pudo eliminar la sala.');
   }
+}
 
 if (cargando) {
       return <Loader mensaje="Cargando funciones..." />;

@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import type { FormEvent } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { login } from '../services/authServices';
+import { useState, type FormEvent } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { login } from '../services/authServices'; // Ajusta la ruta a tu servicio si es necesario
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [contrasena, setContrasena] = useState('');
-  const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
   
   const navigate = useNavigate();
@@ -15,25 +14,48 @@ export default function Login() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError('');
     setCargando(true);
 
     try {
       const data = await login({ email, contrasena });
-      //guardamos el token y los datos del usuario en el navegador
+      // Guardamos el token y los datos del usuario en el navegador
       localStorage.setItem('token', data.token);
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
-      //redirigimos a donde estaba
+      
+      // Redirigimos a donde estaba
       navigate(from, { replace: true });
       
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
+      const mensajeOriginal = err instanceof Error ? err.message : 'Error al iniciar sesión';
+      
+      // Traducción amigable si el servidor está caído
+      const mensajeError = (mensajeOriginal === 'Failed to fetch') 
+        ? 'No nos pudimos conectar con el servidor. Verificá que esté encendido.' 
+        : mensajeErrorText(mensajeOriginal);
+
+      // ✨ Alerta profesional con SweetAlert2
+      Swal.fire({
+        title: '¡Atención!',
+        text: mensajeError,
+        icon: 'error',
+        confirmButtonColor: '#e50914',
+        background: '#141414',
+        color: '#fff'
+      });
     } finally {
       setCargando(false);
     }
   }
 
- return (
+  // Función auxiliar opcional para limpiar mensajes de error del backend si vienen en inglés
+  function mensajeErrorText(msg: string) {
+    if (msg.includes('credenciales') || msg.includes('password') || msg.includes('usuario')) {
+      return 'Correo o contraseña incorrectos.';
+    }
+    return msg;
+  }
+
+  return (
     <div style={{ maxWidth: '420px', margin: '60px auto', fontFamily: 'system-ui, sans-serif', padding: '30px', backgroundColor: '#141414', border: '1px solid #222', borderRadius: '4px', color: '#fff' }}>
       
       <div style={{ margin: '0 0 25px 0', textAlign: 'center' }}>
@@ -41,12 +63,6 @@ export default function Login() {
           Iniciar Sesión
         </h2>
       </div>
-      
-      {error && (
-        <p style={{ color: '#ff4d4d', backgroundColor: '#2d1515', border: '1px solid #e50914', padding: '12px', borderRadius: '4px', marginBottom: '20px', fontSize: '0.9rem' }}>
-          {error}
-        </p>
-      )}
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div>
