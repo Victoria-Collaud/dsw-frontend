@@ -8,8 +8,6 @@ import { getFuncionesDePelicula, type Funcion } from '../services/funcionesServi
 import Loader from '../components/Loader';
 
 
-
-
 export default function Inicio() {
   
   const [peliculas, setPeliculas] = useState<Pelicula[]>([]);

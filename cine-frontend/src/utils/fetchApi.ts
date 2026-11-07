@@ -12,7 +12,7 @@ export async function fetchApi(url: string, options: RequestInit = {}) {
 
   const response = await fetch(url, { ...options, headers });
 
-  // 1. Si el token venció o no es válido (401)
+  // Si el token venció o no es válido (401)
   if (response.status === 401) {
     if (!url.includes('/login')) {
       // Limpiamos la sesión solo si es 401 real
@@ -38,7 +38,7 @@ export async function fetchApi(url: string, options: RequestInit = {}) {
     }
   }
 
-  // 2. Si el usuario está autenticado pero no tiene permisos de administrador (403)
+  // Si el usuario está autenticado pero no tiene permisos de administrador (403)
   if (response.status === 403) {
     if (!Swal.isVisible()) {
       Swal.fire({

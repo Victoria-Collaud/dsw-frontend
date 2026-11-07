@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { getGeneros, createGenero, updateGenero, deleteGenero } from '../../services/generosServices'
 import { type Genero } from '../../services/generosServices'
 import Loader from '../../components/Loader';
+import Swal from 'sweetalert2'
 
 export default function AdminGeneros() {
   const [generos, setGeneros] = useState<Genero[]>([])
@@ -62,20 +63,54 @@ export default function AdminGeneros() {
 
   async function handleDelete(CodGenero?: number) {
     if (!CodGenero) return
-    if (!window.confirm(`¿Seguro que querés eliminar este género?`)) return
+  const result = await Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Seguro que querés eliminar este género?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e50914', // El rojo de tu cine
+    cancelButtonColor: '#222',     // Fondo oscuro para cancelar
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    background: '#141414',         // Fondo oscuro a juego
+    color: '#fff'                  // Texto blanco
+  });
 
-    try {
-      await deleteGenero(CodGenero)
-      cargarGeneros()
-      if (generoEditando === CodGenero) limpiarFormulario()
-    } catch (err) {
-  console.error('Error al guardar la función', err);
-  if (err instanceof Error) {
-    setError(err.message); 
-  } else {
-    setError('No se pudo Eliminar el género.');
-  } }
+  if (!result.isConfirmed) return;
+
+  try {
+    await deleteGenero(CodGenero);
+    
+    // Alerta de éxito elegante
+    Swal.fire({
+      title: '¡Eliminado!',
+      text: 'El género ha sido eliminado correctamente.',
+      icon: 'success',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff',
+      timer: 1500,
+      showConfirmButton: false
+    });
+
+    cargarGeneros();
+    if (generoEditando === CodGenero) limpiarFormulario();
+  } catch (err) {
+    console.error('Error al eliminar el género', err);
+     const mensajeError = err instanceof Error 
+      ? err.message 
+      : 'No se pudo eliminar el género.';
+
+    Swal.fire({
+      title: 'No se puede eliminar',
+      text: mensajeError, // Muestra el mensaje de error real
+      icon: 'error',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff'
+    });
   }
+}
 
    if (cargando) {
     return <Loader mensaje="Cargando funciones..." />;

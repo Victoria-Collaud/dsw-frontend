@@ -33,7 +33,10 @@ export async function deleteGenero(id: number): Promise<void> {
   const res = await fetchApi(`${API_URL}/generos/${id}`, {
     method: 'DELETE',
   })
-  if (!res.ok) throw new Error('Error al eliminar género')
+   if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.mensaje || 'Error al eliminar género');
+  }
 }
 
 export async function updateGenero(id: number, genero: Genero): Promise<Genero> {

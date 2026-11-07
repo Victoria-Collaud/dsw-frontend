@@ -105,13 +105,13 @@ export default function AdminSalas() {
 async function handleDelete(NumSala: number) {
   if (!NumSala) return;
 
-  // 🛡️ Ventana modal profesional con SweetAlert2
+  // Ventana modal profesional con SweetAlert2
   const result = await Swal.fire({
     title: '¿Estás seguro?',
     text: `¿Seguro que querés eliminar la Sala #${NumSala}?`,
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonColor: '#e50914', // El rojo de tu cine
+    confirmButtonColor: '#e50914', // El rojo del cine
     cancelButtonColor: '#222',     // Fondo oscuro para cancelar
     confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar',
@@ -139,8 +139,20 @@ async function handleDelete(NumSala: number) {
 
     cargarSalas();
   } catch (error) {
-    console.log('Error al borrar la sala', error);
-    setError('No se pudo eliminar la sala.');
+    console.error('Error al borrar la sala', error);
+    // ALERTA DE ERROR ESPECÍFICA
+    const mensajeError = error instanceof Error 
+      ? error.message 
+      : 'No se pudo eliminar la sala.';
+
+    Swal.fire({
+      title: 'No se puede eliminar',
+      text: mensajeError, // muestra el mensaje de error real
+      icon: 'error',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff'
+    });
   }
 }
 

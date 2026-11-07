@@ -67,7 +67,10 @@ export async function deleteSala(NumSala: number): Promise<void> {
     headers: getHeaders() // acá enviamos el token
   })
    // Si ocurrió un problema al eliminar, lanza un error
-  if (!res.ok) throw new Error('Error al eliminar sala')
+   if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.mensaje || 'Error al eliminar sala');
+  }
 }
   
 export async function updateSala(NumSala: number, sala: Sala): Promise<Sala> {

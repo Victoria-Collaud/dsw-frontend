@@ -7,6 +7,7 @@ import { getallSala } from '../../services/salaServices';
 import type { Sala } from '../../services/salaServices';
 import { getPeliculas } from '../../services/peliculaServices';
 import Loader from '../../components/Loader';
+import Swal from 'sweetalert2';
 
 export default function AdminFunciones() {
 
@@ -116,25 +117,65 @@ export default function AdminFunciones() {
     setError('No se pudo crear la función.');
   } }
   }
-      //borra funcion 
+  
   async function handleDelete(IdFuncion?: number) {
     if (!IdFuncion) return;
-    if (!window.confirm('¿Seguro que querés eliminar esta función?')) return;
-    try {
-      await deleteFuncion(IdFuncion);
-      if (peliculaBuscada?.IdPelicula !== undefined) {
-      await getFuncionesDePelicula(peliculaBuscada.IdPelicula);
-    } 
-      setExito('Función eliminada correctamente.');
-    } catch (err) {
-  console.error('Error al borrar la función', err);
-  if (err instanceof Error) {
-    setError(err.message); 
-  } else {
-    setError('No se pudo borrar la función.');
+    const result = await Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Seguro que querés eliminar esta función?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e50914', // El rojo de tu cine
+    cancelButtonColor: '#222',     // Fondo oscuro para cancelar
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    background: '#141414',         // Fondo oscuro a juego
+    color: '#fff'                  // Texto blanco
+  });
+
+
+  if (!result.isConfirmed) return;
+
+  try {
+    await deleteFuncion(IdFuncion); // Ajusta al nombre de tu servicio de funciones
+    
+    // Alerta de éxito elegante
+    Swal.fire({
+      title: '¡Eliminado!',
+      text: 'La función ha sido eliminada correctamente.',
+      icon: 'success',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff',
+      timer: 1500,
+      showConfirmButton: false
+    });
+
+    buscarFunciones(peliculaBuscada?.IdPelicula ?? 0); // Ajusta a tu función para refrescar la lista
+  } catch (error) {
+    console.log('Error al borrar la función', error);
+    /*setError('No se pudo eliminar la función.');
   }
- }
+}*/
+
+
+     const mensajeError = error instanceof Error 
+      ? error.message 
+      : 'No se pudo eliminar la función.';
+
+    Swal.fire({
+      title: 'No se puede eliminar',
+      text: mensajeError, // 👈 Acá se muestra el mensaje del backend
+      icon: 'error',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff'
+    });
+
+    // También podés mantener el mensaje en el cartel de arriba (opcional)
+    setError(mensajeError);
   }
+}
 
    async function buscarFunciones(idPelicula: number) {
     setError('');

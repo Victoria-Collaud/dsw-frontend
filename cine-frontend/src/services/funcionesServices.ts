@@ -67,7 +67,10 @@ export async function deleteFuncion(id: number): Promise<void> {
     method: 'DELETE',
     headers: getHeaders()
   });
-  if (!res.ok) throw new Error('Error al eliminar función');
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.mensaje || 'Error al eliminar función');
+  }
 }
 
 export async function updateFuncion(id: number, funcion: CrearFuncionDTO): Promise<Funcion> {

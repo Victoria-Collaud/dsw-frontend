@@ -3,6 +3,7 @@ import { getPeliculas, createPelicula, deletePelicula, updatePelicula } from '..
 import type { Pelicula } from '../../services/peliculaServices.ts'
 import type { FormEvent } from 'react'
 import Loader from '../../components/Loader';
+import Swal from 'sweetalert2'
 
 export default function AdminPeliculas() {
   const [peliculas, setPeliculas] = useState<Pelicula[]>([])
@@ -94,22 +95,59 @@ export default function AdminPeliculas() {
     }
   }
 
-  async function handleDelete(id?: number) {
-    if (!id) return
-    if (!window.confirm(`¿Seguro que querés eliminar esta película?`)) return
+ async function handleDelete(id?: number, tituloPelicula?: string) {
+  if (!id) return;
 
-    try {
-      await deletePelicula(id)
-      cargarPeliculas()
-      if (peliculaEditando === id) limpiarFormulario()
-    }  catch (err) {
-    console.error(err);
-    if (err instanceof Error) {
-      setError(err.message);
-    } else {
-      setError('Error al eliminar la película.');
-    }
-  } 
+  // ✨ Ventana modal profesional con SweetAlert2 mostrando el título real
+  const result = await Swal.fire({
+    title: '¿Estás seguro?',
+    text: `¿Seguro que querés eliminar la película "${tituloPelicula || 'seleccionada'}"?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e50914', // El rojo de tu cine
+    cancelButtonColor: '#222',     // Fondo oscuro para cancelar
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    background: '#141414',         // Fondo oscuro a juego
+    color: '#fff'                  // Texto blanco
+  });
+
+  // Si el usuario cancela, no hacemos nada
+  if (!result.isConfirmed) return;
+
+  try {
+    await deletePelicula(id);
+    
+    // Alerta de éxito elegante
+    Swal.fire({
+      title: '¡Eliminado!',
+      text: 'La película ha sido eliminada correctamente.',
+      icon: 'success',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff',
+      timer: 1500,
+      showConfirmButton: false
+    });
+  
+    cargarPeliculas();
+  } catch (error) {
+    console.error('Error al borrar la película', error);
+
+    // ALERTA DE ERROR ESPECÍFICA
+    const mensajeError = error instanceof Error 
+      ? error.message 
+      : 'No se pudo eliminar la película.';
+
+    Swal.fire({
+      title: 'No se puede eliminar',
+      text: mensajeError, // muestra el mensaje de error real
+      icon: 'error',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff'
+    });
+  }
 }
 
   const peliculasFiltradas = peliculas.filter((p) =>
@@ -283,7 +321,7 @@ export default function AdminPeliculas() {
                   Editar
                 </button>
                 <button 
-                  onClick={() => handleDelete(p.IdPelicula)}
+                  onClick={() => handleDelete(p.IdPelicula, p.TituloPelicula) }
                   style={{ color: '#ff4d4d', padding: '6px 12px', cursor: 'pointer', border: '1px solid #552222', borderRadius: '4px', backgroundColor: '#2a1212', fontWeight: 'bold', fontSize: '0.85rem' }}
                 >
                   Eliminar
