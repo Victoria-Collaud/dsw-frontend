@@ -316,8 +316,8 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
             <p style={{ color: '#aaa', fontSize: '0.95rem', lineHeight: '1.6', marginTop: '15px' }}>
               Somos Newcine. Disfrutá de la mejor cartelera, las mejores salas y la mejor atención en alta definición.
             </p>
-            <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '10px 0' }}>📍 Dirección: Boulevard Oroño 1234, Rosario</p>
-            <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0 0 25px 0' }}>📞 Teléfono: 0800-555-CINE</p>
+            <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '10px 0' }}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-map-pin-check-inside preview-icon"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><path d="m9 10 2 2 4-4"/></svg> Dirección: Boulevard Oroño 1234, Rosario</p>
+            <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0 0 25px 0' }}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-phone preview-icon"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg> Teléfono: 0800-555-CINE</p>
             
             <button 
               onClick={() => setMostrarInfo(false)}
