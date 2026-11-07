@@ -68,10 +68,15 @@ export default function Inicio() {
     cargar();
   }, []);
 
-  const obtenerNombreGenero = (idGenero: number) => {
-    const gen = generos.find(g => g.CodGenero === idGenero);
-    return gen ? gen.NombreGenero : 'Género desconocido';
-  }; 
+  const obtenerNombreGenero = (genero: number | { CodGenero: number; NombreGenero?: string }) => {
+  // Si ya viene como objeto con el nombre, lo devolvemos directo
+  if (typeof genero === 'object' && genero !== null) {
+    return genero.NombreGenero || 'Género desconocido';
+  }
+  // Si viene como número, lo buscamos en el array de géneros
+  const gen = generos.find(g => g.CodGenero === genero);
+  return gen ? gen.NombreGenero : 'Género desconocido';
+};
 
   if (cargando) return <Loader mensaje="Cargando cartelera..." />
  
