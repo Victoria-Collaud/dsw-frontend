@@ -218,7 +218,7 @@ export default function AdminFunciones() {
       
       <div style={{ margin: '20px 0 30px 0' }}>
         <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
-          🎬 Gestión de Funciones
+          Gestión de Funciones
         </h2>
       </div>
 

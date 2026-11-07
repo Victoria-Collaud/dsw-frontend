@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getPeliculas, createPelicula, deletePelicula, updatePelicula } from '../../services/peliculaServices.ts'
+import { getPeliculas, createPelicula, deletePelicula, updatePelicula, cambiarEstadoPelicula } from '../../services/peliculaServices.ts'
 import type { Pelicula } from '../../services/peliculaServices.ts'
 import type { FormEvent } from 'react'
 import Loader from '../../components/Loader';
@@ -150,6 +150,52 @@ export default function AdminPeliculas() {
   }
 }
 
+async function handleArchivar(pelicula: Pelicula) {
+  const accion = pelicula.Activa ? 'archivar' : 'desarchivar';
+  
+  const result = await Swal.fire({
+    title: `¿${pelicula.Activa ? 'Archivar' : 'Desarchivar'} película?`,
+    text: pelicula.Activa 
+      ? `"${pelicula.TituloPelicula}" dejará de aparecer en la cartelera.`
+      : `"${pelicula.TituloPelicula}" volverá a aparecer en la cartelera.`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#e50914',
+    cancelButtonColor: '#222',
+    confirmButtonText: `Sí, ${accion}`,
+    cancelButtonText: 'Cancelar',
+    background: '#141414',
+    color: '#fff'
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    await cambiarEstadoPelicula(pelicula.IdPelicula!);
+    Swal.fire({
+      title: '¡Listo!',
+      text: `La película fue ${pelicula.Activa ? 'archivada' : 'desarchivada'}.`,
+      icon: 'success',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff',
+      timer: 1500,
+      showConfirmButton: false
+    });
+    cargarPeliculas();
+  } catch (error) {
+    const mensajeError = error instanceof Error ? error.message : 'No se pudo cambiar el estado.';
+    Swal.fire({
+      title: 'Error',
+      text: mensajeError,
+      icon: 'error',
+      confirmButtonColor: '#e50914',
+      background: '#141414',
+      color: '#fff'
+    });
+  }
+}
+
   const peliculasFiltradas = peliculas.filter((p) =>
     p.TituloPelicula?.toLowerCase().includes(busqueda.toLowerCase())
   )
@@ -163,7 +209,7 @@ export default function AdminPeliculas() {
       
       <div style={{ margin: '20px 0 30px 0' }}>
         <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
-          🎬 Administración de Películas
+          Administración de Películas
         </h2>
       </div>
 
@@ -300,20 +346,48 @@ export default function AdminPeliculas() {
         <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {peliculasFiltradas.map((p) => (
             <li key={p.IdPelicula} style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '16px', backgroundColor: '#141414', border: '1px solid #222', borderRadius: '4px'
-            }}>
-              <div>
-                <strong style={{ color: '#fff', fontSize: '1rem' }}>
-                  <span style={{ color: '#aaa', marginRight: '8px' }}>#{p.IdPelicula}</span>
-                  {p.TituloPelicula}
-                </strong> 
-                <span style={{ color: '#888', fontSize: '0.9rem', marginLeft: '8px' }}>({p.Duracion} min)</span>
+  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+  padding: '16px', backgroundColor: '#141414', border: '1px solid #222', borderRadius: '4px',
+  opacity: p.Activa === false ? 0.6 : 1
+}}>
+  <div>
+    <strong style={{ color: '#fff', fontSize: '1rem' }}>
+      <span style={{ color: '#aaa', marginRight: '8px' }}>#{p.IdPelicula}</span>
+      {p.TituloPelicula}
+    </strong> 
+    <span style={{ color: '#888', fontSize: '0.9rem', marginLeft: '8px' }}>
+      ({p.Duracion} min)
+    </span>
+    
+    {/* 👇 BADGE DE ARCHIVADA */}
+    {p.Activa === false && (
+      <span style={{ 
+        marginLeft: '10px', padding: '2px 8px', backgroundColor: '#552222', 
+        color: '#ff4d4d', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold'
+      }}>
+        ARCHIVADA
+      </span>
+    )}
+                
                 <br />
                 <small style={{ color: '#666', fontSize: '0.85rem' }}>Clasificación: {p.Clasificacion || p.Clasificacion || 'N/A'}</small>
               </div>
 
               <div style={{ display: 'flex', gap: '8px' }}>
+
+                {/* 👇 BOTÓN ARCHIVAR/DESARCHIVAR */}
+    <button 
+      onClick={() => handleArchivar(p)}
+      style={{ 
+        color: p.Activa ? '#f59e0b' : '#4ade80', padding: '6px 12px', cursor: 'pointer',
+        border: `1px solid ${p.Activa ? '#553311' : '#145522'}`, borderRadius: '4px',
+        backgroundColor: p.Activa ? '#2a1d0b' : '#0b2212', fontWeight: 'bold', fontSize: '0.85rem'
+      }}
+    >
+      {p.Activa ? 'Archivar' : 'Desarchivar'}
+    </button>
+
+
                 <button 
                   onClick={() => handleEditar(p)}
                   style={{ color: '#fff', padding: '6px 12px', cursor: 'pointer', border: '1px solid #333', borderRadius: '4px', backgroundColor: '#222', fontWeight: 'bold', fontSize: '0.85rem' }}

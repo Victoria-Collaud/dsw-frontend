@@ -119,9 +119,9 @@ export default function DetallePelicula() {
           <h1 style={{ marginTop: 0, marginBottom: '12px', fontSize: '2rem', fontWeight: '700', letterSpacing: '1px' }}>{pelicula.TituloPelicula}</h1>
           
           <div style={{ display: 'flex', gap: '15px', marginBottom: '25px', color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            <span>🎭 {generoNombre}</span>
-            <span>⏱️ {pelicula.Duracion} min</span>
-            <span>⚠️ {pelicula.Clasificacion || pelicula.Clasificacion}</span>
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-film preview-icon"><rect width="14" height="14" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg> {generoNombre}</span>
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-clock preview-icon"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> {pelicula.Duracion} min</span>
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-user-exclamation-point preview-icon"><path d="M15 15H9a4 4 0 00-4 4v2"/><path d="M18.988 13v4"/><path d="M18.988 21h.01"/><circle cx="12" cy="7" r="4"/></svg> {pelicula.Clasificacion || pelicula.Clasificacion}</span>
           </div>
 
           <h3 style={{ fontSize: '1.1rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '10px', color: '#fff', borderBottom: '1px solid #222', paddingBottom: '6px' }}>Sinopsis</h3>
@@ -132,7 +132,7 @@ export default function DetallePelicula() {
 {/* SECCIÓN DEL TRAILER */}
       {trailerEmbedUrl && (
         <div style={{ marginBottom: '40px' }}>
-          <h3 style={{ fontSize: '1.1rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '15px', color: '#fff', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block' }}>🎬 Trailer</h3>
+          <h3 style={{ fontSize: '1.1rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '15px', color: '#fff', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block' }}>Trailer</h3>
           <div style={{ 
             position: 'relative', 
             paddingBottom: '56.25%', 
@@ -162,7 +162,7 @@ export default function DetallePelicula() {
 
       <div style={{ margin: '40px 0 20px 0' }}>
         <h3 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
-          🎟️ Funciones Disponibles
+         Funciones Disponibles
         </h3>
       </div>
 
@@ -201,10 +201,13 @@ export default function DetallePelicula() {
                 >
                   <div>
                     <strong style={{ fontSize: '1.05rem', display: 'block', marginBottom: '6px', color: '#fff' }}>
-                      📅 {fechaStr} &nbsp;|&nbsp; 🕒 {func.Horario}
+                       {fechaStr} &nbsp;|&nbsp;  {func.Horario}
                     </strong>
                     <small style={{ color: '#888', fontSize: '0.85rem' }}>
-                      🗣️ {func.Idioma} &nbsp;|&nbsp; 🏛️ Sala #{func.sala.NumSala} &nbsp;|&nbsp; <span style={{ color: '#e50914', fontWeight: 'bold' }}>💺 {func.CapacidadDisponible} disponibles</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-volume-2 preview-icon"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/></svg> {func.Idioma} &nbsp;|&nbsp; 
+                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-monitor preview-icon"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg> {func.sala.TipoPantalla} &nbsp;|&nbsp; 
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-armchair preview-icon"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/><path d="M5 18v2"/><path d="M19 18v2"/></svg> {func.sala.TipoAsientos} &nbsp;|&nbsp;
+                      <span style={{ color: '#e50914', fontWeight: 'bold' }}> {func.CapacidadDisponible} disponibles</span>
                     </small>
                   </div>
                   

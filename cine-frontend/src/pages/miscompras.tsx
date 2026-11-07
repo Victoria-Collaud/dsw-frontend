@@ -11,11 +11,11 @@ export default function MisCompras() {
   
   // Estado para manejar el QR seleccionado y mostrarlo en un modal
   const [qrSeleccionado, setQrSeleccionado] = useState<{ 
-  urls: string[]; 
-  pelicula: string; 
-  fecha: string; 
-  horario: string; 
-} | null>(null);
+    urls: string[]; 
+    pelicula: string; 
+    fecha: string; 
+    horario: string; 
+  } | null>(null);
 
   useEffect(() => {
     async function cargar() {
@@ -34,7 +34,8 @@ export default function MisCompras() {
 
   if (cargando) return <Loader mensaje="Cargando tus compras..." />;
 
-  return (<div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px', color: '#fff', fontFamily: 'system-ui, sans-serif' }}>
+  return (
+    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px', color: '#fff', fontFamily: 'system-ui, sans-serif' }}>
       
       <h1 style={{ borderBottom: '2px solid #e50914', paddingBottom: '15px', marginBottom: '30px', color: '#fff' }}>
         Mis Compras:
@@ -54,18 +55,15 @@ export default function MisCompras() {
           {compras.map((compra) => {
             const fechaCompra = new Date(compra.Fecha).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             
-            // Obtenemos los datos de la función
             const funcion = typeof compra.funcion === 'object' ? compra.funcion : null;
             const pelicula = funcion?.pelicula;
             const sala = funcion?.sala;
 
-            // Verificamos si la función ya ocurrió
             const fechaFuncion = funcion 
               ? new Date(`${funcion.Fecha.split('T')[0]}T${funcion.Horario}`) 
               : null;
             const funcionYaOcurrio = fechaFuncion ? fechaFuncion < new Date() : true;
 
-            // Separamos los QR (uno por entrada)
             const qrs = compra.QREntradas ? compra.QREntradas.split('|||') : [];
 
             return (
@@ -77,18 +75,20 @@ export default function MisCompras() {
                 <div style={{ flex: 1, minWidth: '200px' }}>
                   <h3 style={{ margin: '0 0 8px 0', color: '#fff' }}>{pelicula?.TituloPelicula || 'Película'}</h3>
                   <p style={{ margin: '0 0 5px 0', fontSize: '0.9rem', color: '#aaa' }}>
-                    📅 Función: {funcion ? new Date(funcion.Fecha).toLocaleDateString('es-AR') : '-'} | 🕒 {funcion?.Horario || '-'}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-calendar-days preview-icon"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/></svg> Función: {funcion ? new Date(funcion.Fecha).toLocaleDateString('es-AR') : '-'} 
+                    |<svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 24 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-clock preview-icon"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> {funcion?.Horario || '-'}
                   </p>
                   <p style={{ margin: '0 0 5px 0', fontSize: '0.9rem', color: '#aaa' }}>
-                    🏛️ Sala #{sala?.NumSala || '-'} | 💺 {compra.CantEntradas} entrada(s)
+                     Sala #{sala?.NumSala || '-'} 
+                     | <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-armchair preview-icon"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/><path d="M5 18v2"/><path d="M19 18v2"/></svg> {compra.CantEntradas} entrada(s)
                   </p>
-                  <p style={{ margin: '0 0 5px 0', fontSize: '0.85rem', color: '#666' }}>🧾 Compra realizada el {fechaCompra}</p>
+                  <p style={{ margin: '0 0 5px 0', fontSize: '0.85rem', color: '#666' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-receipt-text preview-icon"><path d="M13 16H8"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z"/></svg> Compra realizada el {fechaCompra}</p>
                   
-                  {/* BOTÓN PARA VER EL QR (solo si la función no ocurrió) */}
                   {!funcionYaOcurrio && qrs.length > 0 && (
                     <button
                       onClick={() => setQrSeleccionado({ 
-                        urls: qrs.map(qr => qr.trim()), // Limpiamos cada QR 
+                        urls: qrs.map(qr => qr.trim()), 
                         pelicula: pelicula?.TituloPelicula || 'Película',
                         fecha: funcion ? new Date(funcion.Fecha).toLocaleDateString('es-AR') : '-',
                         horario: funcion?.Horario || '-'
@@ -99,14 +99,15 @@ export default function MisCompras() {
                         fontWeight: 'bold', fontSize: '0.9rem'
                       }}
                     >
-                       Ver mi QR ({qrs.length})
+                        Ver mis QRs ({qrs.length})
                     </button>
                   )}
                 </div>
 
                 <div style={{ textAlign: 'right', minWidth: '150px' }}>
                   <p style={{ margin: '0 0 5px 0', fontSize: '1.2rem', fontWeight: 'bold', color: '#4ade80' }}>${compra.Precio}</p>
-                  <p style={{ margin: '0', fontSize: '0.8rem', color: '#888' }}>💳 {compra.MetodoPago}</p>
+                  <p style={{ margin: '0', fontSize: '0.8rem', color: '#888' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-credit-card preview-icon"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><path d="M6 14h2"/></svg> {compra.MetodoPago}</p>
                 </div>
               </div>
             );
@@ -114,13 +115,13 @@ export default function MisCompras() {
         </div>
       )}
 
-      {/* MODAL PARA VER EL QR EN GRANDE */}
+      {/* MODAL PARA VER LOS QR */}
       {qrSeleccionado && (
-  <div
-    onClick={() => setQrSeleccionado(null)}
-    style={{
+        <div
+          onClick={() => setQrSeleccionado(null)}
+          style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-            backgroundColor: 'rgba(0,0,0,0.85)', 
+            backgroundColor: 'rgba(0,0,0,0.88)', 
             display: 'flex', 
             justifyContent: 'center',
             alignItems: 'center', 
@@ -128,81 +129,104 @@ export default function MisCompras() {
             padding: '20px', 
             boxSizing: 'border-box'
           }}
-  >
-    <div
-      onClick={(e) => e.stopPropagation()}
-     style={{ 
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ 
               backgroundColor: '#141414', 
-              border: '1px solid #222',
+              border: '1px solid #333',
               padding: '30px', 
-              borderRadius: '10px', 
+              borderRadius: '12px', 
               textAlign: 'center', 
-              maxWidth: '800px', 
+              maxWidth: '550px', 
               width: '100%',
               maxHeight: '90vh',
               display: 'flex', 
-              flexDirection: 'column'
+              flexDirection: 'column',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.8)'
             }}
-    >
-      {/* HEADER: Título y Fecha (Siempre visible) */}
-      <div style={{ flexShrink: 0 }}>
-              <h3 style={{ margin: '0 0 10px 0', color: '#fff', fontSize: '1.5rem' }}>
+          >
+            {/* HEADER: Título y Fecha */}
+            <div style={{ flexShrink: 0, borderBottom: '1px solid #222', paddingBottom: '15px', marginBottom: '20px' }}>
+              <h3 style={{ margin: '0 0 8px 0', color: '#fff', fontSize: '1.5rem' }}>
                  {qrSeleccionado.pelicula}
               </h3>
-              <p style={{ margin: '0 0 20px 0', color: '#aaa', fontSize: '0.95rem' }}>
-                📅 {qrSeleccionado.fecha} | 🕒 {qrSeleccionado.horario}
-              </p>
+             <p style={{ margin: '10px 0 0 0', color: '#aaa', fontSize: '0.95rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'}}>
+  {/* Fecha */}
+  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/>
+    </svg> 
+    {qrSeleccionado.fecha}
+  </span>
+  {/* Separador único */}
+  <span style={{ color: '#444' }}>|</span>
+  {/* Horario */}
+  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+    </svg> 
+    {qrSeleccionado.horario}
+  </span>
+</p>
             </div>
 
-      {/* GRILLA CON SCROLL (Solo esta parte scrollea) */}
-      <div style={{ 
+            {/* LISTA VERTICAL DE QR GIGANTES CON SCROLL */}
+            <div style={{ 
               overflowY: 'auto', 
               flex: 1, 
-              paddingRight: '10px', 
-              marginBottom: '20px'
+              paddingRight: '5px', 
+              marginBottom: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+              alignItems: 'center'
             }}>
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-                gap: '20px'
-              }}>
-                {qrSeleccionado.urls.map((url, index) => (
-                  <div key={index} style={{ 
-                    padding: '15px', 
-                    border: '1px solid #333', 
-                    borderRadius: '8px',
-                    backgroundColor: '#1f1f1f',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center'
-                  }}>
-                    <p style={{ margin: '0 0 10px 0', color: '#fff', fontWeight: 'bold' }}>
-                      Entrada {index + 1}
-                    </p>
-              <img 
-                      src={url} 
-                      alt={`QR de la entrada ${index + 1}`} 
-                      style={{ width: '100%', maxWidth: '200px', display: 'block', backgroundColor: '#fff', padding: '8px', borderRadius: '4px' }} 
-                    />
+              {qrSeleccionado.urls.map((url, index) => (
+                <div key={index} style={{ 
+                  padding: '20px', 
+                  border: '1px solid #333', 
+                  borderRadius: '10px',
+                  backgroundColor: '#1b1b1b',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  width: '100%',
+                  maxWidth: '380px',
+                  boxSizing: 'border-box'
+                }}>
+                  <span style={{ display: 'block', color: '#d1c8c9', fontSize: '1.1rem', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '15px', letterSpacing: '0.5px' }}>
+                    Entrada #{index + 1}
+                  </span>
+                  <img 
+                    src={url} 
+                    alt={`QR de la entrada ${index + 1}`} 
+                    style={{ 
+                      width: '100%', 
+                      maxWidth: '260px', 
+                      height: 'auto', 
+                      display: 'block', 
+                      backgroundColor: '#fff', 
+                      padding: '10px', 
+                      borderRadius: '6px', 
+                      objectFit: 'contain' 
+                    }} 
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* FOOTER: Botón Cerrar (Siempre visible) */}
-     <div style={{ flexShrink: 0, borderTop: '1px solid #222', paddingTop: '20px' }}>
-              <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0 0 15px 0' }}>
-                Presentá cada código en la entrada del cine
-              </p>
+            {/* FOOTER: Botón Cerrar */}
+            <div style={{ flexShrink: '0', borderTop: '1px solid #222', paddingTop: '15px' }}>
               <button
                 onClick={() => setQrSeleccionado(null)}
-                style={{ padding: '12px 30px', backgroundColor: '#e50914', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}
+                style={{ padding: '12px 25px', backgroundColor: '#e50914', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem', width: '100%' }}
               >
                 Cerrar
               </button>
             </div>
-    </div>
-  </div>
+          </div>
+        </div>
       )}
     </div>
   );

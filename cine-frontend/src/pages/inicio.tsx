@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getPeliculas } from '../services/peliculaServices';
+import { getPeliculasActivas } from '../services/peliculaServices';
 import type { Pelicula } from '../services/peliculaServices';
 import { getGeneros } from '../services/generosServices';
 import type { Genero } from '../services/generosServices';
@@ -21,7 +21,7 @@ export default function Inicio() {
     async function cargar() {
       try {
         const [pelisData, generosData] = await Promise.all([
-          getPeliculas(),
+          getPeliculasActivas(),
           getGeneros()
         ]);
         setPeliculas(pelisData);
@@ -86,7 +86,7 @@ export default function Inicio() {
 {/* Hero Section */}
       <div style={{ textAlign: 'left', margin: '10px 0 35px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
         <h1 style={{ fontSize: '1.75rem', letterSpacing: '1px', margin: '0 0 8px 0', color: '#ffffff', textTransform: 'uppercase', fontWeight: '700', fontFamily: 'system-ui, sans-serif' }}>
-          🍿 ¡Bienvenido a NewCine!
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-popcorn preview-icon"><path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"/><path d="M10 22 9 8"/><path d="m14 22 1-14"/><path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"/></svg> ¡Bienvenido a NewCine!
         </h1>
         <p style={{ fontSize: '0.95rem', color: '#888', margin: 0 }}>
           Disfrutá de la mejor cartelera. ¡Comprá tus entradas ahora!

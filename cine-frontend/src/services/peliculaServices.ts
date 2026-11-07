@@ -12,6 +12,7 @@ export interface Pelicula {
   genero: number 
   Cartelera: string
   Trailer: string
+  Activa?: boolean
 }
 
 // 2. Interfaz para CREAR (lo que envías al backend)
@@ -32,6 +33,26 @@ export async function getPeliculas(): Promise<Pelicula[]> {
   if (!res.ok) throw new Error('Error al obtener películas')
   const json = await res.json()
   return json.data || json
+}
+
+// Obtener peliculas activas para la cartelera pública
+export async function getPeliculasActivas(): Promise<Pelicula[]> {
+  const res = await fetchApi(`${API_URL}/peliculas/activas`); // Ajustá la ruta según tu backend
+  if (!res.ok) throw new Error('Error al obtener películas activas');
+  const json = await res.json();
+  return json.data || json;
+}
+
+// archivar/desarchivar
+export async function cambiarEstadoPelicula(IdPelicula: number): Promise<Pelicula> {
+  const res = await fetchApi(`${API_URL}/peliculas/${IdPelicula}/estado`, {
+    method: 'PATCH'
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.mensaje || 'Error al cambiar el estado');
+  }
+  return await res.json();
 }
 
 // Crear una nueva película

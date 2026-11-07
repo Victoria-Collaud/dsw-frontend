@@ -120,7 +120,7 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
 
           {usuario?.rol === 'ADMIN' && (
             <Link to="/admin" style={{ color: '#e50914', textDecoration: 'none', fontWeight: '600', fontSize: '0.95rem', display: 'flex', alignItems: 'center' }}>
-              ⚙️ Admin
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-user-cog preview-icon"><path d="M10 15H6a4 4 0 0 0-4 4v2"/><path d="m14.305 16.53.923-.382"/><path d="m15.228 13.852-.923-.383"/><path d="m16.852 12.228-.383-.923"/><path d="m16.852 17.772-.383.924"/><path d="m19.148 12.228.383-.923"/><path d="m19.53 18.696-.382-.924"/><path d="m20.772 13.852.924-.383"/><path d="m20.772 16.148.924.383"/><circle cx="18" cy="15" r="3"/><circle cx="9" cy="7" r="4"/></svg> Admin
             </Link>
           )}
         </div>
@@ -218,7 +218,7 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
                   fontWeight: '600'
                 }}
               >
-                <span>👤</span>
+                <span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-user-round preview-icon"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
                 <span>{ (usuario.EmailUsuario ? usuario.EmailUsuario.split('@')[0] : 'Usuario')}</span>
                 <span style={{ fontSize: '0.7rem', color: '#888' }}>▼</span>
               </button>
@@ -248,14 +248,14 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
                     onMouseEnter={(e) => e.currentTarget.style.color = '#e50914'}
                     onMouseLeave={(e) => e.currentTarget.style.color = '#ccc'}
                   >
-                    🎟️ Mis Compras
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-ticket preview-icon"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg> Mis Compras
                   </div>
                   
                   <div style={{ padding: '8px 0', fontSize: '0.9rem', cursor: 'pointer', color: '#ccc', transition: 'color 0.2s' }}
                     onMouseEnter={(e) => e.currentTarget.style.color = '#e50914'}
                     onMouseLeave={(e) => e.currentTarget.style.color = '#ccc'}
                   >
-                    ⚙️ Configuración
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-settings preview-icon"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg> Configuración
                   </div>
 
               <hr style={{ margin: '8px 0', border: 'none', borderTop: '1px solid #eee' }} />
@@ -310,7 +310,7 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
           }}>
             
             <h2 style={{ marginTop: 0, color: '#fff', fontSize: '1.3rem', letterSpacing: '1px', textTransform: 'uppercase', borderBottom: '2px solid #e50914', paddingBottom: '10px', display: 'inline-block' }}>
-              🍿 Sobre Nosotros
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-popcorn preview-icon"><path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"/><path d="M10 22 9 8"/><path d="m14 22 1-14"/><path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"/></svg> Sobre Nosotros
             </h2>
             
             <p style={{ color: '#aaa', fontSize: '0.95rem', lineHeight: '1.6', marginTop: '15px' }}>

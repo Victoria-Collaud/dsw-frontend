@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { getPeliculas, buscarPeliculaPorTitulo } from '../services/peliculaServices';
+import { getPeliculasActivas, buscarPeliculaPorTitulo } from '../services/peliculaServices';
 import type { Pelicula } from '../services/peliculaServices';
 import { getGeneros } from '../services/generosServices';
 import type { Genero } from '../services/generosServices';
@@ -45,20 +45,23 @@ export default function Peliculas() {
         // Caso A: Hay texto y género
         if (textoBusqueda.trim() !== '' && filtroGenero !== '') {
           const data = await buscarPeliculaPorTitulo(textoBusqueda);
-          pelisData = data.filter(p => coincideGenero(p, filtroGenero));
+          pelisData = data //doble filtro
+          .filter(p => coincideGenero(p, filtroGenero)) 
+          .filter(p => p.Activa !== false);              
         } 
         // Caso B: Solo hay texto
         else if (textoBusqueda.trim() !== '') {
           pelisData = await buscarPeliculaPorTitulo(textoBusqueda);
+          pelisData = pelisData.filter(p => p.Activa !== false);
         } 
         // Caso C: Solo hay género
         else if (filtroGenero !== '') {
-          const todas = await getPeliculas();
+          const todas = await getPeliculasActivas();
           pelisData = todas.filter(p => coincideGenero(p, filtroGenero));
         } 
         // Caso D: No hay filtros
         else {
-          pelisData = await getPeliculas();
+          pelisData = await getPeliculasActivas();
         }
         if (activo) {
           setPeliculas(pelisData);
