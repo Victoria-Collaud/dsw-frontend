@@ -177,7 +177,7 @@ if (cargando) {
 {/* Formulario de Alta/Edición de Sala */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: '#141414', border: '1px solid #222', padding: '25px', borderRadius: '4px', marginBottom: '30px' }}>
         <h3 style={{ fontSize: '1.1rem', color: '#fff', margin: '0 0 10px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          {salaEditando ? ` Editar Sala #${salaEditando}` : '➕ Agregar Nueva Sala'}
+          {salaEditando ? ` Editar Sala #${salaEditando}` : ' Agregar Nueva Sala'}
         </h3>
         
         <div>
