@@ -81,66 +81,22 @@ export default function Inicio() {
     cargar();
   }, []);
 
-/*
-  const obtenerNombreGenero = (genero: number | { CodGenero: number; NombreGenero?: string }) => {
-    // Si ya viene como objeto con el nombre, lo devolvemos directo
-    if (typeof genero === 'object' && genero !== null) {
-      return genero.NombreGenero || 'Género desconocido';
-    }
-    // Si viene como número, lo buscamos en el array de géneros
-    const gen = generos.find(g => g.CodGenero === genero);
-    if (!gen) return 'Género desconocido';
-    return gen.NombreGenero;
-  }; */
-  /* const obtenerNombreGenero = (genero: unknown) => {
-    const generoObjeto = typeof genero === 'object' && genero !== null
-      ? genero as { CodGenero?: number | string; NombreGenero?: unknown }
-      : null;
 
-    if (typeof generoObjeto?.NombreGenero === 'string' && generoObjeto.NombreGenero.trim()) {
-      return generoObjeto.NombreGenero;
-    }
 
-    const idGenero = generoObjeto ? generoObjeto.CodGenero : genero;
-    if (idGenero === undefined || idGenero === null || idGenero === '') {
-      return 'Género desconocido';
-    }
-
-    const gen = generos.find(g =>
-      g.CodGenero !== undefined && String(g.CodGenero).trim() === String(idGenero).trim()
-    );
-    return gen?.NombreGenero || 'Género desconocido';
-  };
-  */
-
-const obtenerNombreGenero = (genero: unknown) => {
-  // LOG PARA DEBUGGEAR EN PRODUCCIÓN
-  console.log("DEBUG Género recibido:", genero);
-  const generoObjeto = typeof genero === 'object' && genero !== null
-    ? genero as { NombreGenero?: unknown; CodGenero?: number | string }
-    : null;
-  // Caso 1: Es un objeto con NombreGenero
-  if (typeof generoObjeto?.NombreGenero === 'string' && generoObjeto.NombreGenero) {
-    return generoObjeto.NombreGenero;
+const obtenerNombreGenero = (genero: number | { CodGenero: number; NombreGenero?: string }) => {
+  // Si es un objeto y tiene NombreGenero, lo devolvemos
+  if (typeof genero === 'object' && genero !== null && genero.NombreGenero) {
+    return genero.NombreGenero;
   }
-  // Caso 2: Es un número, lo buscamos en el array
+  
+  // Si es un número, lo buscamos
   if (typeof genero === 'number') {
     const gen = generos.find(g => g.CodGenero === genero);
-    return gen ? gen.NombreGenero : 'Género desconocido';
-  }
-  // Caso 3: Es un objeto pero sin NombreGenero (raro)
-  if (generoObjeto?.CodGenero) {
-    const gen = generos.find(g => g.CodGenero === generoObjeto.CodGenero);
     return gen ? gen.NombreGenero : 'Género desconocido';
   }
 
   return 'Género desconocido';
 };
-
-
-
-
-
 
 
   if (cargando) return <Loader mensaje="Cargando cartelera..." />;
