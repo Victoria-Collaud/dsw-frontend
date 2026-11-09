@@ -5,7 +5,7 @@ import type { Pelicula } from '../services/peliculaServices';
 import { getGeneros } from '../services/generosServices';
 import type { Genero } from '../services/generosServices';
 import Loader from '../components/Loader';
-
+import { getFuncionesDePelicula, type Funcion } from '../services/funcionesServices.ts';
 export default function Peliculas() {
   const location = useLocation();
 
@@ -13,6 +13,8 @@ export default function Peliculas() {
   const [generos, setGeneros] = useState<Genero[]>([]);
   const [cargando, setCargando] = useState(true); 
   const [error, setError] = useState('');
+
+  const [funcionesPorPelicula, setFuncionesPorPelicula] = useState<Record<number, Funcion[]>>({});
   
   const busquedaInicial = location.state?.busquedaInicial || '';
   const generoInicial = String(location.state?.generoInicial || '');
@@ -65,6 +67,27 @@ export default function Peliculas() {
         }
         if (activo) {
           setPeliculas(pelisData);
+          const funcionesPromesas = pelisData.map(async (peli) => {
+  try {
+    const funcs = await getFuncionesDePelicula(peli.IdPelicula!);
+    const ahora = new Date();
+    const funcionesValidas = funcs.filter(func => {
+      const fechaHora = new Date(`${func.Fecha.split('T')[0]}T${func.Horario}`);
+      const esFutura = fechaHora > ahora;
+      const tieneCapacidad = (func.CapacidadDisponible ?? 0) > 0;
+      return esFutura && tieneCapacidad;
+    });
+    return { id: peli.IdPelicula!, funcs: funcionesValidas };
+  } catch {
+    return { id: peli.IdPelicula!, funcs: [] as Funcion[] };
+  }
+});
+const resultados = await Promise.all(funcionesPromesas);
+const dict: Record<number, Funcion[]> = {}; 
+resultados.forEach(r => {
+  if (r.id !== undefined) { dict[r.id] = r.funcs; }
+});
+setFuncionesPorPelicula(dict);
         }
       } catch (err) {
         console.error(err);
@@ -146,52 +169,84 @@ export default function Peliculas() {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '25px' }}>
-          {peliculasMostradas.map(peli => (
-            <Link key={peli.IdPelicula} to={`/pelicula/${peli.IdPelicula}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div 
-                style={{ 
-                  borderRadius: '4px', 
-                  overflow: 'hidden', 
-                  backgroundColor: '#141414', 
-                  border: '1px solid #222', 
-                  transition: 'transform 0.2s ease, border-color 0.2s ease', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  height: '100%', 
-                  cursor: 'pointer' 
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.borderColor = '#e50914';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0px)';
-                  e.currentTarget.style.borderColor = '#222';
-                }}
-              >
-                <div style={{ height: '320px', backgroundColor: '#000', position: 'relative' }}>
-                  {peli.Cartelera ? (
-                    <img src={peli.Cartelera} alt={peli.TituloPelicula} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>Sin imagen</div>
-                  )}
-                </div>
+          {peliculasMostradas.map(peli => {
+         
+            const tieneFunciones = funcionesPorPelicula[peli.IdPelicula!] && funcionesPorPelicula[peli.IdPelicula!].length > 0;
+
+            return (
+              <Link key={peli.IdPelicula} to={`/pelicula/${peli.IdPelicula}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div 
+                  style={{ 
+                    borderRadius: '4px', 
+                    overflow: 'hidden', 
+                    backgroundColor: '#141414', 
+                    border: '1px solid #222', 
+                    transition: 'transform 0.2s ease, border-color 0.2s ease', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    height: '100%', 
+                    cursor: 'pointer',
                 
-                <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <h3 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#fff', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{peli.TituloPelicula}</h3>
-                  <p style={{ margin: '0 0 15px 0', color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    {obtenerNombreGenero(peli.genero)} | {peli.Clasificacion || peli.Clasificacion}
-                  </p>
+                    opacity: tieneFunciones ? 1 : 0.6
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.borderColor = '#e50914';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0px)';
+                    e.currentTarget.style.borderColor = '#222';
+                  }}
+                >
+                  <div style={{ height: '320px', backgroundColor: '#000', position: 'relative' }}>
+                    {peli.Cartelera ? (
+                      <img src={peli.Cartelera} alt={peli.TituloPelicula} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>Sin imagen</div>
+                    )}
+                  </div>
                   
-                  <div style={{ marginTop: 'auto' }}>
-                    <div style={{ display: 'block', textAlign: 'center', padding: '10px', backgroundColor: '#e50914', color: 'white', borderRadius: '2px', fontWeight: 'bold', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Ver Detalle
+                  <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#141414' }}>
+                    <h3 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#fff', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{peli.TituloPelicula}</h3>
+                    <p style={{ margin: '0 0 15px 0', color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {obtenerNombreGenero(peli.genero)} | {peli.Clasificacion || peli.Clasificacion}
+                    </p>
+                    
+                    <div style={{ marginTop: 'auto' }}>
+                   
+                      {!tieneFunciones && (
+                        <div style={{ 
+                          color: '#ff4d4d', 
+                          fontWeight: 'bold', 
+                          textAlign: 'center', 
+                          marginBottom: '10px',
+                          fontSize: '0.75rem',
+                          letterSpacing: '0.5px'
+                        }}>
+                          SIN FUNCIONES DISPONIBLES
+                        </div>
+                      )}
+
+                      <div style={{ 
+                        display: 'block', 
+                        textAlign: 'center', 
+                        padding: '10px', 
+                        backgroundColor: tieneFunciones ? '#e50914' : '#222', 
+                        color: 'white', 
+                        borderRadius: '2px', 
+                        fontWeight: 'bold', 
+                        fontSize: '0.85rem', 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '0.5px' 
+                      }}>
+                        Ver Detalle
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

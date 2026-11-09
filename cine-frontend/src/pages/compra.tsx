@@ -118,7 +118,7 @@ export default function Compra() {
 
       setExito(true);
       setTimeout(() => {
-        navigate('/');
+        navigate('/', { state: { compraExitosa: true } });
       }, 2000);
 
 
