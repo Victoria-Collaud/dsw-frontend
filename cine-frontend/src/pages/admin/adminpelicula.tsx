@@ -222,7 +222,7 @@ async function handleArchivar(pelicula: Pelicula) {
       {/* Formulario */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: '#141414', border: '1px solid #222', padding: '25px', borderRadius: '4px', marginBottom: '30px' }}>
         <h3 style={{ fontSize: '1.1rem', color: '#fff', margin: '0 0 10px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          {peliculaEditando ? '✏️ Editar Película' : '➕ Agregar Nueva Película'}
+          {peliculaEditando ? ' Editar Película' : '➕ Agregar Nueva Película'}
         </h3>
 
         <div>
@@ -324,7 +324,7 @@ async function handleArchivar(pelicula: Pelicula) {
 {/* Búsqueda */}
       <div style={{ marginBottom: '20px' }}>
         <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          🔍 Buscar Película
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-search preview-icon"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg> Buscar Película
         </h3>
         <input
           type="text"
@@ -359,7 +359,7 @@ async function handleArchivar(pelicula: Pelicula) {
       ({p.Duracion} min)
     </span>
     
-    {/* 👇 BADGE DE ARCHIVADA */}
+    {/* BADGE DE ARCHIVADA */}
     {p.Activa === false && (
       <span style={{ 
         marginLeft: '10px', padding: '2px 8px', backgroundColor: '#552222', 
@@ -375,7 +375,7 @@ async function handleArchivar(pelicula: Pelicula) {
 
               <div style={{ display: 'flex', gap: '8px' }}>
 
-                {/* 👇 BOTÓN ARCHIVAR/DESARCHIVAR */}
+                {/*  BOTÓN ARCHIVAR/DESARCHIVAR */}
     <button 
       onClick={() => handleArchivar(p)}
       style={{ 

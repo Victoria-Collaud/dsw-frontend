@@ -7,7 +7,7 @@ export default function Admin() {
 {/* Título del Panel */}
       <div style={{ textAlign: 'left', margin: '10px 0 30px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
         <h1 style={{ fontSize: '2rem', letterSpacing: '2px', margin: '0 0 8px 0', color: '#ffffff', textTransform: 'uppercase', fontWeight: '700', fontFamily: 'system-ui, sans-serif' }}>
-          ⚙️ Panel de Administración
+          Panel de Administración
         </h1>
         <p style={{ fontSize: '1rem', color: '#888', margin: 0 }}>
           Gestión de salas, películas, funciones, géneros y compras del sistema.

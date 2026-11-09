@@ -38,7 +38,7 @@ export async function fetchApi(url: string, options: RequestInit = {}) {
   if (response.status === 401 || response.status === 403) {
     if (!url.includes('/login')) {
       
-      // 👇 CORTAMOS LA EJECUCIÓN DE INMEDIATO
+      //  CORTAMOS LA EJECUCIÓN DE INMEDIATO
       // Si ya hay un Swal en pantalla, no hacemos nada más para no pisarlo
       if (Swal.isVisible()) {
         throw new Error('Error de autenticación múltiple');

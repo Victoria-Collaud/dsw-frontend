@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('Flujo completo: iniciar sesión, comprar una entrada para Shrek y verificar éxito', async ({ page }) => {
-  // ============ PASO 1: LOGIN ============
+  // ============ LOGIN ============
   await page.goto('/login');
 
   // Completamos el formulario de login
@@ -14,20 +14,20 @@ test('Flujo completo: iniciar sesión, comprar una entrada para Shrek y verifica
   // O simplemente esperamos a que redirija al inicio
   await page.waitForURL('/');
 
-  // ============ PASO 2: IR A LA CARTELERA ============
+  // ============ IR A LA CARTELERA ============
   await page.goto('/peliculas');
 
   // Esperamos a que carguen las películas y hacemos clic en "Shrek"
   await page.getByText('Shrek', { exact: true }).first().click();
 
-  // ============ PASO 3: SELECCIONAR FUNCIÓN ============
+  // ============ SELECCIONAR FUNCIÓN ============
   // Verificamos que estamos en el detalle de la película
   await expect(page.getByRole('heading', { level: 1, name: 'Shrek' })).toBeVisible(); //level 1 es el h1
 
   // Hacemos clic en el primer botón de "Comprar Entrada"
   await page.getByRole('link', { name: 'Comprar Entrada' }).first().click();
 
-  // ============ PASO 4: FINALIZAR COMPRA ============
+  // ============  FINALIZAR COMPRA ============
   // Verificamos que estamos en la página de compra
   await expect(page.getByRole('heading', { name: 'Finalizar Compra' })).toBeVisible();
 
@@ -37,7 +37,7 @@ test('Flujo completo: iniciar sesión, comprar una entrada para Shrek y verifica
   // Hacer clic en "Confirmar y Pagar"
   await page.getByRole('button', { name: 'Confirmar y Pagar' }).click();
 
-  // ============ PASO 5: VERIFICAR ÉXITO ============
+  // ============  VERIFICAR ÉXITO ============
   // Verificamos que aparezca el mensaje de éxito
   await expect(page.getByText('¡Compra exitosa! Redirigiendo...')).toBeVisible();
 });
