@@ -98,7 +98,7 @@ export default function AdminPeliculas() {
  async function handleDelete(id?: number, tituloPelicula?: string) {
   if (!id) return;
 
-  // ✨ Ventana modal profesional con SweetAlert2 mostrando el título real
+  // Ventana modal con SweetAlert2 mostrando el título real
   const result = await Swal.fire({
     title: '¿Estás seguro?',
     text: `¿Seguro que querés eliminar la película "${tituloPelicula || 'seleccionada'}"?`,

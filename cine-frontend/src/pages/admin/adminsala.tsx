@@ -105,7 +105,7 @@ export default function AdminSalas() {
 async function handleDelete(NumSala: number) {
   if (!NumSala) return;
 
-  // Ventana modal profesional con SweetAlert2
+  // Ventana modal con SweetAlert2
   const result = await Swal.fire({
     title: '¿Estás seguro?',
     text: `¿Seguro que querés eliminar la Sala #${NumSala}?`,
