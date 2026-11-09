@@ -88,9 +88,11 @@ export default function Inicio() {
     }
     // Si viene como número, lo buscamos en el array de géneros
     const gen = generos.find(g => g.CodGenero === genero);
-    return gen ? gen.NombreGenero : 'Género desconocido';
+    if (!gen) return 'Género desconocido';
+    return gen.NombreGenero;
   };
-
+  
+  
   if (cargando) return <Loader mensaje="Cargando cartelera..." />;
 
   return (
