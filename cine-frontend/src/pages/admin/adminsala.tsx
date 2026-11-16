@@ -4,7 +4,7 @@ import { getallSala, createSala, deleteSala, updateSala} from '../../services/sa
 import type { Sala } from '../../services/salaServices'
 import Loader from '../../components/Loader'
 import Swal from 'sweetalert2'
-import './AdminSalas.css'
+import './AdminSala.css'
 
 export default function AdminSalas() {
   // Estados para manejar la lista de salas
