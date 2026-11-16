@@ -81,25 +81,23 @@ export default function Inicio() {
     cargar();
   }, []);
 
-  const obtenerNombreGenero = (genero: unknown) => {
-    const generoObjeto = typeof genero === 'object' && genero !== null
-      ? genero as { CodGenero?: number | string; NombreGenero?: unknown }
-      : null;
 
-    if (typeof generoObjeto?.NombreGenero === 'string' && generoObjeto.NombreGenero.trim()) {
-      return generoObjeto.NombreGenero;
-    }
 
-    const idGenero = generoObjeto ? generoObjeto.CodGenero : genero;
-    if (idGenero === undefined || idGenero === null || idGenero === '') {
-      return 'Género desconocido';
-    }
+const obtenerNombreGenero = (genero: number | { CodGenero: number; NombreGenero?: string }) => {
+  // Si es un objeto y tiene NombreGenero, lo devolvemos
+  if (typeof genero === 'object' && genero !== null && genero.NombreGenero) {
+    return genero.NombreGenero;
+  }
+  
+  // Si es un número, lo buscamos
+  if (typeof genero === 'number') {
+    const gen = generos.find(g => g.CodGenero === genero);
+    return gen ? gen.NombreGenero : 'Género desconocido';
+  }
 
-    const gen = generos.find(g =>
-      g.CodGenero !== undefined && String(g.CodGenero).trim() === String(idGenero).trim()
-    );
-    return gen?.NombreGenero || 'Género desconocido';
-  };
+  return 'Género desconocido';
+};
+
 
   if (cargando) return <Loader mensaje="Cargando cartelera..." />;
 

@@ -9,7 +9,7 @@ export interface Pelicula {
   Sinopsis: string
   Duracion: number
   Clasificacion: string
-  genero: number 
+  genero: number | { CodGenero: number; NombreGenero?: string }; 
   Cartelera: string
   Trailer: string
   Activa?: boolean

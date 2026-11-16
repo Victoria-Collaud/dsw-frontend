@@ -33,7 +33,7 @@ export default function Login() {
         ? 'No nos pudimos conectar con el servidor. Verificá que esté encendido.' 
         : mensajeErrorText(mensajeOriginal);
 
-      // ✨ Alerta profesional con SweetAlert2
+      //  Alerta con SweetAlert2
       Swal.fire({
         title: '¡Atención!',
         text: mensajeError,

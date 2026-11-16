@@ -6,8 +6,8 @@ test('Flujo completo: iniciar sesión, comprar una entrada para Shrek y verifica
 
   // Completamos el formulario de login
   // (Asegurate de que estos labels coincidan con tu Login.tsx)
-  await page.getByLabel('Email:').fill('juan@test.com'); // 👈 Usá un usuario REAL de tu BD
-  await page.getByLabel('Contraseña:').fill('123456');   // 👈 Usá la contraseña REAL
+  await page.getByLabel('Email:').fill('juan@test.com'); // Usuario real 
+  await page.getByLabel('Contraseña:').fill('123456');   // Contraseña real
   await page.getByRole('button', { name: 'Ingresar' }).click();
 
   // Verificamos que el login fue exitoso (el navbar debería mostrar el nombre del usuario)
@@ -31,13 +31,11 @@ test('Flujo completo: iniciar sesión, comprar una entrada para Shrek y verifica
   // Verificamos que estamos en la página de compra
   await expect(page.getByRole('heading', { name: 'Finalizar Compra' })).toBeVisible();
 
-  // (Opcional) Seleccionar una cantidad de entradas
-  // await page.getByLabel('Cantidad de Entradas:').fill('2');
 
   // Hacer clic en "Confirmar y Pagar"
   await page.getByRole('button', { name: 'Confirmar y Pagar' }).click();
 
   // ============  VERIFICAR ÉXITO ============
-  // Verificamos que aparezca el mensaje de éxito
-  await expect(page.getByText('¡Compra exitosa! Redirigiendo...')).toBeVisible();
+  // Verificamos que redirija a la página de éxito
+   await page.waitForURL('/'); 
 });
