@@ -1,14 +1,14 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
 
 interface RutaProtegidaProps {
   rolRequerido?: string; 
 }
 
 export default function RutaProtegida({ rolRequerido }: RutaProtegidaProps) {
-  // Buscamos el token, el usuario en el localStorage y obtenemos su ruta
+  // Buscamos el token y obtenemos el usuario en el localStorage
   const token = localStorage.getItem('token');
-  const usuarioStr = localStorage.getItem('usuario');
-  const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+  const usuario = obtenerUsuarioDesdeToken();
   const location = useLocation();
   // Si no hay token o usuario, lo mandamos al login
   if (!token || !usuario) {

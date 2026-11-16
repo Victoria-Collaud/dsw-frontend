@@ -5,6 +5,7 @@ import { getFuncionPorId } from '../services/funcionesServices';
 import Loader from '../components/Loader';
 import type { Funcion } from '../services/funcionesServices';
 import { getAsientosDeSala } from '../services/salaServices.ts';
+import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
 
 
 export default function Compra() {
@@ -20,8 +21,7 @@ export default function Compra() {
   const [exito, setExito] = useState(false);
 
 
-  const usuarioStr = localStorage.getItem('usuario');
-  const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+  const usuario = obtenerUsuarioDesdeToken();
    //  Estados para los asientos
   const [asientosDisponibles, setAsientosDisponibles] = useState<string[]>([]);
   const [asientosOcupados, setAsientosOcupados] = useState<string[]>([]);
@@ -88,7 +88,7 @@ export default function Compra() {
   async function handleComprar(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    if (!usuario || !usuario.IdUsuario) {
+    if (!usuario || !usuario.idUsuario) {
       setError('Tenés que iniciar sesión para comprar.');
       return;
     }
@@ -111,7 +111,7 @@ export default function Compra() {
         MetodoPago: metodoPago,
         AsientosElegidos: asientosSeleccionados,
         CantEntradas: asientosSeleccionados.length,
-        IdUsuario: usuario.IdUsuario,
+        IdUsuario: usuario.idUsuario,
         IdFuncion: Number(funcionId)    
       });
 

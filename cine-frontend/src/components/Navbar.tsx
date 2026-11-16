@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getGeneros } from '../services/generosServices';
 import type { Genero } from '../services/generosServices';
+import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
 
 
 export default function Navbar() {
@@ -10,9 +11,8 @@ export default function Navbar() {
   const [busqueda, setBusqueda] = useState('');
   const [mostrarInfo, setMostrarInfo] = useState(false); // Estado para info
 
-  // Leemos el usuario del localStorage
-  const usuarioStr = localStorage.getItem('usuario');
-  const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+  // Leemos el usuario con el token
+  const usuario = obtenerUsuarioDesdeToken();
   
   const [menuAbierto, setMenuAbierto] = useState(false);
 
@@ -219,7 +219,7 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
                 }}
               >
                 <span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-user-round preview-icon"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
-                <span>{ (usuario.EmailUsuario ? usuario.EmailUsuario.split('@')[0] : 'Usuario')}</span>
+                <span>{ (usuario.email ? usuario.email.split('@')[0] : 'Usuario')}</span>
                 <span style={{ fontSize: '0.7rem', color: '#888' }}>▼</span>
               </button>
 
@@ -240,7 +240,7 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
                 }}>
                   <p style={{ margin: '0 0 10px 0', fontSize: '0.85rem', color: '#888', borderBottom: '1px solid #222', paddingBottom: '8px' }}>
                     Sesión iniciada como:<br/>
-                    <strong style={{ color: '#fff' }}>{usuario.EmailUsuario}</strong>
+                    <strong style={{ color: '#fff' }}>{usuario.email}</strong>
                   </p>
                   
                   <div onClick={() => { setMenuAbierto(false); navigate('/miscompras'); }}

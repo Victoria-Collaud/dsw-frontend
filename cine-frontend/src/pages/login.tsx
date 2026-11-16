@@ -18,9 +18,9 @@ export default function Login() {
 
     try {
       const data = await login({ email, contrasena });
-      // Guardamos el token y los datos del usuario en el navegador
+      // Guardamos el token y NO los datos del usuario en el navegador
       localStorage.setItem('token', data.token);
-      localStorage.setItem('usuario', JSON.stringify(data.usuario));
+      //localStorage.setItem('usuario', JSON.stringify(data.usuario));
       
       // Redirigimos a donde estaba
       navigate(from, { replace: true });
