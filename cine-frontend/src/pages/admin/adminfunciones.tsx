@@ -7,8 +7,9 @@ import { getallSala } from '../../services/salaServices';
 import type { Sala } from '../../services/salaServices';
 import { getPeliculas } from '../../services/peliculaServices';
 import Loader from '../../components/Loader';
-import Swal from 'sweetalert2';
+//import Swal from 'sweetalert2';
 import './AdminFunciones.css';
+import { useAlerta } from '../../hooks/useAlerta';
 
 export default function AdminFunciones() {
 
@@ -28,6 +29,9 @@ export default function AdminFunciones() {
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');  
   const [cargando, setCargando] = useState(true);
+
+  const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
+  
 
  useEffect(() => {
     async function cargarBase() {
@@ -74,18 +78,18 @@ export default function AdminFunciones() {
     window.scrollTo({ top: 0, behavior: 'smooth' }); // Scrolleamos al form
   }
 
-  // Crear o Actualizar función
+    // Crear o Actualizar función
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!Idioma || !Fecha || !Horario || !peliculaSeleccionada || !salaSeleccionada) {
-      setError('Por favor completá todos los campos.');
+      alertaAdvertencia('Campos incompletos', 'Por favor completá todos los campos.');
       return; 
     }
     // Juntamos la fecha y el horario en un solo objeto Date
     const fechaHoraFuncion = new Date(`${Fecha}T${Horario}`);
     const ahora = new Date();
     if (fechaHoraFuncion < ahora) {
-      setError('No puedes crear una función con una fecha u horario que ya pasó.');
+      alertaAdvertencia('Fecha inválida', 'No podés crear una función con una fecha u horario que ya pasó.');
       return; 
     }
     try {
@@ -97,86 +101,41 @@ export default function AdminFunciones() {
         sala: salaSeleccionada
       };
       if (funcionEditando) {
-        
         await updateFuncion(funcionEditando, funcionData);
-        setExito('Función actualizada exitosamente.');
+        alertaExito('¡Actualizada!', 'La función fue actualizada exitosamente.');
       } else {
-        
         await createFuncion(funcionData);
-        setExito('Función creada exitosamente.');
+        alertaExito('¡Creada!', 'La función fue creada exitosamente.');
       }
       limpiarFormulario();
       // Si había una búsqueda activa, refrescamos la lista
       if (peliculaBuscada?.IdPelicula !== undefined) {
         await buscarFunciones(peliculaBuscada.IdPelicula);
       }
-    }catch (err) {
-  console.error('Error al guardar la función', err);
-  if (err instanceof Error) {
-    setError(err.message); 
-  } else {
-    setError('No se pudo crear la función.');
-  } }
+    } catch (err) {
+      console.error('Error al guardar la función', err);
+      const mensajeError = err instanceof Error ? err.message : 'No se pudo guardar la función.';
+      alertaError('Error', mensajeError);
+    }
   }
   
   async function handleDelete(IdFuncion?: number) {
     if (!IdFuncion) return;
-    const result = await Swal.fire({
-    title: '¿Estás seguro?',
-    text: '¿Seguro que querés eliminar esta función?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#e50914', 
-    cancelButtonColor: '#222',     
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-    background: '#141414',         
-    color: '#fff'                 
-  });
-
-
-  if (!result.isConfirmed) return;
-
-  try {
-    await deleteFuncion(IdFuncion); // Ajusta al nombre de tu servicio de funciones
-    
-    
-    Swal.fire({
-      title: '¡Eliminado!',
-      text: 'La función ha sido eliminada correctamente.',
-      icon: 'success',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff',
-      timer: 1500,
-      showConfirmButton: false
-    });
-
-    buscarFunciones(peliculaBuscada?.IdPelicula ?? 0); // Ajusta a tu función para refrescar la lista
-  } catch (error) {
-    console.log('Error al borrar la función', error);
-    /*setError('No se pudo eliminar la función.');
+    const confirmado = await alertaConfirmacion(
+      '¿Estás seguro?', 
+      '¿Seguro que querés eliminar esta función?'
+    );
+    if (!confirmado) return;
+    try {
+      await deleteFuncion(IdFuncion);
+      alertaExito('¡Eliminado!', 'La función ha sido eliminada correctamente.');
+      buscarFunciones(peliculaBuscada?.IdPelicula ?? 0);
+    } catch (error) {
+      console.error(error);
+      alertaError('Error', 'No se pudo eliminar la función.');
+    }
   }
-}*/
 
-
-     const mensajeError = error instanceof Error 
-      ? error.message 
-      : 'No se pudo eliminar la función.';
-
-    Swal.fire({
-      title: 'No se puede eliminar',
-      text: mensajeError, // 👈 Acá se muestra el mensaje del backend
-      icon: 'error',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff'
-    });
-
-    // También podés mantener el mensaje en el cartel de arriba (opcional)
-    setError(mensajeError);
-  }
-}
 
    async function buscarFunciones(idPelicula: number) {
     setError('');
@@ -188,7 +147,7 @@ export default function AdminFunciones() {
       setPeliculaBuscada(peli);
     } catch (err) {
       console.log('Error al buscar funciones', err);
-      setError('No se pudieron obtener las funciones de esta película.');
+      alertaError('Error de conexión', 'No se pudieron obtener las funciones de esta película.');
       setFunciones([]);
       setPeliculaBuscada(null);
     }
@@ -196,7 +155,7 @@ export default function AdminFunciones() {
 
    async function handleBuscar() {
     if (!peliculaABuscar) {
-      setError('Seleccioná una película primero.');
+      alertaAdvertencia('Atención', 'Seleccioná una película primero.');
       return;
     }
     await buscarFunciones(Number(peliculaABuscar));
