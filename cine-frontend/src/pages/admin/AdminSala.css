@@ -1,0 +1,171 @@
+
+.admin-salas-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: system-ui, sans-serif;
+  color: #fff;
+}
+
+.admin-salas-header {
+  margin: 20px 0 30px 0;
+}
+
+.admin-salas-title {
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #e50914;
+  padding-bottom: 8px;
+  display: inline-block;
+  color: #fff;
+}
+
+.admin-salas-error {
+  color: #ff4d4d;
+  background-color: #2d1515;
+  border: 1px solid #e50914;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.admin-salas-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #141414;
+  border: 1px solid #222;
+  padding: 25px;
+  border-radius: 4px;
+  margin-bottom: 30px;
+}
+
+.admin-salas-form-title {
+  font-size: 1.1rem;
+  color: #fff;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-salas-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-salas-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.admin-salas-input,
+.admin-salas-select {
+  width: 100%;
+  padding: 10px;
+  background-color: #0b0c10;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.admin-salas-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.admin-salas-btn-submit {
+  flex: 1;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #e50914;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-salas-btn-cancel {
+  padding: 12px 20px;
+  cursor: pointer;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-salas-list-title {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-salas-empty {
+  color: #888;
+}
+
+.admin-salas-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-salas-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #141414;
+  border: 1px solid #222;
+  border-radius: 4px;
+}
+
+.admin-salas-item-info strong {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.admin-salas-item-info small {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.admin-salas-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-salas-btn-edit {
+  color: #fff;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background-color: #222;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.admin-salas-btn-delete {
+  color: #ff4d4d;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid #552222;
+  border-radius: 4px;
+  background-color: #2a1212;
+  font-weight: bold;
+  font-size: 0.85rem;
+}

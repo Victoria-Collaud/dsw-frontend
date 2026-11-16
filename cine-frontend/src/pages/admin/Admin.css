@@ -1,0 +1,63 @@
+
+.admin-container {
+  padding: 40px 20px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background-color: #0b0c10;
+  color: #fff;
+  min-height: 100vh;
+}
+
+.admin-header {
+  text-align: left;
+  margin: 10px 0 30px 0;
+  border-bottom: 1px solid #222;
+  padding-bottom: 20px;
+}
+
+.admin-title {
+  font-size: 2rem;
+  letter-spacing: 2px;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-family: system-ui, sans-serif;
+}
+
+.admin-subtitle {
+  font-size: 1rem;
+  color: #888;
+  margin: 0;
+}
+
+.admin-nav {
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid #222;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.admin-tab {
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #aaa;
+  background-color: #141414;
+  border: 1px solid #222;
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-tab.active {
+  color: white;
+  background-color: #e50914;
+  border-color: #e50914;
+}

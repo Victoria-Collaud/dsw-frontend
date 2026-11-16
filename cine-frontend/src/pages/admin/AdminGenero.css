@@ -1,0 +1,165 @@
+
+.admin-generos-container {
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: system-ui, sans-serif;
+  color: #fff;
+}
+
+.admin-generos-header {
+  margin: 20px 0 30px 0;
+}
+
+.admin-generos-title {
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #e50914;
+  padding-bottom: 8px;
+  display: inline-block;
+  color: #fff;
+}
+
+.admin-generos-error {
+  color: #ff4d4d;
+  background-color: #2d1515;
+  border: 1px solid #e50914;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.admin-generos-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #141414;
+  border: 1px solid #222;
+  padding: 25px;
+  border-radius: 4px;
+  margin-bottom: 30px;
+}
+
+.admin-generos-form-title {
+  font-size: 1.1rem;
+  color: #fff;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-generos-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.admin-generos-input {
+  width: 100%;
+  padding: 10px;
+  background-color: #0b0c10;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.admin-generos-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.admin-generos-btn-submit {
+  flex: 1;
+  padding: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #e50914;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-generos-btn-cancel {
+  padding: 12px 20px;
+  cursor: pointer;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-generos-list-title {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-generos-empty {
+  color: #888;
+}
+
+.admin-generos-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-generos-item {
+  padding: 16px;
+  background-color: #141414;
+  border: 1px solid #222;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-generos-item-text {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.admin-generos-item-id {
+  color: #aaa;
+  margin-right: 10px;
+}
+
+.admin-generos-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-generos-btn-edit {
+  color: #fff;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background-color: #222;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.admin-generos-btn-delete {
+  color: #ff4d4d;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid #552222;
+  border-radius: 4px;
+  background-color: #2a1212;
+  font-weight: bold;
+  font-size: 0.85rem;
+}

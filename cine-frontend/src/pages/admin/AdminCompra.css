@@ -1,0 +1,141 @@
+
+.admin-compra-container {
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: sans-serif;
+  color: #fff;
+}
+
+.admin-compra-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.admin-compra-title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.admin-compra-filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background-color: #141414;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #333;
+}
+
+.admin-compra-label {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.admin-compra-input {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background-color: #0b0c10;
+  color: #fff;
+}
+
+.admin-compra-btn-clear {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.admin-compra-error {
+  color: red;
+  background-color: #ffe6e6;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.admin-compra-empty {
+  color: #666;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.admin-compra-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.admin-compra-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #141414;
+  border: 1px solid #222;
+  border-radius: 8px;
+  color: #fff;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-compra-movie-title {
+  margin: 0 0 5px 0;
+  color: #ea3a55;
+}
+
+.admin-compra-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  color: #ccc;
+  font-size: 0.9rem;
+  margin: 0 0 5px 0;
+}
+
+.admin-compra-detail-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-compra-divider {
+  color: #555;
+}
+
+.admin-compra-date {
+  color: #888;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-compra-pricing {
+  text-align: right;
+}
+
+.admin-compra-price {
+  margin: 0 0 5px 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #4ade80;
+}
+
+.admin-compra-info {
+  margin: 0 0 5px 0;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.admin-compra-loading {
+  text-align: center;
+  margin-top: 20px;
+}

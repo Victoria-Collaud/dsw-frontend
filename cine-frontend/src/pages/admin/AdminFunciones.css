@@ -1,0 +1,233 @@
+
+.admin-funciones-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: system-ui, sans-serif;
+  color: #fff;
+}
+
+.admin-funciones-header {
+  margin: 20px 0 30px 0;
+}
+
+.admin-funciones-title {
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #e50914;
+  padding-bottom: 8px;
+  display: inline-block;
+  color: #fff;
+}
+
+.admin-funciones-alert-error {
+  color: #ff4d4d;
+  background-color: #2d1515;
+  border: 1px solid #e50914;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.admin-funciones-alert-success {
+  color: #4ade80;
+  background-color: #14291c;
+  border: 1px solid #4ade80;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.admin-funciones-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #141414;
+  border: 1px solid #222;
+  padding: 25px;
+  border-radius: 4px;
+  margin-bottom: 30px;
+}
+
+.admin-funciones-form-title {
+  font-size: 1.1rem;
+  color: #fff;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-funciones-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-funciones-label {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.admin-funciones-select,
+.admin-funciones-input {
+  width: 100%;
+  padding: 10px;
+  background-color: #0b0c10;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.admin-funciones-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.admin-funciones-btn-submit {
+  flex: 1;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #e50914;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-funciones-btn-cancel {
+  padding: 12px 20px;
+  cursor: pointer;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-funciones-search-section {
+  border-top: 1px solid #222;
+  padding-top: 30px;
+  margin-top: 30px;
+}
+
+.admin-funciones-search-title {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-funciones-search-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-funciones-search-select {
+  flex: 1;
+  padding: 10px;
+  background-color: #141414;
+  border: 1px solid #222;
+  color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.admin-funciones-btn-search {
+  padding: 10px 25px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-funciones-results {
+  margin-top: 25px;
+}
+
+.admin-funciones-results-title {
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.admin-funciones-empty {
+  color: #888;
+}
+
+.admin-funciones-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-funciones-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #141414;
+  border: 1px solid #222;
+  border-radius: 4px;
+}
+
+.admin-funciones-card-info strong {
+  color: #fff;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-funciones-card-info small {
+  color: #888;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.admin-funciones-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-funciones-btn-edit {
+  color: #fff;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background-color: #222;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.admin-funciones-btn-delete {
+  color: #ff4d4d;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid #552222;
+  border-radius: 4px;
+  background-color: #2a1212;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
