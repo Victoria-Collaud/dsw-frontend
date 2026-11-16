@@ -1,0 +1,229 @@
+/* Inicio.css */
+.inicio-container {
+  padding: 40px 20px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background-color: #0b0c10;
+  color: #fff;
+  min-height: 100vh;
+}
+
+.inicio-aviso-compra {
+  background-color: #14291c;
+  border: 1px solid #4ade80;
+  color: #4ade80;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.inicio-aviso-titulo {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  color: #4ade80;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inicio-aviso-texto {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.inicio-aviso-destacado {
+  color: #fff;
+}
+
+.inicio-aviso-flecha {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  transform: translateY(-1px);
+}
+
+.inicio-aviso-cerrar {
+  background: transparent;
+  border: none;
+  color: #4ade80;
+  font-size: 1.2rem;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0 8px;
+}
+
+.inicio-hero {
+  text-align: left;
+  margin: 10px 0 35px 0;
+  border-bottom: 1px solid #222;
+  padding-bottom: 20px;
+}
+
+.inicio-hero-titulo {
+  font-size: 1.75rem;
+  letter-spacing: 1px;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-family: system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inicio-hero-subtitulo {
+  font-size: 0.95rem;
+  color: #888;
+  margin: 0;
+}
+
+.inicio-error {
+  color: #ff4d4d;
+  background-color: #2d1515;
+  border: 1px solid #e50914;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.inicio-seccion-header {
+  margin: 0 0 25px 0;
+}
+
+.inicio-seccion-titulo {
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #e50914;
+  padding-bottom: 8px;
+  display: inline-block;
+  color: #fff;
+}
+
+.inicio-vacio {
+  color: #888;
+  padding: 20px 0;
+}
+
+.inicio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 25px;
+  margin-top: 15px;
+}
+
+.inicio-card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.inicio-card {
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #141414;
+  border: 1px solid #222;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  cursor: pointer;
+}
+
+.inicio-card:hover {
+  transform: translateY(-4px);
+  border-color: #e50914;
+}
+
+.inicio-card.sin-funciones {
+  opacity: 0.6;
+}
+
+.inicio-card-poster-wrapper {
+  height: 320px;
+  background-color: #000;
+  position: relative;
+}
+
+.inicio-card-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inicio-card-sin-imagen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+}
+
+.inicio-card-body {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #141414;
+}
+
+.inicio-card-titulo {
+  margin: 0 0 6px 0;
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inicio-card-meta {
+  margin: 0 0 15px 0;
+  color: #888;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inicio-card-footer {
+  margin-top: auto;
+}
+
+.inicio-card-aviso-funciones {
+  color: #ff4d4d;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.inicio-card-btn {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  background-color: #e50914;
+  color: white;
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.inicio-card-btn.deshabilitado {
+  background-color: #222;
+}

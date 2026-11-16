@@ -123,21 +123,21 @@ setFuncionesPorPelicula(dict);
   }, [peliculas, filtroGenero]);
 
   return (
-    <div style={{ padding: '40px 20px', maxWidth: '1400px', margin: '0 auto', fontFamily: 'system-ui, sans-serif', color: '#fff', backgroundColor: '#0b0c10', minHeight: '100vh' }}>
+    <div className="peliculas-container">
       
-      <div style={{ margin: '10px 0 30px 0', borderBottom: '1px solid #222', paddingBottom: '20px' }}>
-        <h1 style={{ fontSize: '1.75rem', letterSpacing: '1px', margin: '0 0 8px 0', textTransform: 'uppercase', fontWeight: '700', color: '#fff' }}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-clapperboard preview-icon"><path d="m12.296 3.464 3.02 3.956"/><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m6.18 5.276 3.1 3.899"/></svg> Cartelera
+      <div className="peliculas-header">
+        <h1 className="peliculas-titulo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clapperboard preview-icon"><path d="m12.296 3.464 3.02 3.956"/><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m6.18 5.276 3.1 3.899"/></svg> Cartelera
         </h1>
-        <p style={{ fontSize: '0.95rem', color: '#888', margin: 0 }}>
+        <p className="peliculas-subtitulo">
           Explorá todas las películas disponibles y encontrá tu próxima función.
         </p>
       </div>
       
-      {error && <p style={{ color: '#ff4d4d', backgroundColor: '#2d1515', border: '1px solid #e50914', padding: '12px', borderRadius: '4px', marginBottom: '20px' }}>{error}</p>}
+      {error && <p className="peliculas-error">{error}</p>}
 
       {/* Controles de búsqueda y filtro */}
-      <div style={{ display: 'flex', gap: '15px', marginBottom: '35px', flexWrap: 'wrap' }}>
+      <div className="peliculas-filtros">
         <input 
           type="text" 
           placeholder="Escribí el título de la película..." 
@@ -146,13 +146,13 @@ setFuncionesPorPelicula(dict);
             setTextoBusqueda(e.target.value);
             setCargando(true); 
           }}
-          style={{ padding: '12px', flex: 1, minWidth: '250px', borderRadius: '4px', border: '1px solid #333', backgroundColor: '#141414', color: '#fff', fontSize: '0.95rem', boxSizing: 'border-box' }}
+          className="peliculas-input-busqueda"
         />
         
         <select 
           value={filtroGenero} 
           onChange={e => setFiltroGenero(e.target.value)}
-          style={{ padding: '12px', flex: 1, minWidth: '200px', borderRadius: '4px', border: '1px solid #333', backgroundColor: '#141414', color: '#fff', fontSize: '0.95rem', boxSizing: 'border-box' }}
+          className="peliculas-select-genero"
         >
           <option value="">Todos los géneros</option>
           {generos.map(g => (
@@ -164,81 +164,39 @@ setFuncionesPorPelicula(dict);
       {cargando ? (
         <Loader mensaje="Cargando cartelera..." />
       ) : peliculasMostradas.length === 0 ? (
-        <div style={{ textAlign: 'center', marginTop: '60px' }}>
-          <p style={{ fontSize: '1.1rem', color: '#888' }}>No se encontraron películas con esos filtros.</p>
+        <div className="peliculas-vacio">
+          <p className="peliculas-vacio-texto">No se encontraron películas con esos filtros.</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '25px' }}>
+        <div className="peliculas-grid">
           {peliculasMostradas.map(peli => {
-         
             const tieneFunciones = funcionesPorPelicula[peli.IdPelicula!] && funcionesPorPelicula[peli.IdPelicula!].length > 0;
 
             return (
-              <Link key={peli.IdPelicula} to={`/pelicula/${peli.IdPelicula}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div 
-                  style={{ 
-                    borderRadius: '4px', 
-                    overflow: 'hidden', 
-                    backgroundColor: '#141414', 
-                    border: '1px solid #222', 
-                    transition: 'transform 0.2s ease, border-color 0.2s ease', 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    height: '100%', 
-                    cursor: 'pointer',
-                
-                    opacity: tieneFunciones ? 1 : 0.6
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.borderColor = '#e50914';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0px)';
-                    e.currentTarget.style.borderColor = '#222';
-                  }}
-                >
-                  <div style={{ height: '320px', backgroundColor: '#000', position: 'relative' }}>
+              <Link key={peli.IdPelicula} to={`/pelicula/${peli.IdPelicula}`} className="peliculas-card-link">
+                <div className={`peliculas-card ${!tieneFunciones ? 'sin-funciones' : ''}`}>
+                  <div className="peliculas-card-poster-wrapper">
                     {peli.Cartelera ? (
-                      <img src={peli.Cartelera} alt={peli.TituloPelicula} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={peli.Cartelera} alt={peli.TituloPelicula} loading="lazy" className="peliculas-card-poster" />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>Sin imagen</div>
+                      <div className="peliculas-card-sin-imagen">Sin imagen</div>
                     )}
                   </div>
                   
-                  <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#141414' }}>
-                    <h3 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#fff', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{peli.TituloPelicula}</h3>
-                    <p style={{ margin: '0 0 15px 0', color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <div className="peliculas-card-body">
+                    <h3 className="peliculas-card-titulo">{peli.TituloPelicula}</h3>
+                    <p className="peliculas-card-meta">
                       {obtenerNombreGenero(peli.genero)} | {peli.Clasificacion || peli.Clasificacion}
                     </p>
                     
-                    <div style={{ marginTop: 'auto' }}>
-                   
+                    <div className="peliculas-card-footer">
                       {!tieneFunciones && (
-                        <div style={{ 
-                          color: '#ff4d4d', 
-                          fontWeight: 'bold', 
-                          textAlign: 'center', 
-                          marginBottom: '10px',
-                          fontSize: '0.75rem',
-                          letterSpacing: '0.5px'
-                        }}>
+                        <div className="peliculas-card-aviso-funciones">
                           SIN FUNCIONES DISPONIBLES
                         </div>
                       )}
 
-                      <div style={{ 
-                        display: 'block', 
-                        textAlign: 'center', 
-                        padding: '10px', 
-                        backgroundColor: tieneFunciones ? '#e50914' : '#222', 
-                        color: 'white', 
-                        borderRadius: '2px', 
-                        fontWeight: 'bold', 
-                        fontSize: '0.85rem', 
-                        textTransform: 'uppercase', 
-                        letterSpacing: '0.5px' 
-                      }}>
+                      <div className={`peliculas-card-btn ${!tieneFunciones ? 'deshabilitado' : ''}`}>
                         Ver Detalle
                       </div>
                     </div>

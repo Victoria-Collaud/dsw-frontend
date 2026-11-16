@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { registrarUsuario } from '../services/usuarioServices';
+import '../pages/Registro.css';
 
 export default function Registro() {
   const navigate = useNavigate();
@@ -49,88 +50,76 @@ export default function Registro() {
   }
 
   return (
-    <div style={{ maxWidth: '420px', margin: '50px auto', padding: '30px', fontFamily: 'system-ui, sans-serif', backgroundColor: '#141414', border: '1px solid #222', borderRadius: '4px', color: '#fff' }}>
+    <div className="registro-container">
       
-      <div style={{ margin: '0 0 25px 0', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
+      <div className="registro-header">
+        <h2 className="registro-title">
           🎬 Crear Cuenta
         </h2>
       </div>
 
-      {error && <p style={{ color: '#ff4d4d', backgroundColor: '#2d1515', border: '1px solid #e50914', padding: '12px', borderRadius: '4px', marginBottom: '20px', fontSize: '0.9rem' }}>{error}</p>}
-      {exito && <p style={{ color: '#4ade80', backgroundColor: '#14291c', border: '1px solid #4ade80', padding: '12px', borderRadius: '4px', marginBottom: '20px', fontSize: '0.9rem' }}>¡Cuenta creada con éxito! Redirigiendo al login...</p>}
+      {error && <p className="registro-error">{error}</p>}
+      {exito && <p className="registro-exito">¡Cuenta creada con éxito! Redirigiendo al login...</p>}
 
-      <form onSubmit={handleRegistro} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <form onSubmit={handleRegistro} className="registro-form">
         <div>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Email:</label>
+          <label className="registro-label">Email:</label>
           <input 
             type="email" 
             value={email} 
             onChange={e => setEmail(e.target.value)} 
             required 
             placeholder="ejemplo@correo.com"
-            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
+            className="registro-input"
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Contraseña:</label>
+          <label className="registro-label">Contraseña:</label>
           <input 
             type="password" 
             value={contrasena} 
             onChange={e => setContrasena(e.target.value)} 
             required 
             placeholder="Mínimo 6 caracteres"
-            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
+            className="registro-input"
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Confirmar Contraseña:</label>
+          <label className="registro-label">Confirmar Contraseña:</label>
           <input 
             type="password" 
             value={confirmarContrasena} 
             onChange={e => setConfirmarContrasena(e.target.value)} 
             required 
             placeholder="Repetí tu contraseña"
-            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
+            className="registro-input"
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Fecha de Nacimiento:</label>
+          <label className="registro-label">Fecha de Nacimiento:</label>
           <input 
             type="date" 
             value={fechaNacimiento} 
             onChange={e => setFechaNacimiento(e.target.value)} 
             required 
-            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box', colorScheme: 'dark' }}
+            className="registro-input-date"
           />
         </div>
 
         <button 
           type="submit" 
           disabled={cargando} 
-          style={{ 
-            padding: '14px', 
-            backgroundColor: '#e50914', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '4px', 
-            fontWeight: 'bold', 
-            fontSize: '1rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            cursor: 'pointer', 
-            marginTop: '5px' 
-          }}
+          className="registro-btn-submit"
         >
-          Registrarse
+          {cargando ? 'Registrando...' : 'Registrarse'}
         </button>
       </form>
 
-      <p style={{ textAlign: 'center', marginTop: '25px', fontSize: '0.9rem', color: '#888' }}>
-        ¿Ya tenés cuenta? <Link to="/login" style={{ color: '#e50914', textDecoration: 'none', fontWeight: 'bold' }}>Iniciá sesión</Link>
+      <p className="registro-footer-text">
+        ¿Ya tenés cuenta? <Link to="/login" className="registro-login-link">Iniciá sesión</Link>
       </p>
     </div>
   );

@@ -55,18 +55,18 @@ export default function Login() {
     return msg;
   }
 
-  return (
-    <div style={{ maxWidth: '420px', margin: '60px auto', fontFamily: 'system-ui, sans-serif', padding: '30px', backgroundColor: '#141414', border: '1px solid #222', borderRadius: '4px', color: '#fff' }}>
+ return (
+    <div className="login-container">
       
-      <div style={{ margin: '0 0 25px 0', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
+      <div className="login-header">
+        <h2 className="login-title">
           Iniciar Sesión
         </h2>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <form onSubmit={handleSubmit} className="login-form">
         <div>
-          <label htmlFor="email" style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Email:</label>
+          <label htmlFor="email" className="login-label">Email:</label>
           <input
             id="email"
             type="email"
@@ -74,12 +74,12 @@ export default function Login() {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="ejemplo@correo.com"
-            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
+            className="login-input"
           />
         </div>
 
         <div>
-          <label htmlFor="contrasena" style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Contraseña:</label>
+          <label htmlFor="contrasena" className="login-label">Contraseña:</label>
           <input
             id="contrasena"
             type="password"
@@ -87,32 +87,21 @@ export default function Login() {
             onChange={(e) => setContrasena(e.target.value)}
             required
             placeholder="••••••••"
-            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
+            className="login-input"
           />
         </div>
 
         <button 
           type="submit" 
           disabled={cargando}
-          style={{ 
-            padding: '14px', 
-            backgroundColor: cargando ? '#333' : '#e50914', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '4px', 
-            fontWeight: 'bold', 
-            fontSize: '1rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            cursor: cargando ? 'not-allowed' : 'pointer' 
-          }}
+          className="login-btn-submit"
         >
           {cargando ? 'Ingresando...' : 'Ingresar'}
         </button>
       </form>
 
-      <p style={{ marginTop: '25px', textAlign: 'center', fontSize: '0.9rem', color: '#888' }}>
-        ¿No tenés cuenta? <Link to="/registro" style={{ color: '#e50914', textDecoration: 'none', fontWeight: 'bold' }}>Registrate acá</Link>
+      <p className="login-footer-text">
+        ¿No tenés cuenta? <Link to="/registro" className="login-register-link">Registrate acá</Link>
       </p>
     </div>
   );

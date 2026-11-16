@@ -6,6 +6,7 @@ import Loader from '../components/Loader';
 import type { Funcion } from '../services/funcionesServices';
 import { getAsientosDeSala } from '../services/salaServices.ts';
 import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
+import '../pages/Compra.css';
 
 
 export default function Compra() {
@@ -77,7 +78,8 @@ export default function Compra() {
 
 
   if (!funcion) {
-    return <p style={{ textAlign: 'center', color: '#ff4d4d', marginTop: '40px' }}>Función no encontrada.</p>;
+    return <p className="compra-not-found">Función no encontrada.</p>;
+
   }
 
 
@@ -134,48 +136,56 @@ export default function Compra() {
   }
 
 
-  return (
-    <div style={{ maxWidth: '800px', margin: '40px auto', fontFamily: 'system-ui, sans-serif', padding: '30px', backgroundColor: '#141414', border: '1px solid #222', borderRadius: '4px', color: '#fff' }}>
-     
-      <div style={{ margin: '0 0 25px 0' }}>
-        <h2 style={{ fontSize: '1.25rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '2px solid #e50914', paddingBottom: '8px', display: 'inline-block', color: '#fff' }}>
-          Finalizar Compra
-        </h2>
+ return (
+    <div className="compra-container">
+      <div className="compra-header">
+        <h2 className="compra-title">Finalizar Compra</h2>
       </div>
 
-
-{/* Resumen de la Función seleccionada */}
-      <div style={{ backgroundColor: '#0b0c10', border: '1px solid #222', padding: '20px', borderRadius: '4px', marginBottom: '25px' }}>
-        <h3 style={{ margin: '0 0 12px 0', color: '#fff', fontSize: '1.2rem' }}>{funcion.pelicula.TituloPelicula}</h3>
-        <p style={{ margin: '0 0 6px 0', color: '#aaa', fontSize: '0.9rem' }}> Fecha: {new Date(funcion.Fecha).toLocaleDateString('es-AR')}</p>
-        <p style={{ margin: '0 0 6px 0', color: '#aaa', fontSize: '0.9rem' }}> Horario: {funcion.Horario}</p>
-        <p style={{ margin: '0 0 6px 0', color: '#aaa', fontSize: '0.9rem' }}> Sala #{funcion.sala.NumSala} </p>
-        <p style={{ margin: '0 0 5px 0' }}> 
-           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-tv-minimal preview-icon"><path d="M7 21h10"/><rect width="20" height="14" x="2" y="3" rx="2"/></svg> Pantalla: {funcion.sala.TipoPantalla} 
-          | <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-armchair preview-icon"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/><path d="M5 18v2"/><path d="M19 18v2"/></svg> Asientos: {funcion.sala.TipoAsientos}
-</p>
-        <p style={{ margin: '0', fontWeight: 'bold', color: '#e50914', fontSize: '0.9rem' }}> Asientos disponibles: {funcion.CapacidadDisponible}</p>
+      {/* Resumen de la Función seleccionada */}
+      <div className="compra-resumen-funcion">
+        <h3 className="compra-pelicula-titulo">{funcion.pelicula.TituloPelicula}</h3>
+        <p className="compra-detalle-texto">Fecha: {new Date(funcion.Fecha).toLocaleDateString('es-AR')}</p>
+        <p className="compra-detalle-texto">Horario: {funcion.Horario}</p>
+        <p className="compra-detalle-texto">Sala #{funcion.sala.NumSala}</p>
+        <p className="compra-detalle-iconos">
+          <span className="compra-detalle-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 21h10" />
+              <rect width="20" height="14" x="2" y="3" rx="2" />
+            </svg>
+            Pantalla: {funcion.sala.TipoPantalla}
+          </span>
+          <span>|</span>
+          <span className="compra-detalle-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" />
+              <path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z" />
+              <path d="M5 18v2" />
+              <path d="M19 18v2" />
+            </svg>
+            Asientos: {funcion.sala.TipoAsientos}
+          </span>
+        </p>
+        <p className="compra-disponibles">Asientos disponibles: {funcion.CapacidadDisponible}</p>
       </div>
 
-
-      {error && <p style={{ color: '#ff4d4d', backgroundColor: '#2d1515', border: '1px solid #e50914', padding: '12px', borderRadius: '4px', marginBottom: '20px' }}>{error}</p>}
-      {exito && <p style={{ color: '#4ade80', backgroundColor: '#14291c', border: '1px solid #4ade80', padding: '12px', borderRadius: '4px', marginBottom: '20px' }}>¡Compra exitosa! Redirigiendo...</p>}
-
+      {error && <p className="compra-alert-error">{error}</p>}
+      {exito && <p className="compra-alert-success">¡Compra exitosa! Redirigiendo...</p>}
 
       {/* MAPA DE ASIENTOS */}
-      <div style={{ marginBottom: '20px' }}>
+      <div className="compra-mapa-seccion">
         <h3>Seleccioná tus asientos:</h3>
-       
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <div style={{ backgroundColor: '#e50914', height: '8px', width: '60%', margin: '0 auto', borderRadius: '5px' }}></div>
-          <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '5px' }}>PANTALLA</p>
+
+        <div className="compra-pantalla-wrapper">
+          <div className="compra-pantalla-barra"></div>
+          <p className="compra-pantalla-texto">PANTALLA</p>
         </div>
 
-
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+        <div className="compra-filas-container">
           {Array.from(new Set(asientosDisponibles.map(a => a[0]))).map(fila => (
-            <div key={fila} style={{ display: 'flex', gap: '8px' }}>
-              <span style={{ color: '#888', width: '20px' }}>{fila}</span>
+            <div key={fila} className="compra-fila">
+              <span className="compra-fila-letra">{fila}</span>
               {asientosDisponibles.filter(a => a[0] === fila).map(asiento => {
                 const ocupado = asientosOcupados.includes(asiento);
                 const seleccionado = asientosSeleccionados.includes(asiento);
@@ -185,14 +195,7 @@ export default function Compra() {
                     type="button"
                     onClick={() => toggleAsiento(asiento)}
                     disabled={ocupado}
-                    style={{
-                      width: '35px', height: '35px', borderRadius: '4px',
-                      backgroundColor: ocupado ? '#333' : seleccionado ? '#4ade80' : '#222',
-                      color: ocupado ? '#555' : seleccionado ? '#000' : '#fff',
-                      border: '1px solid #444',
-                      cursor: ocupado ? 'not-allowed' : 'pointer',
-                      fontWeight: 'bold'
-                    }}
+                    className={`compra-asiento-btn ${ocupado ? 'ocupado' : ''} ${seleccionado ? 'seleccionado' : ''}`}
                   >
                     {asiento.slice(1)}
                   </button>
@@ -201,79 +204,53 @@ export default function Compra() {
             </div>
           ))}
         </div>
-       
-        <div style={{ marginTop: '15px', textAlign: 'center', color: '#4ade80' }}>
+
+        <div className="compra-seleccionados-texto">
           {asientosSeleccionados.length > 0
             ? `Seleccionados: ${asientosSeleccionados.join(', ')}`
             : 'Ningún asiento seleccionado'}
         </div>
       </div>
 
-
-      <form onSubmit={handleComprar} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        {/* NUEVO PANEL DE RESUMEN DINÁMICO */}
-        <div style={{ backgroundColor: '#0b0c10', border: '1px solid #222', padding: '15px', borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <p style={{ margin: 0, color: '#aaa', fontSize: '0.9rem' }}>
-           Entradas a comprar: <strong style={{ color: '#fff' }}>{asientosSeleccionados.length}</strong>
+      <form onSubmit={handleComprar} className="compra-form">
+        {/* PANEL DE RESUMEN DINÁMICO */}
+        <div className="compra-resumen-pago">
+          <p className="compra-pago-item">
+            Entradas a comprar: <strong>{asientosSeleccionados.length}</strong>
           </p>
-        <p style={{ margin: 0, color: '#aaa', fontSize: '0.9rem' }}>
-         Precio por entrada: <strong style={{ color: '#fff' }}>${precioUnitario}</strong>
+          <p className="compra-pago-item">
+            Precio por entrada: <strong>${precioUnitario}</strong>
           </p>
-       <h3 style={{ margin: '10px 0 0 0', color: '#e50914', fontSize: '1.3rem' }}>
-           Total a Pagar: ${total}
-      </h3>
-    </div>
-
+          <h3 className="compra-pago-total">Total a Pagar: ${total}</h3>
+        </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem', color: '#aaa' }}>Método de Pago:</label>
+          <label className="compra-label">Método de Pago:</label>
           <select
             value={metodoPago}
             onChange={(e) => setMetodoPago(e.target.value as Metodopago)}
-            style={{ width: '100%', padding: '10px', backgroundColor: '#0b0c10', border: '1px solid #333', color: '#fff', borderRadius: '4px', boxSizing: 'border-box' }}
+            className="compra-select"
           >
             <option value={Metodopago.MERCADO_PAGO}>Mercado Pago</option>
             <option value={Metodopago.TARJETA_CREDITO}>Tarjeta de Crédito</option>
             <option value={Metodopago.TARJETA_DEBITO}>Tarjeta de Débito</option>
             <option value={Metodopago.TRANSFERENCIA}>Transferencia Bancaria</option>
           </select>
-        </div>
-
-
-        <div style={{ backgroundColor: '#0b0c10', border: '1px solid #222', padding: '15px', borderRadius: '4px' }}>
-          <p style={{ margin: '0 0 6px 0', color: '#aaa', fontSize: '0.9rem' }}>Precio por entrada: ${precioUnitario}</p>
-          <h3 style={{ margin: 0, color: '#e50914', fontSize: '1.3rem' }}>Total a Pagar: ${total}</h3>
+        
         </div>
 
 
         <button
           type="submit"
           disabled={exito || asientosSeleccionados.length === 0}
-          style={{
-            padding: '14px',
-            backgroundColor: exito ? '#333' : '#e50914',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontWeight: 'bold',
-            fontSize: '1rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            cursor: exito ? 'not-allowed' : 'pointer'
-          }}
+          className="compra-btn-confirmar"
         >
           {exito
-        ? 'Procesando...'
-        : asientosSeleccionados.length === 0
-        ? 'Seleccioná un asiento'
-        : `Confirmar y Pagar (${asientosSeleccionados.length} ${asientosSeleccionados.length === 1 ? 'entrada' : 'entradas'})`
-  }
-
-
+            ? 'Procesando...'
+            : asientosSeleccionados.length === 0
+            ? 'Seleccioná un asiento'
+            : `Confirmar y Pagar (${asientosSeleccionados.length} ${asientosSeleccionados.length === 1 ? 'entrada' : 'entradas'})`}
         </button>
       </form>
     </div>
-  );
-}
-
-
+  ); }

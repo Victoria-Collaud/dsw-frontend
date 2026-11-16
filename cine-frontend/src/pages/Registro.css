@@ -1,0 +1,113 @@
+
+.registro-container {
+  max-width: 420px;
+  margin: 50px auto;
+  padding: 30px;
+  font-family: system-ui, sans-serif;
+  background-color: #141414;
+  border: 1px solid #222;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.registro-header {
+  margin: 0 0 25px 0;
+  text-align: center;
+}
+
+.registro-title {
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #e50914;
+  padding-bottom: 8px;
+  display: inline-block;
+  color: #fff;
+}
+
+.registro-error {
+  color: #ff4d4d;
+  background-color: #2d1515;
+  border: 1px solid #e50914;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.registro-exito {
+  color: #4ade80;
+  background-color: #14291c;
+  border: 1px solid #4ade80;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.registro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.registro-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.registro-input {
+  width: 100%;
+  padding: 10px;
+  background-color: #0b0c10;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.registro-input-date {
+  width: 100%;
+  padding: 10px;
+  background-color: #0b0c10;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color-scheme: dark;
+}
+
+.registro-btn-submit {
+  padding: 14px;
+  background-color: #e50914;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.registro-btn-submit:disabled {
+  background-color: #333;
+  cursor: not-allowed;
+}
+
+.registro-footer-text {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.registro-login-link {
+  color: #e50914;
+  text-decoration: none;
+  font-weight: bold;
+}

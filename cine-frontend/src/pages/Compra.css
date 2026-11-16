@@ -1,0 +1,241 @@
+
+.compra-container {
+  max-width: 800px;
+  margin: 40px auto;
+  font-family: system-ui, sans-serif;
+  padding: 30px;
+  background-color: #141414;
+  border: 1px solid #222;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.compra-not-found {
+  text-align: center;
+  color: #ff4d4d;
+  margin-top: 40px;
+}
+
+.compra-header {
+  margin: 0 0 25px 0;
+}
+
+.compra-title {
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #e50914;
+  padding-bottom: 8px;
+  display: inline-block;
+  color: #fff;
+}
+
+.compra-resumen-funcion {
+  background-color: #0b0c10;
+  border: 1px solid #222;
+  padding: 20px;
+  border-radius: 4px;
+  margin-bottom: 25px;
+}
+
+.compra-pelicula-titulo {
+  margin: 0 0 12px 0;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.compra-detalle-texto {
+  margin: 0 0 6px 0;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.compra-detalle-iconos {
+  margin: 0 0 8px 0;
+  color: #ccc;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.compra-detalle-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.compra-disponibles {
+  margin: 0;
+  font-weight: bold;
+  color: #e50914;
+  font-size: 0.9rem;
+}
+
+.compra-alert-error {
+  color: #ff4d4d;
+  background-color: #2d1515;
+  border: 1px solid #e50914;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.compra-alert-success {
+  color: #4ade80;
+  background-color: #14291c;
+  border: 1px solid #4ade80;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+/* Mapa de Asientos */
+.compra-mapa-seccion {
+  margin-bottom: 25px;
+}
+
+.compra-pantalla-wrapper {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.compra-pantalla-barra {
+  background-color: #e50914;
+  height: 8px;
+  width: 60%;
+  margin: 0 auto;
+  border-radius: 5px;
+}
+
+.compra-pantalla-texto {
+  color: #888;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.compra-filas-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.compra-fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compra-fila-letra {
+  color: #888;
+  width: 20px;
+  font-weight: bold;
+}
+
+.compra-asiento-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 4px;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #444;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.compra-asiento-btn:hover:not(:disabled) {
+  border-color: #4ade80;
+}
+
+.compra-asiento-btn.seleccionado {
+  background-color: #4ade80;
+  color: #000;
+  border-color: #4ade80;
+}
+
+.compra-asiento-btn.ocupado {
+  background-color: #333;
+  color: #555;
+  cursor: not-allowed;
+}
+
+.compra-seleccionados-texto {
+  margin-top: 15px;
+  text-align: center;
+  color: #4ade80;
+  font-weight: 500;
+}
+
+/* Formulario y Pago */
+.compra-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.compra-resumen-pago {
+  background-color: #0b0c10;
+  border: 1px solid #222;
+  padding: 15px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compra-pago-item {
+  margin: 0;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.compra-pago-item strong {
+  color: #fff;
+}
+
+.compra-pago-total {
+  margin: 10px 0 0 0;
+  color: #e50914;
+  font-size: 1.3rem;
+}
+
+.compra-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.compra-select {
+  width: 100%;
+  padding: 10px;
+  background-color: #0b0c10;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.compra-btn-confirmar {
+  padding: 14px;
+  background-color: #e50914;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.compra-btn-confirmar:disabled {
+  background-color: #333;
+  color: #777;
+  cursor: not-allowed;
+}
