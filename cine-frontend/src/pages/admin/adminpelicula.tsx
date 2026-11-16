@@ -119,7 +119,7 @@ export default function AdminPeliculas() {
   try {
     await deletePelicula(id);
     
-    // Alerta de éxito elegante
+    // Alerta de éxito 
     Swal.fire({
       title: '¡Eliminado!',
       text: 'La película ha sido eliminada correctamente.',
@@ -223,7 +223,7 @@ async function handleArchivar(pelicula: Pelicula) {
       {/* Formulario */}
       <form onSubmit={handleSubmit} className="admin-pelicula-form">
         <h3 className="admin-pelicula-form-title">
-          {peliculaEditando ? ' Editar Película' : '➕ Agregar Nueva Película'}
+          {peliculaEditando ? ' Editar Película' : ' Agregar Nueva Película'}
         </h3>
 
         <div className="admin-pelicula-field">

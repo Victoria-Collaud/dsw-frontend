@@ -135,7 +135,7 @@ export default function AdminGeneros() {
       {/* Formulario */}
       <form onSubmit={handleSubmit} className="admin-generos-form">
         <h3 className="admin-generos-form-title">
-          {generoEditando ? ' Editar Género' : '➕ Agregar Nuevo Género'}
+          {generoEditando ? ' Editar Género' : 'Agregar Nuevo Género'}
         </h3>
         
         <div>

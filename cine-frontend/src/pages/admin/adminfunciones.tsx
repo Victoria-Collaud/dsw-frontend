@@ -237,7 +237,7 @@ export default function AdminFunciones() {
       {/* FORMULARIO DE CREACIÓN / EDICIÓN */}
       <form onSubmit={handleSubmit} className="admin-funciones-form">
         <h3 className="admin-funciones-form-title">
-          {funcionEditando ? ` Editar Función #${funcionEditando}` : '➕ Agregar Nueva Función'}
+          {funcionEditando ? ` Editar Función #${funcionEditando}` : 'Agregar Nueva Función'}
         </h3>
 
         <div className="admin-funciones-field">
