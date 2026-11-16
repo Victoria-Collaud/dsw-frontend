@@ -31,6 +31,9 @@ export function useAlerta() {
   const alertaError = (titulo: string, mensaje: string) => 
     dispararAlerta({ titulo, mensaje, tipo: 'error' });
 
+  const alertaAdvertencia = (titulo: string, mensaje: string) => 
+    dispararAlerta({ titulo, mensaje, tipo: 'warning' });
+
   // Para confirmaciones (devuelve true o false)
   const alertaConfirmacion = async (titulo: string, mensaje: string) => {
     const result = await Swal.fire({
@@ -50,5 +53,5 @@ export function useAlerta() {
     return result.isConfirmed; 
   };
 
-  return { dispararAlerta, alertaExito, alertaError, alertaConfirmacion };
+  return { dispararAlerta, alertaExito, alertaError, alertaConfirmacion, alertaAdvertencia };
 }
