@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getCompras } from '../../services/compraServices';
 import type { Compra } from '../../services/compraServices';
 import './AdminCompra.css'; 
+import Loader from '../../components/Loader';
 
 export default function AdminCompras() {
   const [compras, setCompras] = useState<Compra[]>([]);
@@ -49,7 +50,7 @@ export default function AdminCompras() {
     return true;
   });
 
-  if (cargando) return <p className="admin-compra-loading">Cargando auditoría de compras...</p>;
+  if (cargando) return <Loader mensaje="Cargando auditoría de compras..." />;
 
   return (
     <div className="admin-compra-container">

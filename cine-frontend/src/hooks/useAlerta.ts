@@ -35,7 +35,7 @@ export function useAlerta() {
     dispararAlerta({ titulo, mensaje, tipo: 'warning' });
 
   // Para confirmaciones (devuelve true o false)
-  const alertaConfirmacion = async (titulo: string, mensaje: string) => {
+  const alertaConfirmacion = async (titulo: string, mensaje: string, textoboton: string) => {
     const result = await Swal.fire({
       title: titulo,
       text: mensaje,
@@ -43,7 +43,7 @@ export function useAlerta() {
       showCancelButton: true,
       confirmButtonColor: '#e50914',
       cancelButtonColor: '#222',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: textoboton,
       cancelButtonText: 'Cancelar',
       background: '#141414',
       color: '#fff',

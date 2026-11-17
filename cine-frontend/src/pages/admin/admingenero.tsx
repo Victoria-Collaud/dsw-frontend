@@ -2,28 +2,27 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { getGeneros, createGenero, updateGenero, deleteGenero } from '../../services/generosServices'
 import { type Genero } from '../../services/generosServices'
 import Loader from '../../components/Loader';
-import Swal from 'sweetalert2'
 import './AdminGenero.css'
+import { useAlerta } from '../../hooks/useAlerta';
 
 export default function AdminGeneros() {
   const [generos, setGeneros] = useState<Genero[]>([])
   const [nombreGenero, setNombreGenero] = useState('')
   const [generoEditando, setGeneroEditando] = useState<number | null>(null)
-  const [error, setError] = useState('')
   const [cargando, setCargando] = useState(true);
+  const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
 
   useEffect(() => {
     cargarGeneros()
   }, [])
 
   async function cargarGeneros() {
-    setError('')
     setCargando(true);
     try {
       const data = await getGeneros()
       setGeneros(data)
     } catch {
-      setError('No se pudieron obtener los géneros.')
+      alertaError('Error de conexión', 'No se pudieron obtener los géneros. Por favor, intentá nuevamente.');
     } finally {
       setCargando(false); 
     }
@@ -32,86 +31,56 @@ export default function AdminGeneros() {
   function limpiarFormulario() {
     setNombreGenero('')
     setGeneroEditando(null)
-    setError('')
   }
 
   function handleEditar(genero: Genero) {
     setNombreGenero(genero.NombreGenero)
     setGeneroEditando(genero.CodGenero!)
-    setError('')
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
   }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!nombreGenero.trim()) {
-      setError('El nombre del género es obligatorio.')
+      alertaAdvertencia('Campos incompletos', 'El nombre del género es obligatorio.'); 
       return
     }
-
     try {
       if (generoEditando) {
         await updateGenero(generoEditando, { NombreGenero: nombreGenero })
+        alertaExito('¡Actualizado!', 'El género fue actualizado correctamente.'); 
       } else {
         await createGenero({ NombreGenero: nombreGenero })
+        alertaExito('¡Creado!', 'El género fue creado correctamente.');
       }
-      
       limpiarFormulario()
       cargarGeneros()
-    } catch {
-      setError(generoEditando ? 'Error al actualizar el género.' : 'Error al crear el género.')
+    } catch (err) {
+      console.error(err)
+      const mensajeError = err instanceof Error ? err.message : 'Error al guardar el género.';
+      alertaError('Error', mensajeError);
     }
   }
 
-  async function handleDelete(CodGenero?: number) {
-    if (!CodGenero) return
-  const result = await Swal.fire({
-    title: '¿Estás seguro?',
-    text: '¿Seguro que querés eliminar este género?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#e50914', 
-    cancelButtonColor: '#222',     
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-    background: '#141414',         
-    color: '#fff'                 
-  });
-
-  if (!result.isConfirmed) return;
-
-  try {
-    await deleteGenero(CodGenero);
-    
-    // Alerta de éxito
-    Swal.fire({
-      title: '¡Eliminado!',
-      text: 'El género ha sido eliminado correctamente.',
-      icon: 'success',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff',
-      timer: 1500,
-      showConfirmButton: false
-    });
-
-    cargarGeneros();
-    if (generoEditando === CodGenero) limpiarFormulario();
-  } catch (err) {
-    console.error('Error al eliminar el género', err);
-     const mensajeError = err instanceof Error 
-      ? err.message 
-      : 'No se pudo eliminar el género.';
-
-    Swal.fire({
-      title: 'No se puede eliminar',
-      text: mensajeError, // Muestra el mensaje de error real
-      icon: 'error',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff'
-    });
+    async function handleDelete(CodGenero?: number) {
+    if (!CodGenero) return;
+    const confirmado = await alertaConfirmacion(
+      '¿Estás seguro?', 
+      '¿Seguro que querés eliminar este género?',
+      'Si, elmininar'
+    );
+    if (!confirmado) return;
+    try {
+      await deleteGenero(CodGenero);
+      alertaExito('¡Eliminado!', 'El género ha sido eliminado correctamente.');
+      cargarGeneros();
+      if (generoEditando === CodGenero) limpiarFormulario();
+    } catch (err) {
+      console.error('Error al eliminar el género', err);
+      const mensajeError = err instanceof Error ? err.message : 'No se pudo eliminar el género.';
+      alertaError('No se puede eliminar', mensajeError);
+    }
   }
-}
 
    if (cargando) {
     return <Loader mensaje="Cargando funciones..." />;
@@ -126,11 +95,6 @@ export default function AdminGeneros() {
         </h2>
       </div>
 
-      {error && (
-        <p className="admin-generos-error">
-          {error}
-        </p>
-      )}
 
       {/* Formulario */}
       <form onSubmit={handleSubmit} className="admin-generos-form">

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { registrarUsuario } from '../services/usuarioServices';
 import '../pages/Registro.css';
+import { useAlerta } from '../hooks/useAlerta.ts';
 
 export default function Registro() {
   const navigate = useNavigate();
@@ -9,22 +10,20 @@ export default function Registro() {
   const [contrasena, setContrasena] = useState('');
   const [confirmarContrasena, setConfirmarContrasena] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
-  const [error, setError] = useState('');
-  const [exito, setExito] = useState(false);
   const [cargando, setCargando] = useState(false);
+  const { alertaExito, alertaError, alertaAdvertencia } = useAlerta();
 
   async function handleRegistro(e: FormEvent) {
     e.preventDefault();
     setCargando(true);
-    setError('');
 
     // Validaciones
     if (contrasena !== confirmarContrasena) {
-      setError('Las contraseñas no coinciden.');
+      alertaAdvertencia('Contraseñas no coinciden', 'Las contraseñas no coinciden.');
       return;
     }
     if (contrasena.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres.');
+      alertaError('Contraseña corta', 'La contraseña debe tener al menos 6 caracteres.');
       return;
     }
 
@@ -36,14 +35,14 @@ export default function Registro() {
         rol: 'CLIENTE' // Rol por defecto
       });
 
-      setExito(true);
+      alertaExito('¡Registro exitoso!', 'Tu cuenta ha sido creada. Redirigiendo al login...');
       setTimeout(() => {
         navigate('/login');
       }, 2000);
 
     } catch (err) {
       console.error(err);
-      setError(err instanceof Error ? err.message : 'Error al crear la cuenta.');
+      alertaError('Error al crear la cuenta', err instanceof Error ? err.message : 'Error al crear la cuenta.');
     }  finally {
       setCargando(false);
   }
@@ -58,8 +57,6 @@ export default function Registro() {
         </h2>
       </div>
 
-      {error && <p className="registro-error">{error}</p>}
-      {exito && <p className="registro-exito">¡Cuenta creada con éxito! Redirigiendo al login...</p>}
 
       <form onSubmit={handleRegistro} className="registro-form">
         <div>

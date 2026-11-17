@@ -3,8 +3,8 @@ import { getPeliculas, createPelicula, deletePelicula, updatePelicula, cambiarEs
 import type { Pelicula } from '../../services/peliculaServices.ts'
 import type { FormEvent } from 'react'
 import Loader from '../../components/Loader';
-import Swal from 'sweetalert2'
 import './AdminPelicula.css'
+import { useAlerta } from '../../hooks/useAlerta';
 
 export default function AdminPeliculas() {
   const [peliculas, setPeliculas] = useState<Pelicula[]>([])
@@ -17,21 +17,22 @@ export default function AdminPeliculas() {
   const [trailer, setTrailer] = useState('')
   const [peliculaEditando, setPeliculaEditando] = useState<number | null>(null)
   const [busqueda, setBusqueda] = useState('')
-  const [error, setError] = useState('')
+  //const [error, setError] = useState('')
   const [cargando, setCargando] = useState(true);
+  const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
 
   useEffect(() => {
     cargarPeliculas()
   }, [])
 
   async function cargarPeliculas() {
-    setError('')
+    
     setCargando(true);
     try {
       const data = await getPeliculas()
       setPeliculas(data)
     } catch  {
-      setError('No se pudieron obtener las películas.')
+      alertaError('Error de conexión', 'No se pudieron obtener las películas. Por favor, intentá nuevamente.');
     } finally {
       setCargando(false); 
   } }
@@ -45,7 +46,6 @@ export default function AdminPeliculas() {
     setCartelera('')
     setTrailer('')
     setPeliculaEditando(null)
-    setError('')
   }
 
   function handleEditar(pelicula: Pelicula) {
@@ -61,17 +61,17 @@ export default function AdminPeliculas() {
     setCartelera(pelicula.Cartelera)
     setTrailer(pelicula.Trailer)
     setPeliculaEditando(pelicula.IdPelicula!)
-    setError('')
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  async function handleSubmit(e: FormEvent) {
+    async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!tituloPelicula.trim() || !duracion || !codGenero) {
-      setError('Por favor completá los campos obligatorios (Título, Duración y Género).')
+      alertaAdvertencia('Campos incompletos', 'Por favor completá los campos obligatorios (Título, Duración y Género).'); // 👈
       return
     }
     try {
-      const peliculaData = {
+      const peliculaData = { 
         TituloPelicula: tituloPelicula,
         Sinopsis: sinopsis,
         Duracion: Number(duracion),
@@ -79,123 +79,65 @@ export default function AdminPeliculas() {
         CodGenero: Number(codGenero),
         Cartelera: cartelera,
         Trailer: trailer
-      }
+       }
+      
       if (peliculaEditando) {
         await updatePelicula(peliculaEditando, peliculaData)
+        alertaExito('¡Actualizada!', 'La película fue actualizada correctamente.'); 
       } else {
         await createPelicula(peliculaData)
+        alertaExito('¡Creada!', 'La película fue creada correctamente.'); 
       }
+      
       limpiarFormulario()
       cargarPeliculas()
     } catch (err) {
-       if (err instanceof Error) {
-        setError(err.message); 
-      } else {
-        setError('Error al crear la película.');
-      }
+      console.error(err)
+      const mensajeError = err instanceof Error ? err.message : 'Error al crear la película.';
+      alertaError('Error', mensajeError); 
     }
   }
 
- async function handleDelete(id?: number, tituloPelicula?: string) {
-  if (!id) return;
-
-  
-  const result = await Swal.fire({
-    title: '¿Estás seguro?',
-    text: `¿Seguro que querés eliminar la película "${tituloPelicula || 'seleccionada'}"?`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#e50914', 
-    cancelButtonColor: '#222',     
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-    background: '#141414',         
-    color: '#fff'                  
-  });
-
-  // Si el usuario cancela, no hacemos nada
-  if (!result.isConfirmed) return;
-
-  try {
-    await deletePelicula(id);
-    
-    // Alerta de éxito 
-    Swal.fire({
-      title: '¡Eliminado!',
-      text: 'La película ha sido eliminada correctamente.',
-      icon: 'success',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff',
-      timer: 1500,
-      showConfirmButton: false
-    });
-  
-    cargarPeliculas();
-  } catch (error) {
-    console.error('Error al borrar la película', error);
-
-    // ALERTA DE ERROR ESPECÍFICA
-    const mensajeError = error instanceof Error 
-      ? error.message 
-      : 'No se pudo eliminar la película.';
-
-    Swal.fire({
-      title: 'No se puede eliminar',
-      text: mensajeError, // muestra el mensaje de error real
-      icon: 'error',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff'
-    });
+   async function handleDelete(id?: number, tituloPelicula?: string) {
+    if (!id) return;
+    const confirmado = await alertaConfirmacion(
+      '¿Estás seguro?', 
+      `¿Seguro que querés eliminar la película "${tituloPelicula || 'seleccionada'}"?`,
+      'Si, eliminar'
+    );
+    if (!confirmado) return;
+    try {
+      await deletePelicula(id);
+      alertaExito('¡Eliminado!', 'La película ha sido eliminada correctamente.');
+      cargarPeliculas();
+    } catch (error) {
+      console.error('Error al borrar la película', error);
+      const mensajeError = error instanceof Error ? error.message : 'No se pudo eliminar la película.';
+      alertaError('No se puede eliminar', mensajeError);
+    }
   }
-}
 
-async function handleArchivar(pelicula: Pelicula) {
-  const accion = pelicula.Activa ? 'archivar' : 'desarchivar';
-  
-  const result = await Swal.fire({
-    title: `¿${pelicula.Activa ? 'Archivar' : 'Desarchivar'} película?`,
-    text: pelicula.Activa 
-      ? `"${pelicula.TituloPelicula}" dejará de aparecer en la cartelera.`
-      : `"${pelicula.TituloPelicula}" volverá a aparecer en la cartelera.`,
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#e50914',
-    cancelButtonColor: '#222',
-    confirmButtonText: `Sí, ${accion}`,
-    cancelButtonText: 'Cancelar',
-    background: '#141414',
-    color: '#fff'
-  });
-
-  if (!result.isConfirmed) return;
-
-  try {
-    await cambiarEstadoPelicula(pelicula.IdPelicula!);
-    Swal.fire({
-      title: '¡Listo!',
-      text: `La película fue ${pelicula.Activa ? 'archivada' : 'desarchivada'}.`,
-      icon: 'success',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff',
-      timer: 1500,
-      showConfirmButton: false
-    });
-    cargarPeliculas();
-  } catch (error) {
-    const mensajeError = error instanceof Error ? error.message : 'No se pudo cambiar el estado.';
-    Swal.fire({
-      title: 'Error',
-      text: mensajeError,
-      icon: 'error',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff'
-    });
+  async function handleArchivar(pelicula: Pelicula) {
+    const confirmado = await alertaConfirmacion(
+      `¿${pelicula.Activa ? 'Archivar' : 'Desarchivar'} película?`,
+      pelicula.Activa 
+        ? `"${pelicula.TituloPelicula}" dejará de aparecer en la cartelera.`
+        : `"${pelicula.TituloPelicula}" volverá a aparecer en la cartelera.`,
+        'Si, archivar'
+    );
+    if (!confirmado) return;
+    try {
+      await cambiarEstadoPelicula(pelicula.IdPelicula!);
+      alertaExito(
+        '¡Listo!', 
+        `La película fue ${pelicula.Activa ? 'archivada' : 'desarchivada'}.`
+      );
+      cargarPeliculas();
+    } catch (error) {
+      const mensajeError = error instanceof Error ? error.message : 'No se pudo cambiar el estado.';
+      alertaError('Error', mensajeError);
+    }
   }
-}
 
   const peliculasFiltradas = peliculas.filter((p) =>
     p.TituloPelicula?.toLowerCase().includes(busqueda.toLowerCase())
@@ -214,11 +156,6 @@ async function handleArchivar(pelicula: Pelicula) {
         </h2>
       </div>
 
-      {error && (
-        <p className="admin-peliculas-error">
-          {error}
-        </p>
-      )}
 
       {/* Formulario */}
       <form onSubmit={handleSubmit} className="admin-pelicula-form">

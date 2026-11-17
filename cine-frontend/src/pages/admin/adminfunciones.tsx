@@ -7,7 +7,6 @@ import { getallSala } from '../../services/salaServices';
 import type { Sala } from '../../services/salaServices';
 import { getPeliculas } from '../../services/peliculaServices';
 import Loader from '../../components/Loader';
-//import Swal from 'sweetalert2';
 import './AdminFunciones.css';
 import { useAlerta } from '../../hooks/useAlerta';
 
@@ -26,8 +25,6 @@ export default function AdminFunciones() {
   const [peliculaSeleccionada, setPeliculaSeleccionada] = useState<Pelicula | null>(null);  // ← Objeto
   const [salaSeleccionada, setSalaSeleccionada] = useState<Sala | null>(null);              // ← Objeto
 
-  const [error, setError] = useState('');
-  const [exito, setExito] = useState('');  
   const [cargando, setCargando] = useState(true);
 
   const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
@@ -35,7 +32,6 @@ export default function AdminFunciones() {
 
  useEffect(() => {
     async function cargarBase() {
-      setError('');
       try {
         const [pelis, salasData] = await Promise.all([
           getPeliculas(),
@@ -45,7 +41,7 @@ export default function AdminFunciones() {
         setSalas(salasData);
       } catch (err) {
         console.log('Error al cargar base', err);
-        setError('No se pudieron obtener los datos iniciales.');
+        alertaError('Error de conexión', 'No se pudieron obtener las películas o salas. Por favor, intentá nuevamente.');
       } finally {
         setCargando(false); 
       }
@@ -61,7 +57,6 @@ export default function AdminFunciones() {
     setPeliculaSeleccionada(null);
     setSalaSeleccionada(null);
     setFuncionEditando(null);
-    setError('');
   }
 
   // Función para cargar los datos en el formulario al editar
@@ -73,9 +68,7 @@ export default function AdminFunciones() {
     setPeliculaSeleccionada(func.pelicula);
     setSalaSeleccionada(func.sala);
     setFuncionEditando(func.IdFuncion!);
-    setError('');
-    setExito('');
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scrolleamos al form
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
   }
 
     // Crear o Actualizar función
@@ -123,7 +116,8 @@ export default function AdminFunciones() {
     if (!IdFuncion) return;
     const confirmado = await alertaConfirmacion(
       '¿Estás seguro?', 
-      '¿Seguro que querés eliminar esta función?'
+      '¿Seguro que querés eliminar esta función?',
+      'Si, Eliminar'
     );
     if (!confirmado) return;
     try {
@@ -138,8 +132,6 @@ export default function AdminFunciones() {
 
 
    async function buscarFunciones(idPelicula: number) {
-    setError('');
-    setExito('');
     try {
       const funcs = await getFuncionesDePelicula(idPelicula);
       setFunciones(funcs);
@@ -182,16 +174,6 @@ export default function AdminFunciones() {
         </h2>
       </div>
 
-      {error && (
-        <p className="admin-funciones-alert-error">
-          {error}
-        </p>
-      )}
-      {exito && (
-        <p className="admin-funciones-alert-success">
-          {exito}
-        </p>
-      )}
 
       {/* FORMULARIO DE CREACIÓN / EDICIÓN */}
       <form onSubmit={handleSubmit} className="admin-funciones-form">

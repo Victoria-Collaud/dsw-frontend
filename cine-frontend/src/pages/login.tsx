@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import Swal from 'sweetalert2';
 import { login } from '../services/authServices'; // Ajusta la ruta a tu servicio si es necesario
+import { useAlerta } from '../hooks/useAlerta.ts';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -11,6 +11,8 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
+
+  const { alertaError } = useAlerta();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -27,21 +29,11 @@ export default function Login() {
       
     } catch (err) {
       const mensajeOriginal = err instanceof Error ? err.message : 'Error al iniciar sesión';
-      
-      // Traducción amigable si el servidor está caído
+      // Traducción si el servidor está caído
       const mensajeError = (mensajeOriginal === 'Failed to fetch') 
         ? 'No nos pudimos conectar con el servidor. Verificá que esté encendido.' 
         : mensajeErrorText(mensajeOriginal);
-
-      //  Alerta con SweetAlert2
-      Swal.fire({
-        title: '¡Atención!',
-        text: mensajeError,
-        icon: 'error',
-        confirmButtonColor: '#e50914',
-        background: '#141414',
-        color: '#fff'
-      });
+      alertaError('¡Atención!', mensajeError);
     } finally {
       setCargando(false);
     }

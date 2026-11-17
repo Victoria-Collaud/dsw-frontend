@@ -3,8 +3,8 @@ import type { FormEvent } from 'react'
 import { getallSala, createSala, deleteSala, updateSala} from '../../services/salaServices'
 import type { Sala } from '../../services/salaServices'
 import Loader from '../../components/Loader'
-import Swal from 'sweetalert2'
 import './AdminSala.css'
+import { useAlerta } from '../../hooks/useAlerta'
 
 export default function AdminSalas() {
   // Estados para manejar la lista de salas
@@ -15,28 +15,26 @@ export default function AdminSalas() {
   const [TipoPantalla, setTipoPantalla] = useState<string>('')
   const [TipoAsientos, setTipoAsientos] = useState<string>('')
   const [precioSala, setPrecioSala] = useState<number | ''>('')
-  // Estado para capturar errores de conexión o validación
-  const [error, setError] = useState('')
-// NUEVO ESTADO POR UPDATE: Guarda el ID de la sala si estamos editando, o null si estamos creando
+  //const [error, setError] = useState('')
   const [salaEditando, setSalaEditando] = useState<number | null>(null)
-  
   const [cargando, setCargando] = useState(true);
+  const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
 
-  // Cargar las salas al montar el componente
   useEffect(() => {
     cargarSalas()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Función para obtener las salas desde el backend
   async function cargarSalas() {
-    setError('')
+    
     setCargando(true);
     try {
       const data = await getallSala()
       setSalas(data)
     }catch (error) {
       console.log('Error al buscar las salas', error)
-      setError('No se pudieron obtener las salas del servidor.')
+      alertaError('Error de conexión', 'No se pudieron obtener las salas. Por favor, intentá nuevamente.');
     } finally {
       setCargando(false); 
   } }
@@ -49,7 +47,6 @@ export default function AdminSalas() {
     setTipoPantalla('')
     setTipoAsientos('')
     setSalaEditando(null) // Reseteamos el modo edición
-    setError('')
   }
 
   // CARGAR LOS DATOS DE UNA SALA EN EL FORMULARIO
@@ -60,21 +57,19 @@ export default function AdminSalas() {
     setTipoPantalla(sala.TipoPantalla)
     setTipoAsientos(sala.TipoAsientos)
     setSalaEditando(sala.NumSala) // Guardamos el ID para saber que estamos editando
-    setError('')
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
   }
 
-  // Manejador del formulario 
-  async function handleSubmit(e: FormEvent) {
+   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-
     if (!NumSala || !capacidad || !precioSala) {
-      setError('Por favor completá todos los campos.')
+      alertaAdvertencia('Campos incompletos', 'Por favor completá todos los campos.')
       return
     }
     if (salaEditando === null) {
       const salaExistente = salas.some(s => s.NumSala === Number(NumSala))
       if (salaExistente) {
-        setError(`Ya existe una sala registrada con el número #${NumSala}. Por favor elegí otro número.`)
+        alertaAdvertencia('Sala duplicada', `Ya existe una sala registrada con el número #${NumSala}. Por favor elegí otro número.`)
         return
       }
     }
@@ -86,75 +81,41 @@ export default function AdminSalas() {
         TipoAsientos: TipoAsientos,
         PrecioSala: Number(precioSala)
       }
-
       if (salaEditando) {
-        
         await updateSala(salaEditando, salaData)
+        alertaExito('¡Actualizada!', 'La sala fue actualizada correctamente.');
       } else {
-       
         await createSala(salaData)
+        alertaExito('¡Creada!', 'La sala fue creada correctamente.');
       }
-
       limpiarFormulario()
       cargarSalas()
     } catch (error) {
       console.log('Error al guardar la sala', error)
-      setError(salaEditando ? 'No se pudo actualizar la sala.' : 'No se pudo crear la sala.')
+      const mensajeError = error instanceof Error ? error.message : 'Error al guardar la sala.';
+      alertaError('Error', mensajeError);
     }
   }
 
 async function handleDelete(NumSala: number) {
-  if (!NumSala) return;
-
- 
-  const result = await Swal.fire({
-    title: '¿Estás seguro?',
-    text: `¿Seguro que querés eliminar la Sala #${NumSala}?`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#e50914', 
-    cancelButtonColor: '#222',     
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-    background: '#141414',         
-    color: '#fff'                 
-  });
-
-  // Si el usuario cancela, no hacemos nada
-  if (!result.isConfirmed) return;
-
-  try {
-    await deleteSala(NumSala);
-    
-    Swal.fire({
-      title: '¡Eliminado!',
-      text: 'La sala ha sido eliminada correctamente.',
-      icon: 'success',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff',
-      timer: 1500,
-      showConfirmButton: false
-    });
-
-    cargarSalas();
-  } catch (error) {
-    console.error('Error al borrar la sala', error);
-    // ALERTA DE ERROR ESPECÍFICA
-    const mensajeError = error instanceof Error 
-      ? error.message 
-      : 'No se pudo eliminar la sala.';
-
-    Swal.fire({
-      title: 'No se puede eliminar',
-      text: mensajeError, // muestra el mensaje de error real
-      icon: 'error',
-      confirmButtonColor: '#e50914',
-      background: '#141414',
-      color: '#fff'
-    });
+    if (!NumSala) return;
+    const confirmado = await alertaConfirmacion(
+      '¿Estás seguro?',
+      `¿Seguro que querés eliminar la Sala #${NumSala}?`,
+      'Sí, eliminar'
+    );
+    if (!confirmado) return;
+    try {
+      await deleteSala(NumSala);
+      alertaExito('¡Eliminada!', 'La sala ha sido eliminada correctamente.');
+      cargarSalas();
+    } catch (error) {
+      console.error('Error al borrar la sala', error);
+      const mensajeError = error instanceof Error ? error.message : 'No se pudo eliminar la sala.';
+      alertaError('No se puede eliminar', mensajeError);
+    }
   }
-}
+
 
 if (cargando) {
       return <Loader mensaje="Cargando funciones..." />;
@@ -169,11 +130,6 @@ if (cargando) {
         </h2>
       </div>
 
-      {error && (
-        <p className="admin-salas-error">
-          {error}
-        </p>
-      )}
 {/* Formulario de Alta/Edición de Sala */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: '#141414', border: '1px solid #222', padding: '25px', borderRadius: '4px', marginBottom: '30px' }}>
         <h3 style={{ fontSize: '1.1rem', color: '#fff', margin: '0 0 10px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>

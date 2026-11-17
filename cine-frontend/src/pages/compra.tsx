@@ -7,20 +7,17 @@ import type { Funcion } from '../services/funcionesServices';
 import { getAsientosDeSala } from '../services/salaServices.ts';
 import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
 import '../pages/Compra.css';
+import { useAlerta } from '../hooks/useAlerta.ts';
 
 
 export default function Compra() {
   const { funcionId } = useParams<{ funcionId: string }>();
   const navigate = useNavigate();
 
-
   const [funcion, setFuncion] = useState<Funcion | null>(null);
   const [cargando, setCargando] = useState(true);
-  //const [cantidad, setCantidad] = useState<number>(1);
   const [metodoPago, setMetodoPago] = useState<Metodopago>(Metodopago.MERCADO_PAGO);
-  const [error, setError] = useState('');
   const [exito, setExito] = useState(false);
-
 
   const usuario = obtenerUsuarioDesdeToken();
    //  Estados para los asientos
@@ -28,6 +25,7 @@ export default function Compra() {
   const [asientosOcupados, setAsientosOcupados] = useState<string[]>([]);
   const [asientosSeleccionados, setAsientosSeleccionados] = useState<string[]>([]);
 
+  const { alertaExito, alertaError, alertaAdvertencia } = useAlerta();
 
   useEffect(() => {
     async function cargarFuncion() {
@@ -35,7 +33,6 @@ export default function Compra() {
       try {
         const data = await getFuncionPorId(Number(funcionId));
         setFuncion(data);
-
 
         // Traemos los asientos de la sala y los ocupados de la función
         const [asientos, ocupados] = await Promise.all([
@@ -48,13 +45,13 @@ export default function Compra() {
 
       } catch (err) {
         console.error(err);
-        setError('No se pudo cargar la función seleccionada.');
+        alertaError('Error', 'No se pudo cargar la función.')
       } finally {
         setCargando(false);
       }
     }
     cargarFuncion();
-  }, [funcionId]);
+  }, [funcionId, alertaError]);
 
 
     function toggleAsiento(asiento: string) { //!!
@@ -64,24 +61,21 @@ export default function Compra() {
       setAsientosSeleccionados(asientosSeleccionados.filter(a => a !== asiento));
     } else {
       if (asientosSeleccionados.length >= 5) {
-        setError('Solo podés seleccionar hasta 5 asientos.');
+        alertaAdvertencia('Límite alcanzado', 'Solo podés seleccionar hasta 5 asientos.');
         return;
       }
       setAsientosSeleccionados([...asientosSeleccionados, asiento]);
     }
   }
 
-
   if (cargando) {
     return <Loader mensaje="Cargando..." />
   }
-
 
   if (!funcion) {
     return <p className="compra-not-found">Función no encontrada.</p>;
 
   }
-
 
   const precioUnitario = funcion.sala.PrecioSala;
   const total = asientosSeleccionados.length * precioUnitario;
@@ -89,23 +83,22 @@ export default function Compra() {
 
   async function handleComprar(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     if (!usuario || !usuario.idUsuario) {
-      setError('Tenés que iniciar sesión para comprar.');
+      alertaError('Sesión requerida', 'Tenés que iniciar sesión para comprar.');
       return;
     }
     if (asientosSeleccionados.length === 0) {
-      setError('Seleccioná al menos un asiento.');
+      alertaAdvertencia('Sin asientos', 'Seleccioná al menos un asiento.');
       return;
     }
     const funcionActual = funcion;
     if (!funcionActual) {
-      setError('No se encontró la función.');
+      alertaError('Función no encontrada', 'No se encontró la función seleccionada.');
       return;
     }
     const capacidadMaxima = funcionActual.CapacidadDisponible ?? 0;
     if (asientosSeleccionados.length > capacidadMaxima) {
-      setError(`Solo quedan ${capacidadMaxima} entradas disponibles para esta función.`);
+      alertaError('Capacidad excedida', `Solo quedan ${capacidadMaxima} entradas disponibles para esta función.`);
       return;
     }
     try {
@@ -116,9 +109,8 @@ export default function Compra() {
         IdUsuario: usuario.idUsuario,
         IdFuncion: Number(funcionId)    
       });
-
-
       setExito(true);
+      alertaExito('¡Compra exitosa!', 'Redirigiendo a la cartelera...');
       setTimeout(() => {
         navigate('/', { state: { compraExitosa: true } });
       }, 2000);
@@ -126,12 +118,9 @@ export default function Compra() {
 
     } catch (err) {
       console.error(err);
-     
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Hubo un error al procesar la compra.');
-      }
+      const mensajeError = err instanceof Error ? err.message : 'Hubo un error al procesar la compra.';
+      // Alerta de error del backend
+      alertaError('Error al comprar', mensajeError);
     }
   }
 
@@ -170,9 +159,7 @@ export default function Compra() {
         <p className="compra-disponibles">Asientos disponibles: {funcion.CapacidadDisponible}</p>
       </div>
 
-      {error && <p className="compra-alert-error">{error}</p>}
-      {exito && <p className="compra-alert-success">¡Compra exitosa! Redirigiendo...</p>}
-
+      
       {/* MAPA DE ASIENTOS */}
       <div className="compra-mapa-seccion">
         <h3>Seleccioná tus asientos:</h3>
