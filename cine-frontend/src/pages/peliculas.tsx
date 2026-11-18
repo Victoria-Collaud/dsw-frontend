@@ -6,7 +6,10 @@ import { getGeneros } from '../services/generosServices';
 import type { Genero } from '../services/generosServices';
 import Loader from '../components/Loader';
 import { getFuncionesDePelicula, type Funcion } from '../services/funcionesServices.ts';
+import '../pages/Peliculas.css';
+
 export default function Peliculas() {
+
   const location = useLocation();
 
   const [peliculas, setPeliculas] = useState<Pelicula[]>([]);

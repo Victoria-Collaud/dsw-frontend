@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { getMisCompras } from '../services/compraServices';
 import type { Compra } from '../services/compraServices';
 import Loader from '../components/Loader';
-
+import '../pages/MisCompras.css';
 export default function MisCompras() {
   const [compras, setCompras] = useState<Compra[]>([]);
   const [cargando, setCargando] = useState(true);

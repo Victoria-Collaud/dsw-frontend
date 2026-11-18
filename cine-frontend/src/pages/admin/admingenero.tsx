@@ -14,7 +14,7 @@ export default function AdminGeneros() {
 
   useEffect(() => {
     cargarGeneros()
-  }, [])
+  }, )
 
   async function cargarGeneros() {
     setCargando(true);

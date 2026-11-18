@@ -47,7 +47,7 @@ export default function AdminFunciones() {
       }
     }
     cargarBase();
-  }, []);
+  }, );
 
   // Función para limpiar el formulario
   function limpiarFormulario() {

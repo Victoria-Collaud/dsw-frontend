@@ -15,7 +15,7 @@ import AdminGeneros from './pages/admin/admingenero.tsx'
 import Registro from './pages/registro.tsx';
 import MisCompras from './pages/miscompras.tsx';
 import ErrorBoundary from './components/ErrorBoundary';
-
+import './App.css'; 
 export default function App() {
   return (
     <BrowserRouter>

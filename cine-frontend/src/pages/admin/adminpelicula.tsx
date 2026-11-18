@@ -23,7 +23,7 @@ export default function AdminPeliculas() {
 
   useEffect(() => {
     cargarPeliculas()
-  }, [])
+  }, )
 
   async function cargarPeliculas() {
     

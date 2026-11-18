@@ -16,7 +16,7 @@ export function cerrarSesionPorExpiracion() {
     color: '#fff',
     allowOutsideClick: false,
     allowEscapeKey: false,
-    showConfirmButton: true, // 👈 Le damos un botón para que el usuario decida
+    showConfirmButton: true, // Le damos un botón para que el usuario decida
     confirmButtonText: 'Ir al Login'
   }).then(() => {
     window.location.href = '/login'; // Redirección forzada al login
