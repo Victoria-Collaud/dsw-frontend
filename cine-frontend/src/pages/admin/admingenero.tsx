@@ -1,20 +1,38 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { getGeneros, createGenero, updateGenero, deleteGenero } from '../../services/generosServices'
 import { type Genero } from '../../services/generosServices'
 import Loader from '../../components/Loader';
 import './AdminGenero.css'
 import { useAlerta } from '../../hooks/useAlerta';
 
+//interfaz de datos de useForm
+interface GeneroFormData {
+  NombreGenero: string;
+}
+
 export default function AdminGeneros() {
   const [generos, setGeneros] = useState<Genero[]>([])
-  const [nombreGenero, setNombreGenero] = useState('')
+  //const [nombreGenero, setNombreGenero] = useState('')
   const [generoEditando, setGeneroEditando] = useState<number | null>(null)
   const [cargando, setCargando] = useState(true);
-  const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
+  const { alertaConfirmacion, alertaExito, alertaError } = useAlerta();
+
+  // Configuramos react-hook-form
+  const { 
+    register, 
+    handleSubmit, 
+    reset, 
+    setValue, 
+    formState: { errors } 
+  } = useForm<GeneroFormData>({
+    defaultValues: { NombreGenero: '' }
+  });
 
   useEffect(() => {
     cargarGeneros()
-  }, )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function cargarGeneros() {
     setCargando(true);
@@ -29,29 +47,25 @@ export default function AdminGeneros() {
   }
 
   function limpiarFormulario() {
-    setNombreGenero('')
+    reset({ NombreGenero: '' }); // Limpiamos el form con reset
     setGeneroEditando(null)
   }
 
   function handleEditar(genero: Genero) {
-    setNombreGenero(genero.NombreGenero)
+    setValue('NombreGenero', genero.NombreGenero); // Actualizamos el valor del formulario
     setGeneroEditando(genero.CodGenero!)
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   }
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    if (!nombreGenero.trim()) {
-      alertaAdvertencia('Campos incompletos', 'El nombre del género es obligatorio.'); 
-      return
-    }
+   // Submit recibe los datos ya validados
+  const onSubmit = async (data: GeneroFormData) => {
     try {
       if (generoEditando) {
-        await updateGenero(generoEditando, { NombreGenero: nombreGenero })
-        alertaExito('¡Actualizado!', 'El género fue actualizado correctamente.'); 
+        await updateGenero(generoEditando, { NombreGenero: data.NombreGenero })
+        alertaExito('Actualizado', 'El género fue actualizado correctamente.'); 
       } else {
-        await createGenero({ NombreGenero: nombreGenero })
-        alertaExito('¡Creado!', 'El género fue creado correctamente.');
+        await createGenero({ NombreGenero: data.NombreGenero })
+        alertaExito('Creado', 'El género fue creado correctamente.');
       }
       limpiarFormulario()
       cargarGeneros()
@@ -62,12 +76,12 @@ export default function AdminGeneros() {
     }
   }
 
-    async function handleDelete(CodGenero?: number) {
-    if (!CodGenero) return;
+  async function handleDelete(CodGenero?: number) {
+      if (!CodGenero) return;
     const confirmado = await alertaConfirmacion(
       '¿Estás seguro?', 
       '¿Seguro que querés eliminar este género?',
-      'Si, elmininar'
+      'Si, elimininar'
     );
     if (!confirmado) return;
     try {
@@ -97,7 +111,7 @@ export default function AdminGeneros() {
 
 
       {/* Formulario */}
-      <form onSubmit={handleSubmit} className="admin-generos-form">
+      <form onSubmit={handleSubmit(onSubmit)} className="admin-generos-form">
         <h3 className="admin-generos-form-title">
           {generoEditando ? ' Editar Género' : 'Agregar Nuevo Género'}
         </h3>
@@ -107,10 +121,18 @@ export default function AdminGeneros() {
           <input
             type="text"
             placeholder="Ej: Acción, Comedia, Terror..."
-            value={nombreGenero}
-            onChange={(e) => setNombreGenero(e.target.value)}
+             {...register('NombreGenero', { 
+              required: 'El nombre es obligatorio.',
+              validate: value => value.trim() !== '' || 'No puede estar vacío o tener solo espacios.'
+            })} 
             className="admin-generos-input"
           />
+          {/* Mostramos el error de validación si existe */}
+          {errors.NombreGenero && (
+            <p style={{ color: '#ff4d4d', fontSize: '0.85rem', marginTop: '4px' }}>
+              {errors.NombreGenero.message}
+            </p>
+          )}
         </div>
         
         <div className="admin-generos-actions">

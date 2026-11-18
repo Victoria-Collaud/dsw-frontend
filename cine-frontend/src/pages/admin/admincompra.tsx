@@ -1,17 +1,29 @@
 import { useState, useEffect } from 'react';
 import { getCompras } from '../../services/compraServices';
 import type { Compra } from '../../services/compraServices';
+import { useForm, useWatch } from 'react-hook-form'; 
 import './AdminCompra.css'; 
 import Loader from '../../components/Loader';
+
+// definimos la interfaz para las fechas del filtro
+interface FiltroFechaData {
+  fechaDesde: string;
+  fechaHasta: string;
+}
 
 export default function AdminCompras() {
   const [compras, setCompras] = useState<Compra[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
-  //  Estados para los filtros de fecha
-  const [fechaDesde, setFechaDesde] = useState('');
-  const [fechaHasta, setFechaHasta] = useState('');
+   // Configuramos el formulario
+    const { register, control, reset } = useForm<FiltroFechaData>({
+    defaultValues: { fechaDesde: '', fechaHasta: '' }
+  });
+
+  // "watch" observa los valores de los inputs en tiempo real
+  const fechaDesde = useWatch({ control, name: 'fechaDesde' });
+  const fechaHasta = useWatch({ control, name: 'fechaHasta' });
 
   useEffect(() => {
     async function cargar() {
@@ -28,25 +40,19 @@ export default function AdminCompras() {
     cargar();
   }, []);
 
-  //  Lógica de filtrado por fecha
+    // el filtrado usa los valores de "watch"
   const comprasFiltradas = compras.filter((compra) => {
-    if (!fechaDesde && !fechaHasta) return true; // Si no hay filtros, muestra todo
-
+    if (!fechaDesde && !fechaHasta) return true;
     const fechaCompra = new Date(compra.Fecha);
-    
-    // Ajustamos las fechas para comparar solo el día (ignorando la hora)
     fechaCompra.setHours(0, 0, 0, 0);
-
     if (fechaDesde) {
       const desde = new Date(`${fechaDesde}T00:00:00`);
       if (fechaCompra < desde) return false;
     }
-
     if (fechaHasta) {
       const hasta = new Date(`${fechaHasta}T23:59:59`);
       if (fechaCompra > hasta) return false;
     }
-
     return true;
   });
 
@@ -63,23 +69,21 @@ export default function AdminCompras() {
           <label className="admin-compra-label">Desde:</label>
           <input 
             type="date" 
-            value={fechaDesde} 
-            onChange={(e) => setFechaDesde(e.target.value)}
+            {...register('fechaDesde')}
             className="admin-compra-input"
           />
           
           <label className="admin-compra-label" style={{ marginLeft: '5px' }}>Hasta:</label>
           <input 
             type="date" 
-            value={fechaHasta} 
-            onChange={(e) => setFechaHasta(e.target.value)}
+            {...register('fechaHasta')}
             className="admin-compra-input"
           />
 
           {/* Botón para limpiar filtros */}
           {(fechaDesde || fechaHasta) && (
             <button 
-              onClick={() => { setFechaDesde(''); setFechaHasta(''); }}
+              onClick={() => { reset({ fechaDesde: '', fechaHasta: '' }); }} //limpiamos con reset
               className="admin-compra-btn-clear"
             >
               Limpiar
