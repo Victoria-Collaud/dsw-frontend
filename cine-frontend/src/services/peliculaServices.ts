@@ -107,9 +107,16 @@ export async function buscarPeliculaPorTitulo(titulo: string): Promise<Pelicula[
 export async function getPeliculaPorId(id: number): Promise<Pelicula> {
   const res = await fetchApi(`${API_URL}/peliculas/${id}`, {
   });
+  if (res.status === 404) {
+    const peliculas = await getPeliculas();
+    const pelicula = peliculas.find((item) => item.IdPelicula === id);
+    if (pelicula) return pelicula;
+    throw new Error('Película no encontrada');
+  }
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(errorData.mensaje || 'Error al obtener película');
   }
-  return await res.json();
+  const json = await res.json();
+  return json.data || json;
 }
