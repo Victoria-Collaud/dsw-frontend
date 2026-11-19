@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { FormEvent } from 'react';
+//import type { FormEvent } from 'react';
 import { createFuncion, deleteFuncion, getFuncionesDePelicula, updateFuncion } from '../../services/funcionesServices';
 import type { Funcion } from '../../services/funcionesServices';
 import type { Pelicula } from '../../services/peliculaServices';
@@ -9,6 +9,19 @@ import { getPeliculas } from '../../services/peliculaServices';
 import Loader from '../../components/Loader';
 import './AdminFunciones.css';
 import { useAlerta } from '../../hooks/useAlerta';
+import { useForm } from 'react-hook-form';
+
+interface FuncionFormData {
+  Idioma: string;
+  Fecha: string;
+  Horario: string;
+  peliculaId: number;
+  salaId: number;
+}
+
+interface BusquedaFormData {
+  peliculaABuscar: number;
+}
 
 export default function AdminFunciones() {
 
@@ -16,19 +29,31 @@ export default function AdminFunciones() {
   const [peliculas, setPeliculas] = useState<Pelicula[]>([]);
   const [salas, setSalas] = useState<Sala[]>([]);
   const [peliculaBuscada, setPeliculaBuscada] = useState<Pelicula | null>(null);
-  const [peliculaABuscar, setPeliculaABuscar] = useState<number | ''>('');
+  //const [peliculaABuscar, setPeliculaABuscar] = useState<number | ''>('');
   const [funcionEditando, setFuncionEditando] = useState<number | null>(null);
   // Estados del formulario
-  const [Idioma, setIdioma] = useState<string>('');
-  const [Fecha, setFecha] = useState<string>('');
-  const [Horario, setHorario] = useState<string>('');
-  const [peliculaSeleccionada, setPeliculaSeleccionada] = useState<Pelicula | null>(null);  // ← Objeto
-  const [salaSeleccionada, setSalaSeleccionada] = useState<Sala | null>(null);              // ← Objeto
+  //const [Idioma, setIdioma] = useState<string>('');
+  //const [Fecha, setFecha] = useState<string>('');
+  //const [Horario, setHorario] = useState<string>('');
+  //const [peliculaSeleccionada, setPeliculaSeleccionada] = useState<Pelicula | null>(null);  // ← Objeto
+  //const [salaSeleccionada, setSalaSeleccionada] = useState<Sala | null>(null);              // ← Objeto
 
   const [cargando, setCargando] = useState(true);
 
   const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
   
+    const { 
+    register: registerFuncion, 
+    handleSubmit: handleSubmitFuncion, 
+    reset: resetFuncion,
+    setValue: setValueFuncion
+  } = useForm<FuncionFormData>();
+
+  const { 
+    register: registerBusqueda, 
+    handleSubmit: handleSubmitBusqueda
+  } = useForm<BusquedaFormData>();
+
 
  useEffect(() => {
     async function cargarBase() {
@@ -47,49 +72,45 @@ export default function AdminFunciones() {
       }
     }
     cargarBase();
-  }, );
+    }, [alertaError]); //??
 
   // Función para limpiar el formulario
   function limpiarFormulario() {
-    setIdioma('');
-    setFecha('');
-    setHorario('');
-    setPeliculaSeleccionada(null);
-    setSalaSeleccionada(null);
+    resetFuncion({ Idioma: '', Fecha: '', Horario: '', peliculaId: 0, salaId: 0 });
     setFuncionEditando(null);
   }
 
   // Función para cargar los datos en el formulario al editar
   function handleEditar(func: Funcion) {
-    setIdioma(func.Idioma);
-    // Formateamos la fecha ISO a YYYY-MM-DD para el input type="date"
-    setFecha(func.Fecha.split('T')[0]); 
-    setHorario(func.Horario);
-    setPeliculaSeleccionada(func.pelicula);
-    setSalaSeleccionada(func.sala);
+    setValueFuncion('Idioma', func.Idioma);
+    setValueFuncion('Fecha', func.Fecha.split('T')[0]);
+    setValueFuncion('Horario', func.Horario);
+    setValueFuncion('peliculaId', func.pelicula.IdPelicula!);
+    setValueFuncion('salaId', func.sala.NumSala);
     setFuncionEditando(func.IdFuncion!);
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   }
 
     // Crear o Actualizar función
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!Idioma || !Fecha || !Horario || !peliculaSeleccionada || !salaSeleccionada) {
-      alertaAdvertencia('Campos incompletos', 'Por favor completá todos los campos.');
-      return; 
-    }
-    // Juntamos la fecha y el horario en un solo objeto Date
-    const fechaHoraFuncion = new Date(`${Fecha}T${Horario}`);
+  const onSubmitFuncion = async (data: FuncionFormData) => {
+    const fechaHoraFuncion = new Date(`${data.Fecha}T${data.Horario}`);
     const ahora = new Date();
     if (fechaHoraFuncion < ahora) {
       alertaAdvertencia('Fecha inválida', 'No podés crear una función con una fecha u horario que ya pasó.');
       return; 
     }
     try {
+      const peliculaSeleccionada = peliculas.find(p => p.IdPelicula === data.peliculaId);
+      const salaSeleccionada = salas.find(s => s.NumSala === data.salaId);
+
+      if (!peliculaSeleccionada || !salaSeleccionada) {
+        alertaError('Error', 'Película o sala no válida.');
+        return;
+      }
       const funcionData = {
-        Idioma,
-        Fecha,
-        Horario,
+        Idioma: data.Idioma,
+        Fecha: data.Fecha,
+        Horario: data.Horario,
         pelicula: peliculaSeleccionada,
         sala: salaSeleccionada
       };
@@ -101,7 +122,6 @@ export default function AdminFunciones() {
         alertaExito('¡Creada!', 'La función fue creada exitosamente.');
       }
       limpiarFormulario();
-      // Si había una búsqueda activa, refrescamos la lista
       if (peliculaBuscada?.IdPelicula !== undefined) {
         await buscarFunciones(peliculaBuscada.IdPelicula);
       }
@@ -112,6 +132,14 @@ export default function AdminFunciones() {
     }
   }
   
+  const onSubmitBusqueda = async (data: BusquedaFormData) => {
+    if (!data.peliculaABuscar) {
+      alertaAdvertencia('Atención', 'Seleccioná una película primero.');
+      return;
+    }
+    await buscarFunciones(Number(data.peliculaABuscar));
+  }
+
   async function handleDelete(IdFuncion?: number) {
     if (!IdFuncion) return;
     const confirmado = await alertaConfirmacion(
@@ -130,8 +158,7 @@ export default function AdminFunciones() {
     }
   }
 
-
-   async function buscarFunciones(idPelicula: number) {
+  async function buscarFunciones(idPelicula: number) {
     try {
       const funcs = await getFuncionesDePelicula(idPelicula);
       setFunciones(funcs);
@@ -145,13 +172,13 @@ export default function AdminFunciones() {
     }
   }
 
-   async function handleBuscar() {
+  /* async function handleBuscar() {
     if (!peliculaABuscar) {
       alertaAdvertencia('Atención', 'Seleccioná una película primero.');
       return;
     }
     await buscarFunciones(Number(peliculaABuscar));
-  }
+  } */
 
   const formatearFecha = (f: string) => {
     try {
@@ -176,7 +203,7 @@ export default function AdminFunciones() {
 
 
       {/* FORMULARIO DE CREACIÓN / EDICIÓN */}
-      <form onSubmit={handleSubmit} className="admin-funciones-form">
+      <form onSubmit={handleSubmitFuncion(onSubmitFuncion)} className="admin-funciones-form">
         <h3 className="admin-funciones-form-title">
           {funcionEditando ? ` Editar Función #${funcionEditando}` : 'Agregar Nueva Función'}
         </h3>
@@ -184,11 +211,7 @@ export default function AdminFunciones() {
         <div className="admin-funciones-field">
           <label className="admin-funciones-label">Película:</label>
           <select
-            value={peliculaSeleccionada?.IdPelicula || ''}
-            onChange={(e) => {
-              const id = Number(e.target.value);
-              setPeliculaSeleccionada(peliculas.find(p => p.IdPelicula === id) || null);
-            }}
+           {...registerFuncion('peliculaId', { required: true, valueAsNumber: true })}
             className="admin-funciones-select"
           >
             <option value="">-- Seleccioná una película --</option>
@@ -201,11 +224,7 @@ export default function AdminFunciones() {
         <div className="admin-funciones-field">
           <label className="admin-funciones-label">Sala:</label>
           <select
-            value={salaSeleccionada?.NumSala || ''}
-            onChange={(e) => {
-              const num = Number(e.target.value);
-              setSalaSeleccionada(salas.find(s => s.NumSala === num) || null);
-            }}
+            {...registerFuncion('salaId', { required: true, valueAsNumber: true })}
             className="admin-funciones-select"
           >
             <option value="">-- Seleccioná una sala --</option>
@@ -220,8 +239,7 @@ export default function AdminFunciones() {
         <div className="admin-funciones-field">
           <label className="admin-funciones-label">Idioma:</label>
           <select 
-            value={Idioma} 
-            onChange={(e) => setIdioma(e.target.value)}
+           {...registerFuncion('Idioma', { required: true })}
             className="admin-funciones-select"
           >
             <option value="">-- Seleccioná --</option>
@@ -234,8 +252,7 @@ export default function AdminFunciones() {
           <label className="admin-funciones-label">Fecha:</label>
           <input 
             type="date" 
-            value={Fecha} 
-            onChange={(e) => setFecha(e.target.value)}
+            {...registerFuncion('Fecha', { required: true })}
             className="admin-funciones-input" 
           />
         </div>
@@ -244,8 +261,7 @@ export default function AdminFunciones() {
           <label className="admin-funciones-label">Horario:</label>
           <input 
             type="time" 
-            value={Horario} 
-            onChange={(e) => setHorario(e.target.value)}
+            {...registerFuncion('Horario', { required: true })}
             className="admin-funciones-input" 
           />
         </div>
@@ -270,16 +286,15 @@ export default function AdminFunciones() {
 
       </form>
 
-      {/*ECCIÓN DE BÚSQUEDA*/}
+      {/*SECCIÓN DE BÚSQUEDA*/}
       <div className="admin-funciones-search-section">
         <h3 className="admin-funciones-search-title">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg> Buscar Funciones de una Película
         </h3>
 
-        <div className="admin-funciones-search-bar">
+        <form onSubmit={handleSubmitBusqueda(onSubmitBusqueda)} className="admin-funciones-search-bar">
           <select
-            value={peliculaABuscar}
-            onChange={(e) => setPeliculaABuscar(Number(e.target.value))}
+            {...registerBusqueda('peliculaABuscar', { required: true, valueAsNumber: true })}
             className="admin-funciones-search-select"
           >
             <option value="">-- Seleccioná una película --</option>
@@ -289,13 +304,12 @@ export default function AdminFunciones() {
           </select>
 
           <button
-            onClick={handleBuscar}
+            type="submit"
             className="admin-funciones-btn-search"
           >
             Buscar
           </button>
-
-        </div>
+        </form>
 
         {/* LISTADO DE RESULTADOS */}
         {peliculaBuscada && (
