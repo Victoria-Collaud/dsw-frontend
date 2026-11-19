@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { crearCompra, getAsientosOcupados, Metodopago } from '../services/compraServices';
 import { getFuncionPorId } from '../services/funcionesServices';
 import Loader from '../components/Loader';
-import type { Funcion } from '../services/funcionesServices';
+
 import { getAsientosDeSala } from '../services/salaServices.ts';
 import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
 import '../pages/Compra.css';
@@ -13,52 +14,75 @@ import { useAlerta } from '../hooks/useAlerta.ts';
 export default function Compra() {
   const { funcionId } = useParams<{ funcionId: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient(); 
 
-  const [funcion, setFuncion] = useState<Funcion | null>(null);
-  const [cargando, setCargando] = useState(true);
-  const [metodoPago, setMetodoPago] = useState<Metodopago>(Metodopago.MERCADO_PAGO);
-  const [exito, setExito] = useState(false);
-
-  const usuario = obtenerUsuarioDesdeToken();
-   //  Estados para los asientos
-  const [asientosDisponibles, setAsientosDisponibles] = useState<string[]>([]);
-  const [asientosOcupados, setAsientosOcupados] = useState<string[]>([]);
+  const idFuncionNum = Number(funcionId); 
+  const idFuncionValido = Number.isFinite(idFuncionNum) && idFuncionNum > 0; 
+const [metodoPago, setMetodoPago] = useState<Metodopago>(Metodopago.MERCADO_PAGO);
   const [asientosSeleccionados, setAsientosSeleccionados] = useState<string[]>([]);
-
+  const usuario = obtenerUsuarioDesdeToken();
   const { alertaExito, alertaError, alertaAdvertencia } = useAlerta();
 
-  useEffect(() => {
-    async function cargarFuncion() {
-      if (!funcionId) return;
-      try {
-        const data = await getFuncionPorId(Number(funcionId));
-        setFuncion(data);
+ 
+  const {
+    data: funcion,
+    isLoading: cargandoFuncion,
+    isError: errorFuncion,
+  } = useQuery({
+    queryKey: ['funciones', 'detalle', idFuncionNum],
+    queryFn: () => getFuncionPorId(idFuncionNum),
+    enabled: idFuncionValido,
+  });
 
-        // Traemos los asientos de la sala y los ocupados de la función
-        const [asientos, ocupados] = await Promise.all([
-          getAsientosDeSala(data.sala.NumSala),
-          getAsientosOcupados(Number(funcionId))
-        ]);
-        setAsientosDisponibles(asientos);
-        setAsientosOcupados(ocupados);
+  const numSala = funcion?.sala?.NumSala; 
 
+  //  Consulta de asientos de la sala (espera a numSala)
+  const {
+    data: asientosDisponibles = [],
+    isLoading: cargandoAsientosSala,
+  } = useQuery({
+    queryKey: ['salas', 'asientos', numSala],
+    queryFn: () => getAsientosDeSala(numSala!),
+    enabled: Boolean(numSala),
+  });
 
-      } catch (err) {
-        console.error(err);
-        alertaError('Error', 'No se pudo cargar la función.')
-      } finally {
-        setCargando(false);
-      }
-    }
-    cargarFuncion();
-  }, [funcionId, alertaError]);
+  // Consulta de asientos ocupados de la función
+  const {
+    data: asientosOcupados = [],
+    isLoading: cargandoOcupados,
+  } = useQuery({
+    queryKey: ['compras', 'asientosOcupados', idFuncionNum],
+    queryFn: () => getAsientosOcupados(idFuncionNum),
+    enabled: idFuncionValido,
+  });
 
+  
+  const compraMutation = useMutation({
+    mutationFn: crearCompra,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['compras', 'asientosOcupados', idFuncionNum] });
+      queryClient.invalidateQueries({ queryKey: ['funciones'] });
+      queryClient.invalidateQueries({ queryKey: ['misCompras'] });
 
-    function toggleAsiento(asiento: string) { //!!
+      setAsientosSeleccionados([]);
+      alertaExito('¡Compra exitosa!', 'Redirigiendo a la cartelera...');
+      setTimeout(() => {
+        navigate('/', { state: { compraExitosa: true } });
+      }, 2000);
+    },
+    onError: (err: unknown) => {
+      console.error(err);
+      const mensajeError =
+        err instanceof Error ? err.message : 'Hubo un error al procesar la compra.';
+      alertaError('Error al comprar', mensajeError);
+    },
+  });
+
+  function toggleAsiento(asiento: string) {
     if (asientosOcupados.includes(asiento)) return;
-   
+
     if (asientosSeleccionados.includes(asiento)) {
-      setAsientosSeleccionados(asientosSeleccionados.filter(a => a !== asiento));
+      setAsientosSeleccionados(asientosSeleccionados.filter((a) => a !== asiento));
     } else {
       if (asientosSeleccionados.length >= 5) {
         alertaAdvertencia('Límite alcanzado', 'Solo podés seleccionar hasta 5 asientos.');
@@ -68,20 +92,28 @@ export default function Compra() {
     }
   }
 
+  // Estado de carga unificado desde las queries
+  const cargando =
+    cargandoFuncion || (Boolean(numSala) && cargandoAsientosSala) || cargandoOcupados;
+
+  if (!idFuncionValido) { 
+    return <p className="compra-not-found">Función inválida.</p>; 
+  } 
+
   if (cargando) {
-    return <Loader mensaje="Cargando..." />
+    return <Loader mensaje="Cargando..." />;
   }
 
-  if (!funcion) {
+  if (errorFuncion || !funcion) { 
     return <p className="compra-not-found">Función no encontrada.</p>;
 
   }
 
   const precioUnitario = funcion.sala.PrecioSala;
   const total = asientosSeleccionados.length * precioUnitario;
+  const procesandoCompra = compraMutation.isPending || compraMutation.isSuccess; 
 
-
-  async function handleComprar(e: React.FormEvent) {
+  function handleComprar(e: React.FormEvent) {
     e.preventDefault();
     if (!usuario || !usuario.idUsuario) {
       alertaError('Sesión requerida', 'Tenés que iniciar sesión para comprar.');
@@ -91,39 +123,28 @@ export default function Compra() {
       alertaAdvertencia('Sin asientos', 'Seleccioná al menos un asiento.');
       return;
     }
-    const funcionActual = funcion;
-    if (!funcionActual) {
+    if (!funcion) {
       alertaError('Función no encontrada', 'No se encontró la función seleccionada.');
       return;
     }
-    const capacidadMaxima = funcionActual.CapacidadDisponible ?? 0;
+    const capacidadMaxima = funcion.CapacidadDisponible ?? 0;
     if (asientosSeleccionados.length > capacidadMaxima) {
-      alertaError('Capacidad excedida', `Solo quedan ${capacidadMaxima} entradas disponibles para esta función.`);
+      alertaError(
+        'Capacidad excedida',
+        `Solo quedan ${capacidadMaxima} entradas disponibles para esta función.`
+      );
       return;
     }
-    try {
-      await crearCompra({
-        MetodoPago: metodoPago,
-        AsientosElegidos: asientosSeleccionados,
-        CantEntradas: asientosSeleccionados.length,
-        IdUsuario: usuario.idUsuario,
-        IdFuncion: Number(funcionId)    
-      });
-      setExito(true);
-      alertaExito('¡Compra exitosa!', 'Redirigiendo a la cartelera...');
-      setTimeout(() => {
-        navigate('/', { state: { compraExitosa: true } });
-      }, 2000);
 
-
-    } catch (err) {
-      console.error(err);
-      const mensajeError = err instanceof Error ? err.message : 'Hubo un error al procesar la compra.';
-      // Alerta de error del backend
-      alertaError('Error al comprar', mensajeError);
-    }
+    // ✨ Dispara la mutación en vez de llamar directo a crearCompra con try/catch/setExito
+    compraMutation.mutate({
+      MetodoPago: metodoPago,
+      AsientosElegidos: asientosSeleccionados,
+      CantEntradas: asientosSeleccionados.length,
+      IdUsuario: usuario.idUsuario,
+      IdFuncion: idFuncionNum,
+    });
   }
-
 
  return (
     <div className="compra-container">
@@ -227,12 +248,12 @@ export default function Compra() {
         </div>
 
 
-        <button
+       <button
           type="submit"
-          disabled={exito || asientosSeleccionados.length === 0}
+          disabled={procesandoCompra || asientosSeleccionados.length === 0}
           className="compra-btn-confirmar"
         >
-          {exito
+          {procesandoCompra
             ? 'Procesando...'
             : asientosSeleccionados.length === 0
             ? 'Seleccioná un asiento'

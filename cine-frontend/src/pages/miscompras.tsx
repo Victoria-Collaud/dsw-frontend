@@ -1,47 +1,42 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react'; 
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query'; 
+
 import { getMisCompras } from '../services/compraServices';
-import type { Compra } from '../services/compraServices';
+
 import Loader from '../components/Loader';
 import '../pages/MisCompras.css';
+
 export default function MisCompras() {
-  const [compras, setCompras] = useState<Compra[]>([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState('');
-  
+  // Consulta de compras con TanStack Query
+  const {
+    data: compras = [],
+    isLoading: cargando,
+    isError: error,
+  } = useQuery({
+    queryKey: ['misCompras'],
+    queryFn: getMisCompras,
+  });
+
   // Estado para manejar el QR seleccionado y mostrarlo en un modal
-  const [qrSeleccionado, setQrSeleccionado] = useState<{ 
-    urls: string[]; 
-    pelicula: string; 
-    fecha: string; 
-    horario: string; 
+  const [qrSeleccionado, setQrSeleccionado] = useState<{
+    urls: string[];
+    pelicula: string;
+    fecha: string;
+    horario: string;
+
   } | null>(null);
 
-  useEffect(() => {
-    async function cargar() {
-      try {
-        const data = await getMisCompras();
-        setCompras(data);
-      } catch (err) {
-        console.error(err);
-        setError('No se pudieron obtener tus compras.');
-      } finally {
-        setCargando(false);
-      }
-    }
-    cargar();
-  }, []);
-
-  if (cargando) return <Loader mensaje="Cargando tus compras..." />;
+ if (cargando) return <Loader mensaje="Cargando tus compras..." />;
 
   return (
     <div className="mis-compras-container">
-      
+
       <h1 className="mis-compras-titulo">
         Mis Compras:
       </h1>
 
-      {error && <p className="mis-compras-error">{error}</p>}
+      {error && <p className="mis-compras-error">No se pudieron obtener tus compras.</p>} {/* ✨ */}
 
       {compras.length === 0 && !error ? (
         <div className="mis-compras-vacio">
@@ -54,18 +49,19 @@ export default function MisCompras() {
         <div className="mis-compras-lista">
           {compras.map((compra) => {
             const fechaCompra = new Date(compra.Fecha).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            
+
             const funcion = typeof compra.funcion === 'object' ? compra.funcion : null;
             const pelicula = funcion?.pelicula;
             const sala = funcion?.sala;
+            const qrs = compra.QREntradas
+              ? compra.QREntradas.split(',').map((qr) => qr.trim()).filter(Boolean)
+              : [];
 
-            const fechaFuncion = funcion 
-              ? new Date(`${funcion.Fecha.split('T')[0]}T${funcion.Horario}`) 
+            const fechaFuncion = funcion
+              ? new Date(`${funcion.Fecha.split('T')[0]}T${funcion.Horario}`)
               : null;
             const funcionYaOcurrio = fechaFuncion ? fechaFuncion < new Date() : true;
-
-            const qrs = compra.QREntradas ? compra.QREntradas.split('|||') : [];
-
+            
             return (
               <div key={compra.IdCompra} className="mis-compras-card">
                 {pelicula?.Cartelera && (
@@ -121,7 +117,7 @@ export default function MisCompras() {
                   {!funcionYaOcurrio && qrs.length > 0 && (
                     <button
                       onClick={() => setQrSeleccionado({ 
-                        urls: qrs.map(qr => qr.trim()), 
+                        urls: qrs, 
                         pelicula: pelicula?.TituloPelicula || 'Película',
                         fecha: funcion ? new Date(funcion.Fecha).toLocaleDateString('es-AR') : '-',
                         horario: funcion?.Horario || '-'

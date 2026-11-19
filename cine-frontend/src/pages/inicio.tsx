@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query'; // ✨
 import { getPeliculasActivas } from '../services/peliculaServices';
 import type { Pelicula } from '../services/peliculaServices';
 import { getGeneros } from '../services/generosServices';
-import type { Genero } from '../services/generosServices';
+
 import { getFuncionesDePelicula, type Funcion } from '../services/funcionesServices.ts';
 import Loader from '../components/Loader';
 import '../pages/Inicio.css';
@@ -12,16 +13,10 @@ import '../pages/Inicio.css';
 export default function Inicio() {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const [peliculas, setPeliculas] = useState<Pelicula[]>([]);
-  const [generos, setGeneros] = useState<Genero[]>([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState('');
-  const [funcionesPorPelicula, setFuncionesPorPelicula] = useState<Record<number, Funcion[]>>({});
 
-
-  const [mostrarAvisoCompra, setMostrarAvisoCompra] = useState(() => Boolean(location.state?.compraExitosa));
-
+  const [mostrarAvisoCompra, setMostrarAvisoCompra] = useState(() =>
+    Boolean(location.state?.compraExitosa)
+  );
 
   useEffect(() => {
     if (location.state?.compraExitosa) {
@@ -29,76 +24,83 @@ export default function Inicio() {
     }
   }, [location, navigate]);
 
-  useEffect(() => {
-    async function cargar() {
-      try {
-        const [pelisData, generosData] = await Promise.all([
-          getPeliculasActivas(),
-          getGeneros()
-        ]);
-        setPeliculas(pelisData);
-        setGeneros(generosData);
-        
-        const funcionesPromesas = pelisData.map(async (peli) => {
-          try {
-            const funcs = await getFuncionesDePelicula(peli.IdPelicula!);
-            // FILTRAMOS SOLO LAS FUNCIONES FUTURAS Y CON CAPACIDAD
-            const ahora = new Date();
-            const funcionesValidas = funcs.filter(func => {
-              // Combinamos fecha y horario para comparar
-              const fechaHora = new Date(`${func.Fecha.split('T')[0]}T${func.Horario}`);
-              
-              // Condición A: La función debe ser en el futuro
-              const esFutura = fechaHora > ahora;
-              
-              // Condición B: Debe haber asientos disponibles (mayor a 0)
-              const tieneCapacidad = (func.CapacidadDisponible ?? 0) > 0;
+  // Películas activas con useQuery
+  const {
+    data: peliculas = [],
+    isLoading: cargandoPeliculas,
+    isError: errorPeliculas,
+  } = useQuery({
+    queryKey: ['peliculas', 'activas', { busqueda: '' }],
+    queryFn: getPeliculasActivas,
+  });
 
-              // Solo la guardamos si cumple AMBAS condiciones
+  //  Géneros con useQuery
+  const { data: generos = [] } = useQuery({
+    queryKey: ['generos'],
+    queryFn: getGeneros,
+    staleTime: 1000 * 60 * 15,
+  });
+
+  //  Funciones futuras y con capacidad para las películas visibles (primeras 8)
+  const peliculasVisibles = peliculas.slice(0, 8);
+  const idsVisibles = peliculasVisibles
+    .map((p) => p.IdPelicula)
+    .filter((id): id is number => id !== undefined);
+
+  const {
+    data: funcionesPorPelicula = {},
+    isLoading: cargandoFunciones,
+  } = useQuery({
+    queryKey: ['funciones', 'inicio', idsVisibles],
+    enabled: idsVisibles.length > 0,
+    queryFn: async () => {
+      const ahora = new Date();
+      const resultados = await Promise.all(
+        peliculasVisibles.map(async (peli) => {
+          if (peli.IdPelicula === undefined) {
+            return { id: undefined, funcs: [] as Funcion[] };
+          }
+          try {
+            const funcs = await getFuncionesDePelicula(peli.IdPelicula);
+            const funcionesValidas = funcs.filter((func) => {
+             const fechaHora = new Date(`${func.Fecha.split('T')[0]}T${func.Horario}`);
+            const esFutura = fechaHora > ahora;
+             const tieneCapacidad = (func.CapacidadDisponible ?? 0) > 0;
               return esFutura && tieneCapacidad;
             });
-            return { id: peli.IdPelicula!, funcs: funcionesValidas };
+            return { id: peli.IdPelicula, funcs: funcionesValidas };
           } catch {
-            // Si falla la petición de esta película, guardamos un array vacío
-            return { id: peli.IdPelicula!, funcs: [] as Funcion[] };
+            return { id: peli.IdPelicula, funcs: [] as Funcion[] };
           }
-        });
+        })
+      );
 
-        const resultados = await Promise.all(funcionesPromesas);
-        const dict: Record<number, Funcion[]> = {}; 
-        resultados.forEach(r => {
-          if (r.id !== undefined) {
-            dict[r.id] = r.funcs;
-          }
-        });
-        setFuncionesPorPelicula(dict);
-      } catch (err) {
-        console.error(err);
-        setError('No se pudo cargar la cartelera.');
-      } finally {
-        setCargando(false);
-      }
+      const dict: Record<number, Funcion[]> = {};
+      resultados.forEach((r) => {
+        if (r.id !== undefined) {
+          dict[r.id] = r.funcs;
+        }
+      });
+      return dict;
+    },
+  });
+
+  const obtenerNombreGenero = (
+    genero: Pelicula['genero']
+  ) => {
+    if (typeof genero === 'object' && genero !== null && genero.NombreGenero) {
+      return genero.NombreGenero;
     }
-    cargar();
-  }, []);
 
+    if (typeof genero === 'number') {
+      const gen = generos.find((g) => g.CodGenero === genero);
+      return gen ? gen.NombreGenero : 'Género desconocido';
+    }
 
+    return 'Género desconocido';
+  };
 
-const obtenerNombreGenero = (genero: number | { CodGenero: number; NombreGenero?: string }) => {
-  // Si es un objeto y tiene NombreGenero, lo devolvemos
-  if (typeof genero === 'object' && genero !== null && genero.NombreGenero) {
-    return genero.NombreGenero;
-  }
-  
-  // Si es un número, lo buscamos
-  if (typeof genero === 'number') {
-    const gen = generos.find(g => g.CodGenero === genero);
-    return gen ? gen.NombreGenero : 'Género desconocido';
-  }
-
-  return 'Género desconocido';
-};
-
+  const cargando = cargandoPeliculas || (idsVisibles.length > 0 && cargandoFunciones); 
 
   if (cargando) return <Loader mensaje="Cargando cartelera..." />;
 
@@ -145,7 +147,9 @@ const obtenerNombreGenero = (genero: number | { CodGenero: number; NombreGenero?
         </p>
       </div>
 
-      {error && <p className="inicio-error">{error}</p>}
+      {errorPeliculas && (
+        <p className="inicio-error">No se pudo cargar la cartelera.</p>
+      )}
 
       <div className="inicio-seccion-header">
         <h2 className="inicio-seccion-titulo">
@@ -156,11 +160,11 @@ const obtenerNombreGenero = (genero: number | { CodGenero: number; NombreGenero?
       {peliculas.length === 0 ? (
         <p className="inicio-vacio">No hay películas disponibles en este momento ¡Vuelva pronto!</p>
       ) : (
-        <div className="inicio-grid">
-
-          {peliculas.slice(0, 8).map((peli) => {
-            
-            const tieneFunciones = funcionesPorPelicula[peli.IdPelicula!] && funcionesPorPelicula[peli.IdPelicula!].length > 0;
+       <div className="inicio-grid">
+          {peliculasVisibles.map((peli) => { 
+            const tieneFunciones =
+              peli.IdPelicula !== undefined &&
+              Boolean(funcionesPorPelicula[peli.IdPelicula]?.length);
 
             return (
               <Link 
