@@ -1,29 +1,59 @@
 import { useState, useEffect } from 'react'
 import { getPeliculas, createPelicula, deletePelicula, updatePelicula, cambiarEstadoPelicula } from '../../services/peliculaServices.ts'
 import type { Pelicula } from '../../services/peliculaServices.ts'
-import type { FormEvent } from 'react'
+//import type { FormEvent } from 'react'
 import Loader from '../../components/Loader';
 import './AdminPelicula.css'
 import { useAlerta } from '../../hooks/useAlerta';
+import { useForm } from 'react-hook-form';
+
+interface PeliculaFormData {
+  TituloPelicula: string;
+  Duracion: number;
+  CodGenero: number;
+  Clasificacion: string;
+  Cartelera: string;
+  Trailer: string;
+  Sinopsis: string;
+}
 
 export default function AdminPeliculas() {
   const [peliculas, setPeliculas] = useState<Pelicula[]>([])
-  const [tituloPelicula, setTituloPelicula] = useState('')
-  const [sinopsis, setSinopsis] = useState('')
-  const [duracion, setDuracion] = useState<string>('')
-  const [clasificacion, setClasificacion] = useState('')
-  const [codGenero, setCodGenero] = useState<string>('')
-  const [cartelera, setCartelera] = useState('')
-  const [trailer, setTrailer] = useState('')
+  //const [tituloPelicula, setTituloPelicula] = useState('')
+  //const [sinopsis, setSinopsis] = useState('')
+  //const [duracion, setDuracion] = useState<string>('')
+  //const [clasificacion, setClasificacion] = useState('')
+  //const [codGenero, setCodGenero] = useState<string>('')
+  //const [cartelera, setCartelera] = useState('')
+  //const [trailer, setTrailer] = useState('')
   const [peliculaEditando, setPeliculaEditando] = useState<number | null>(null)
   const [busqueda, setBusqueda] = useState('')
   //const [error, setError] = useState('')
   const [cargando, setCargando] = useState(true);
-  const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
+
+  const { alertaConfirmacion, alertaExito, alertaError } = useAlerta();
+
+  const { 
+    register, 
+    handleSubmit, 
+    reset, 
+    setValue 
+  } = useForm<PeliculaFormData>({
+    defaultValues: {
+      TituloPelicula: '',
+      Duracion: 0,
+      CodGenero: 0,
+      Clasificacion: '',
+      Cartelera: '',
+      Trailer: '',
+      Sinopsis: ''
+    }
+  });
 
   useEffect(() => {
     cargarPeliculas()
-  }, )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function cargarPeliculas() {
     
@@ -38,13 +68,7 @@ export default function AdminPeliculas() {
   } }
 
   function limpiarFormulario() {
-    setTituloPelicula('')
-    setSinopsis('')
-    setDuracion('')
-    setClasificacion('')
-    setCodGenero('')
-    setCartelera('')
-    setTrailer('')
+    reset(); 
     setPeliculaEditando(null)
   }
 
@@ -53,34 +77,30 @@ export default function AdminPeliculas() {
     ? (pelicula.genero as { CodGenero: number }).CodGenero 
     : pelicula.genero;
 
-    setTituloPelicula(pelicula.TituloPelicula)
-    setSinopsis(pelicula.Sinopsis)
-    setDuracion(String(pelicula.Duracion))
-    setClasificacion(pelicula.Clasificacion)
-    setCodGenero(String(idGenero))
-    setCartelera(pelicula.Cartelera)
-    setTrailer(pelicula.Trailer)
+    setValue('TituloPelicula', pelicula.TituloPelicula);
+    setValue('Duracion', pelicula.Duracion);
+    setValue('CodGenero', Number(idGenero));
+    setValue('Clasificacion', pelicula.Clasificacion);
+    setValue('Cartelera', pelicula.Cartelera);
+    setValue('Trailer', pelicula.Trailer);
+    setValue('Sinopsis', pelicula.Sinopsis);
+    
     setPeliculaEditando(pelicula.IdPelicula!)
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-    async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    if (!tituloPelicula.trim() || !duracion || !codGenero) {
-      alertaAdvertencia('Campos incompletos', 'Por favor completá los campos obligatorios (Título, Duración y Género).'); // 👈
-      return
-    }
+
+    const onSubmit = async (data: PeliculaFormData) => {
     try {
       const peliculaData = { 
-        TituloPelicula: tituloPelicula,
-        Sinopsis: sinopsis,
-        Duracion: Number(duracion),
-        Clasificacion: clasificacion,
-        CodGenero: Number(codGenero),
-        Cartelera: cartelera,
-        Trailer: trailer
-       }
-      
+        TituloPelicula: data.TituloPelicula,
+        Sinopsis: data.Sinopsis,
+        Duracion: Number(data.Duracion),
+        Clasificacion: data.Clasificacion,
+        CodGenero: Number(data.CodGenero),
+        Cartelera: data.Cartelera,
+        Trailer: data.Trailer
+      }
       if (peliculaEditando) {
         await updatePelicula(peliculaEditando, peliculaData)
         alertaExito('¡Actualizada!', 'La película fue actualizada correctamente.'); 
@@ -88,12 +108,11 @@ export default function AdminPeliculas() {
         await createPelicula(peliculaData)
         alertaExito('¡Creada!', 'La película fue creada correctamente.'); 
       }
-      
       limpiarFormulario()
       cargarPeliculas()
     } catch (err) {
       console.error(err)
-      const mensajeError = err instanceof Error ? err.message : 'Error al crear la película.';
+      const mensajeError = err instanceof Error ? err.message : 'Error al guardar la película.';
       alertaError('Error', mensajeError); 
     }
   }
@@ -158,7 +177,7 @@ export default function AdminPeliculas() {
 
 
       {/* Formulario */}
-      <form onSubmit={handleSubmit} className="admin-pelicula-form">
+      <form onSubmit={handleSubmit(onSubmit)} className="admin-pelicula-form">
         <h3 className="admin-pelicula-form-title">
           {peliculaEditando ? ' Editar Película' : ' Agregar Nueva Película'}
         </h3>
@@ -168,8 +187,7 @@ export default function AdminPeliculas() {
           <input 
             type="text" 
             placeholder="Ej: El Padrino, Matrix, Titanic..."
-            value={tituloPelicula} 
-            onChange={(e) => setTituloPelicula(e.target.value)}
+             {...register('TituloPelicula', { required: true })}
             className="admin-pelicula-input" 
           />
         </div>
@@ -179,8 +197,7 @@ export default function AdminPeliculas() {
           <input 
             type="number" 
             placeholder="Ej: 120"
-            value={duracion} 
-            onChange={(e) => setDuracion(e.target.value)}
+            {...register('Duracion', { required: true, valueAsNumber: true })}
             className="admin-pelicula-input" 
           />
         </div>
@@ -190,8 +207,7 @@ export default function AdminPeliculas() {
           <input 
             type="number" 
             placeholder="Ej: 1"
-            value={codGenero} 
-            onChange={(e) => setCodGenero(e.target.value)}
+             {...register('CodGenero', { required: true, valueAsNumber: true })}
             className="admin-pelicula-input" 
           />
         </div>
@@ -201,8 +217,7 @@ export default function AdminPeliculas() {
           <input 
             type="text" 
             placeholder="Ej: ATP, +13, +18"
-            value={clasificacion} 
-            onChange={(e) => setClasificacion(e.target.value)}
+            {...register('Clasificacion')}
             className="admin-pelicula-input" 
           />
         </div>
@@ -212,8 +227,7 @@ export default function AdminPeliculas() {
           <input 
             type="text" 
             placeholder="Ej: https://example.com/cartelera.jpg"
-            value={cartelera} 
-            onChange={(e) => setCartelera(e.target.value)}
+            {...register('Cartelera')}
             className="admin-pelicula-input" 
           />
         </div>
@@ -223,8 +237,7 @@ export default function AdminPeliculas() {
           <input 
             type="text" 
             placeholder="Ej: https://example.com/trailer.mp4"
-            value={trailer} 
-            onChange={(e) => setTrailer(e.target.value)}
+            {...register('Trailer')}
             className="admin-pelicula-input" 
           />
         </div>
@@ -233,8 +246,7 @@ export default function AdminPeliculas() {
           <label className="admin-pelicula-label">Sinopsis:</label>
           <textarea 
             placeholder="Ej: Shrek es un ogro verde y solitario..."
-            value={sinopsis} 
-            onChange={(e) => setSinopsis(e.target.value)}
+            {...register('Sinopsis')}
             className="admin-pelicula-textarea" 
           />
         </div>

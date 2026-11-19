@@ -1,24 +1,49 @@
 import { useState, useEffect } from 'react'
-import type { FormEvent } from 'react'
+//import type { FormEvent } from 'react'
 import { getallSala, createSala, deleteSala, updateSala} from '../../services/salaServices'
 import type { Sala } from '../../services/salaServices'
 import Loader from '../../components/Loader'
 import './AdminSala.css'
 import { useAlerta } from '../../hooks/useAlerta'
+import { useForm } from 'react-hook-form'
+
+interface SalaFormData {
+  NumSala: number;
+  Capacidad: number;
+  TipoPantalla: string;
+  TipoAsientos: string;
+  PrecioSala: number;
+}
 
 export default function AdminSalas() {
   // Estados para manejar la lista de salas
   const [salas, setSalas] = useState<Sala[]>([])
   // Estados para los campos del formulario
-  const [NumSala, setNumSala] = useState<number | ''>('')
-  const [capacidad, setCapacidad] = useState<number | ''>('')
-  const [TipoPantalla, setTipoPantalla] = useState<string>('')
-  const [TipoAsientos, setTipoAsientos] = useState<string>('')
-  const [precioSala, setPrecioSala] = useState<number | ''>('')
+  //const [NumSala, setNumSala] = useState<number | ''>('')
+  //const [capacidad, setCapacidad] = useState<number | ''>('')
+  //const [TipoPantalla, setTipoPantalla] = useState<string>('')
+  //const [TipoAsientos, setTipoAsientos] = useState<string>('')
+  //const [precioSala, setPrecioSala] = useState<number | ''>('')
   //const [error, setError] = useState('')
   const [salaEditando, setSalaEditando] = useState<number | null>(null)
   const [cargando, setCargando] = useState(true);
   const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
+
+
+  const { 
+    register, 
+    handleSubmit, 
+    reset, 
+    setValue,
+  } = useForm<SalaFormData>({
+    defaultValues: {
+      NumSala: 0,
+      Capacidad: 0,
+      TipoPantalla: '',
+      TipoAsientos: '',
+      PrecioSala: 0
+    }
+  });
 
   useEffect(() => {
     cargarSalas()
@@ -39,47 +64,39 @@ export default function AdminSalas() {
       setCargando(false); 
   } }
 
- //  LIMPIAR EL FORMULARIO
+ //  LIMPIAR EL FORMULARIO con reset
   function limpiarFormulario() {
-    setNumSala('')
-    setCapacidad('')
-    setPrecioSala('')
-    setTipoPantalla('')
-    setTipoAsientos('')
-    setSalaEditando(null) // Reseteamos el modo edición
+    reset();
+    setSalaEditando(null);
   }
 
   // CARGAR LOS DATOS DE UNA SALA EN EL FORMULARIO
   function handleEditar(sala: Sala) {
-    setNumSala(sala.NumSala)
-    setCapacidad(sala.Capacidad)
-    setPrecioSala(sala.PrecioSala)
-    setTipoPantalla(sala.TipoPantalla)
-    setTipoAsientos(sala.TipoAsientos)
-    setSalaEditando(sala.NumSala) // Guardamos el ID para saber que estamos editando
+    setValue('NumSala', sala.NumSala);
+    setValue('Capacidad', sala.Capacidad);
+    setValue('TipoPantalla', sala.TipoPantalla);
+    setValue('TipoAsientos', sala.TipoAsientos);
+    setValue('PrecioSala', sala.PrecioSala);
+    setSalaEditando(sala.NumSala);
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   }
 
-   async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    if (!NumSala || !capacidad || !precioSala) {
-      alertaAdvertencia('Campos incompletos', 'Por favor completá todos los campos.')
-      return
-    }
+   const onSubmit = async (data: SalaFormData) => {
+    // Validación de sala duplicada (solo si no estamos editando)
     if (salaEditando === null) {
-      const salaExistente = salas.some(s => s.NumSala === Number(NumSala))
+      const salaExistente = salas.some(s => s.NumSala === Number(data.NumSala))
       if (salaExistente) {
-        alertaAdvertencia('Sala duplicada', `Ya existe una sala registrada con el número #${NumSala}. Por favor elegí otro número.`)
-        return
+        alertaAdvertencia('Sala duplicada', `Ya existe una sala registrada con el número #${data.NumSala}. Por favor elegí otro número.`);
+        return;
       }
     }
     try {
       const salaData = {
-        NumSala: Number(NumSala),
-        Capacidad: Number(capacidad),
-        TipoPantalla: TipoPantalla,
-        TipoAsientos: TipoAsientos,
-        PrecioSala: Number(precioSala)
+        NumSala: Number(data.NumSala),
+        Capacidad: Number(data.Capacidad),
+        TipoPantalla: data.TipoPantalla,
+        TipoAsientos: data.TipoAsientos,
+        PrecioSala: Number(data.PrecioSala)
       }
       if (salaEditando) {
         await updateSala(salaEditando, salaData)
@@ -116,7 +133,6 @@ async function handleDelete(NumSala: number) {
     }
   }
 
-
 if (cargando) {
       return <Loader mensaje="Cargando funciones..." />;
     }
@@ -131,7 +147,7 @@ if (cargando) {
       </div>
 
 {/* Formulario de Alta/Edición de Sala */}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: '#141414', border: '1px solid #222', padding: '25px', borderRadius: '4px', marginBottom: '30px' }}>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: '#141414', border: '1px solid #222', padding: '25px', borderRadius: '4px', marginBottom: '30px' }}>
         <h3 style={{ fontSize: '1.1rem', color: '#fff', margin: '0 0 10px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {salaEditando ? ` Editar Sala #${salaEditando}` : ' Agregar Nueva Sala'}
         </h3>
@@ -141,8 +157,7 @@ if (cargando) {
           <input
             type="number"
             placeholder="Ej: 1"
-            value={NumSala}
-            onChange={(e) => setNumSala(Number(e.target.value))}
+            {...register('NumSala', { required: true, valueAsNumber: true })}
             disabled={salaEditando !== null} 
             className="admin-salas-input"
           />
@@ -151,8 +166,7 @@ if (cargando) {
         <div className="admin-salas-field">
           <label className="admin-salas-label">Capacidad:</label>
           <select
-            value={capacidad}
-            onChange={(e) => setCapacidad(Number(e.target.value))}
+            {...register('Capacidad', { required: true, valueAsNumber: true })}
             className="admin-salas-select"
           >
             <option value="">-- Seleccioná la capacidad --</option>
@@ -169,8 +183,7 @@ if (cargando) {
           <input
             type="text"
             placeholder="Ej: IMAX"
-            value={TipoPantalla}
-            onChange={(e) => setTipoPantalla(e.target.value)}
+           {...register('TipoPantalla', { required: true })}
             className="admin-salas-input"
           />
         </div>
@@ -180,8 +193,7 @@ if (cargando) {
           <input
             type="text"
             placeholder="Ej: Reclinable"
-            value={TipoAsientos}
-            onChange={(e) => setTipoAsientos(e.target.value)}
+            {...register('TipoAsientos', { required: true })}
             className="admin-salas-input"
           />
         </div>
@@ -191,8 +203,7 @@ if (cargando) {
           <input
             type="number"
             placeholder="Ej: 4500"
-            value={precioSala}
-            onChange={(e) => setPrecioSala(Number(e.target.value))}
+            {...register('PrecioSala', { required: true, valueAsNumber: true })}
             className="admin-salas-input"
           />
         </div>
