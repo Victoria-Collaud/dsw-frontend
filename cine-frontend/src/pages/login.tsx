@@ -1,36 +1,44 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { login } from '../services/authServices'; // Ajusta la ruta a tu servicio si es necesario
 import { useAlerta } from '../hooks/useAlerta.ts';
+import { useForm } from 'react-hook-form';
 import '../pages/Login.css'; 
 
+  interface LoginFormData {
+  email: string;
+  contrasena: string;
+}
+
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [contrasena, setContrasena] = useState('');
   const [cargando, setCargando] = useState(false);
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
   const { alertaError } = useAlerta();
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
+  const { 
+    register, 
+    handleSubmit,
+    formState: { errors }
+  } = useForm<LoginFormData>();
+
+  const onSubmit = async (data: LoginFormData) => {
     setCargando(true);
 
     try {
-      const data = await login({ email, contrasena });
-      // Guardamos el token y NO los datos del usuario en el navegador
-      localStorage.setItem('token', data.token);
-      //localStorage.setItem('usuario', JSON.stringify(data.usuario));
+      const response = await login({ email: data.email, contrasena: data.contrasena });
       
-      // Redirigimos a donde estaba
+      // Guardamos el token
+      localStorage.setItem('token', response.token);
+      
+      // Redirigimos
       navigate(from, { replace: true });
       
     } catch (err) {
       const mensajeOriginal = err instanceof Error ? err.message : 'Error al iniciar sesión';
-      // Traducción si el servidor está caído
       const mensajeError = (mensajeOriginal === 'Failed to fetch') 
         ? 'No nos pudimos conectar con el servidor. Verificá que esté encendido.' 
         : mensajeErrorText(mensajeOriginal);
@@ -40,7 +48,7 @@ export default function Login() {
     }
   }
 
-  // Función auxiliar opcional para limpiar mensajes de error del backend si vienen en inglés
+  // Función auxiliar para limpiar mensajes de error
   function mensajeErrorText(msg: string) {
     if (msg.includes('credenciales') || msg.includes('password') || msg.includes('usuario')) {
       return 'Correo o contraseña incorrectos.';
@@ -57,18 +65,23 @@ export default function Login() {
         </h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="login-form">
+      <form onSubmit={handleSubmit(onSubmit)} className="login-form">
         <div>
           <label htmlFor="email" className="login-label">Email:</label>
           <input
             id="email"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register('email', { required: 'El email es obligatorio' })}
             required
             placeholder="ejemplo@correo.com"
             className="login-input"
           />
+         {/* Mostramos el error si existe */}
+          {errors.email && (
+            <span style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
+              {errors.email.message}
+            </span>
+          )}
         </div>
 
         <div>
@@ -76,12 +89,17 @@ export default function Login() {
           <input
             id="contrasena"
             type="password"
-            value={contrasena}
-            onChange={(e) => setContrasena(e.target.value)}
+            {...register('contrasena', { required: 'La contraseña es obligatoria' })}
             required
             placeholder="••••••••"
             className="login-input"
           />
+          {/* Mostramos el error si existe */}
+          {errors.contrasena && (
+            <span style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
+              {errors.contrasena.message}
+            </span>
+          )}
         </div>
 
         <button 

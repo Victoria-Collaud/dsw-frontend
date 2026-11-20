@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-//import type { FormEvent } from 'react'
 import { getallSala, createSala, deleteSala, updateSala} from '../../services/salaServices'
 import type { Sala } from '../../services/salaServices'
 import Loader from '../../components/Loader'
@@ -16,19 +15,10 @@ interface SalaFormData {
 }
 
 export default function AdminSalas() {
-  // Estados para manejar la lista de salas
   const [salas, setSalas] = useState<Sala[]>([])
-  // Estados para los campos del formulario
-  //const [NumSala, setNumSala] = useState<number | ''>('')
-  //const [capacidad, setCapacidad] = useState<number | ''>('')
-  //const [TipoPantalla, setTipoPantalla] = useState<string>('')
-  //const [TipoAsientos, setTipoAsientos] = useState<string>('')
-  //const [precioSala, setPrecioSala] = useState<number | ''>('')
-  //const [error, setError] = useState('')
   const [salaEditando, setSalaEditando] = useState<number | null>(null)
   const [cargando, setCargando] = useState(true);
   const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
-
 
   const { 
     register, 
@@ -36,13 +26,6 @@ export default function AdminSalas() {
     reset, 
     setValue,
   } = useForm<SalaFormData>({
-    defaultValues: {
-      NumSala: 0,
-      Capacidad: 0,
-      TipoPantalla: '',
-      TipoAsientos: '',
-      PrecioSala: 0
-    }
   });
 
   useEffect(() => {
@@ -52,7 +35,6 @@ export default function AdminSalas() {
 
   // Función para obtener las salas desde el backend
   async function cargarSalas() {
-    
     setCargando(true);
     try {
       const data = await getallSala()

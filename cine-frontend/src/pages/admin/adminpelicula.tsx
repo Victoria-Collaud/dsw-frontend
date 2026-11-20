@@ -39,15 +39,6 @@ export default function AdminPeliculas() {
     reset, 
     setValue 
   } = useForm<PeliculaFormData>({
-    defaultValues: {
-      TituloPelicula: '',
-      Duracion: 0,
-      CodGenero: 0,
-      Clasificacion: '',
-      Cartelera: '',
-      Trailer: '',
-      Sinopsis: ''
-    }
   });
 
   useEffect(() => {
