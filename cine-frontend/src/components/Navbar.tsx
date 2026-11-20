@@ -1,7 +1,8 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react'; 
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query'; 
 import { getGeneros } from '../services/generosServices';
-import type { Genero } from '../services/generosServices';
+
 import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
 import '../components/Navbar.css';
 
@@ -14,25 +15,31 @@ export default function Navbar() {
 
   // Leemos el usuario con el token
   const usuario = obtenerUsuarioDesdeToken();
-  
+
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [generoSeleccionado, setGeneroSeleccionado] = useState(''); 
 
-  const [generos, setGeneros] = useState<Genero[]>([]);
-  const [generoSeleccionado, setGeneroSeleccionado] = useState('');
-
-  const rutasSinBuscador = ['/peliculas', '/login', '/miscompras', '/admin', '/compra', '/admin/funciones', '/admin/peliculas', '/admin/salas', '/admin/compras', 'admin/generos'];
+  const rutasSinBuscador = [
+    '/peliculas',
+    '/login',
+    '/miscompras',
+    '/admin',
+    '/compra',
+    '/admin/funciones',
+    '/admin/peliculas',
+    '/admin/salas',
+    '/admin/compras',
+    '/admin/generos', 
+  ];
   const ocultarBuscador = rutasSinBuscador.includes(location.pathname);
 
+  //  Géneros cacheados con TanStack Query 
+  const { data: generos = [] } = useQuery({
+    queryKey: ['generos'],
+    queryFn: getGeneros,
+    staleTime: 1000 * 60 * 15,
+  });
 
-  useEffect(() => {
-    getGeneros()
-      .then(setGeneros)
-      .catch((err) => console.error('Error al cargar géneros', err));
-  }, []);
-
- 
- 
- 
   function cerrarSesion() {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
@@ -40,42 +47,39 @@ export default function Navbar() {
     window.location.reload();
   }
 
+  function handleBuscar(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
-function handleBuscar(e: FormEvent<HTMLFormElement>) {
-  e.preventDefault();
-
-  if (busqueda.trim() || generoSeleccionado) {
-   navigate('/peliculas', {
-  state: {
-    busquedaInicial: busqueda.trim(),
-    generoInicial: generoSeleccionado,
-  },
-});
+    if (busqueda.trim() || generoSeleccionado) {
+      navigate('/peliculas', {
+        state: {
+          busquedaInicial: busqueda.trim(),
+          generoInicial: generoSeleccionado,
+        },
+      });
+    }
   }
-}
 
-
-
- return (
-   <>
+  return (
+    <>
       <nav className="navbar-container">
-        
+
         {/* Lado Izquierdo: Logo, Inicio, Más Info y Admin */}
         <div className="navbar-left">
           <Link to="/" className="navbar-logo">
-            <img 
-              src="/logo.png" 
-              alt="Logo New Cine" 
-              className="navbar-logo-img" 
+            <img
+              src="/logo.png"
+              alt="Logo New Cine"
+              className="navbar-logo-img"
             />
             <span className="navbar-logo-text">Cine</span>
           </Link>
-          
+
           <Link to="/" className="navbar-link">
             Inicio
           </Link>
-          
-          <button 
+
+          <button
             onClick={() => setMostrarInfo(true)}
             className="navbar-btn-info"
           >
@@ -105,9 +109,9 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
               ))}
             </select>
 
-            <input 
-              type="text" 
-              placeholder="Buscar película..." 
+            <input
+              type="text"
+              placeholder="Buscar película..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               className="navbar-input-busqueda"
@@ -121,17 +125,17 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
             </button>
           </form>
         )}
-        
+
         {/* Lado Derecho: Usuario / Login */}
         <div className="navbar-user-section">
           {usuario ? (
             <>
-              <button 
-                onClick={() => setMenuAbierto(!menuAbierto)} 
+              <button
+                onClick={() => setMenuAbierto(!menuAbierto)}
                 className="navbar-user-btn"
               >
                 <span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round preview-icon"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
-                <span>{ (usuario.email ? usuario.email.split('@')[0] : 'Usuario')}</span>
+                <span>{(usuario.email ? usuario.email.split('@')[0] : 'Usuario')}</span>
                 <span style={{ fontSize: '0.7rem', color: '#888' }}>▼</span>
               </button>
 
@@ -141,19 +145,19 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
                     Sesión iniciada como:<br/>
                     <strong className="navbar-dropdown-strong">{usuario.email}</strong>
                   </p>
-                  
+
                   <div onClick={() => { setMenuAbierto(false); navigate('/miscompras'); }} className="navbar-dropdown-item">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-ticket preview-icon"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg> Mis Compras
                   </div>
-                  
+
                   <div className="navbar-dropdown-item">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings preview-icon"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg> Configuración
                   </div>
 
                   <hr className="navbar-dropdown-divider" />
-                  
-                  <button 
-                    onClick={() => { setMenuAbierto(false); cerrarSesion(); }} 
+
+                  <button
+                    onClick={() => { setMenuAbierto(false); cerrarSesion(); }}
                     className="navbar-btn-logout"
                   >
                     Cerrar Sesión
@@ -174,11 +178,11 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
       {mostrarInfo && (
         <div className="navbar-modal-overlay">
           <div className="navbar-modal-content">
-            
+
             <h2 className="navbar-modal-title">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-popcorn preview-icon"><path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"/><path d="M10 22 9 8"/><path d="m14 22 1-14"/><path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"/></svg> Sobre Nosotros
             </h2>
-            
+
             <p className="navbar-modal-text">
               Somos Newcine. Disfrutá de la mejor cartelera, las mejores salas y la mejor atención en alta definición.
             </p>
@@ -188,8 +192,8 @@ function handleBuscar(e: FormEvent<HTMLFormElement>) {
             <p className="navbar-modal-detail-phone">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-phone preview-icon"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg> Teléfono: 0800-555-CINE
             </p>
-            
-            <button 
+
+            <button
               onClick={() => setMostrarInfo(false)}
               className="navbar-modal-btn-cerrar"
             >

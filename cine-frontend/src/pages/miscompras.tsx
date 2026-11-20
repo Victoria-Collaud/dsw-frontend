@@ -53,9 +53,9 @@ export default function MisCompras() {
             const funcion = typeof compra.funcion === 'object' ? compra.funcion : null;
             const pelicula = funcion?.pelicula;
             const sala = funcion?.sala;
-            const qrs = compra.QREntradas
-              ? compra.QREntradas.split(',').map((qr) => qr.trim()).filter(Boolean)
-              : [];
+           const qrs = compra.QREntradas
+          ? compra.QREntradas.split('|||').map((qr) => qr.trim()).filter(Boolean)
+           : [];
 
             const fechaFuncion = funcion
               ? new Date(`${funcion.Fecha.split('T')[0]}T${funcion.Horario}`)

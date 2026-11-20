@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query'; // 
 import { getCompras } from '../../services/compraServices';
-import type { Compra } from '../../services/compraServices';
-import { useForm, useWatch } from 'react-hook-form'; 
-import './AdminCompra.css'; 
+import { useForm, useWatch } from 'react-hook-form';
+import './AdminCompra.css';
 import Loader from '../../components/Loader';
 
 // definimos la interfaz para las fechas del filtro
@@ -12,35 +11,27 @@ interface FiltroFechaData {
 }
 
 export default function AdminCompras() {
-  const [compras, setCompras] = useState<Compra[]>([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState('');
+  //  Consulta de auditoría de compras con TanStack Query
+  const {
+    data: compras = [],
+    isLoading: cargando,
+    isError: error,
+  } = useQuery({
+    queryKey: ['admin', 'compras'],
+    queryFn: getCompras,
+  });
 
-   // Configuramos el formulario
-    const { register, control, reset } = useForm<FiltroFechaData>({
-    defaultValues: { fechaDesde: '', fechaHasta: '' }
+  // Configuramos el formulario
+  const { register, control, reset } = useForm<FiltroFechaData>({
+    defaultValues: { fechaDesde: '', fechaHasta: '' },
   });
 
   // "watch" observa los valores de los inputs en tiempo real
   const fechaDesde = useWatch({ control, name: 'fechaDesde' });
   const fechaHasta = useWatch({ control, name: 'fechaHasta' });
+  
 
-  useEffect(() => {
-    async function cargar() {
-      try {
-        const data = await getCompras();
-        setCompras(data);
-      } catch (err) {
-        console.error(err);
-        setError('No se pudieron obtener los registros de compras.');
-      } finally {
-        setCargando(false);
-      }
-    }
-    cargar();
-  }, []);
-
-    // el filtrado usa los valores de "watch"
+  // el filtrado usa los valores de "watch"
   const comprasFiltradas = compras.filter((compra) => {
     if (!fechaDesde && !fechaHasta) return true;
     const fechaCompra = new Date(compra.Fecha);
@@ -60,30 +51,31 @@ export default function AdminCompras() {
 
   return (
     <div className="admin-compra-container">
-      
+
       <div className="admin-compra-header">
         <h2 className="admin-compra-title">Auditoría de Compras</h2>
-        
+
         {/* Controles del filtro de fecha */}
         <div className="admin-compra-filters">
           <label className="admin-compra-label">Desde:</label>
-          <input 
-            type="date" 
+          <input
+            type="date"
             {...register('fechaDesde')}
             className="admin-compra-input"
           />
-          
+
           <label className="admin-compra-label" style={{ marginLeft: '5px' }}>Hasta:</label>
-          <input 
-            type="date" 
+          <input
+            type="date"
             {...register('fechaHasta')}
             className="admin-compra-input"
           />
 
           {/* Botón para limpiar filtros */}
           {(fechaDesde || fechaHasta) && (
-            <button 
-              onClick={() => { reset({ fechaDesde: '', fechaHasta: '' }); }} //limpiamos con reset
+            <button
+              type="button" //  evita submits accidentales si está dentro de un form
+              onClick={() => { reset({ fechaDesde: '', fechaHasta: '' }); }} // limpiamos con reset
               className="admin-compra-btn-clear"
             >
               Limpiar
@@ -92,7 +84,9 @@ export default function AdminCompras() {
         </div>
       </div>
 
-      {error && <p className="admin-compra-error">{error}</p>}
+      {error && ( // 
+        <p className="admin-compra-error">No se pudieron obtener los registros de compras.</p> 
+      )}
 
       {comprasFiltradas.length === 0 && !error ? (
         <p className="admin-compra-empty">
@@ -102,20 +96,20 @@ export default function AdminCompras() {
         <div className="admin-compra-list">
           {comprasFiltradas.map((c) => {
             const fechaObj = new Date(c.Fecha);
-            const fechaFormateada = isNaN(fechaObj.getTime()) 
-              ? String(c.Fecha) 
-              : fechaObj.toLocaleString('es-AR', { 
-                  day: '2-digit', month: '2-digit', year: 'numeric', 
-                  hour: '2-digit', minute: '2-digit' 
+            const fechaFormateada = isNaN(fechaObj.getTime())
+              ? String(c.Fecha)
+              : fechaObj.toLocaleString('es-AR', {
+                  day: '2-digit', month: '2-digit', year: 'numeric',
+                  hour: '2-digit', minute: '2-digit',
                 });
 
             return (
               <div key={c.IdCompra} className="admin-compra-card">
                 <div>
                   <h3 className="admin-compra-movie-title">
-                     {typeof c.funcion === 'object' ? c.funcion.pelicula?.TituloPelicula : 'Película Desconocida'}
+                    {typeof c.funcion === 'object' ? c.funcion.pelicula?.TituloPelicula : 'Película Desconocida'}
                   </h3>
-                  
+
                   <div className="admin-compra-details">
                     <span className="admin-compra-detail-item">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -144,7 +138,7 @@ export default function AdminCompras() {
                   </div>
 
                   <small className="admin-compra-date">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-calendar-clock preview-icon"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v3"/><path d="M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338"/><path d="M3 9h5.859"/><path d="M8 2v3"/><circle cx="16" cy="16" r="6"/></svg> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-calendar-clock preview-icon"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v3"/><path d="M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338"/><path d="M3 9h5.859"/><path d="M8 2v3"/><circle cx="16" cy="16" r="6"/></svg>
                     {fechaFormateada}
                   </small>
                 </div>
