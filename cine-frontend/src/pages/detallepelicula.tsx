@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getPeliculaPorId } from '../services/peliculaServices';
 import { getGeneros } from '../services/generosServices';
 import { getFuncionesDePelicula } from '../services/funcionesServices';
-
 import '../pages/DetallePelicula.css';
 
 export default function DetallePelicula() {
@@ -46,7 +45,7 @@ export default function DetallePelicula() {
     return gen ? gen.NombreGenero : 'Desconocido';
   }, [pelicula, generos]);
 
-  // FUNCIÓN PARA TRANSFORMAR LA URL DE YOUTUBE A EMBED
+    // FUNCIÓN PARA TRANSFORMAR LA URL DE YOUTUBE A EMBED
   const obtenerUrlEmbed = (url: string) => {
     if (!url) return null;
 

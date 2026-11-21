@@ -23,10 +23,8 @@ interface BusquedaFormData {
 
 export default function AdminFunciones() {
   const queryClient = useQueryClient(); 
-
   const [peliculaBuscadaId, setPeliculaBuscadaId] = useState<number | null>(null); 
   const [funcionEditando, setFuncionEditando] = useState<number | null>(null);
-
   const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
 
   const {
@@ -41,7 +39,7 @@ export default function AdminFunciones() {
     handleSubmit: handleSubmitBusqueda,
   } = useForm<BusquedaFormData>();
 
-  //  Películas y salas con useQuery 
+  // Películas y salas con useQuery 
   const {
     data: peliculas = [],
     isLoading: cargandoPeliculas,
@@ -143,7 +141,7 @@ export default function AdminFunciones() {
   }
 
   // Crear o Actualizar función
-  const onSubmitFuncion = (data: FuncionFormData) => { 
+    const onSubmitFuncion = (data: FuncionFormData) => { 
     const fechaHoraFuncion = new Date(`${data.Fecha}T${data.Horario}`);
     const ahora = new Date();
     if (fechaHoraFuncion < ahora) {

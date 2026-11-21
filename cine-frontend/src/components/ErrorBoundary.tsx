@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      // Pantalla de respaldo elegante cuando ocurre una falla
+      // Pantalla de respaldo para cuando ocurre una falla
       return (
         <div style={{ 
           padding: '40px', 

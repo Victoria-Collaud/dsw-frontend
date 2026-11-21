@@ -13,7 +13,6 @@ interface GeneroFormData {
 
 export default function AdminGeneros() {
   const [generos, setGeneros] = useState<Genero[]>([])
-  //const [nombreGenero, setNombreGenero] = useState('')
   const [generoEditando, setGeneroEditando] = useState<number | null>(null)
   const [cargando, setCargando] = useState(true);
   const { alertaConfirmacion, alertaExito, alertaError } = useAlerta();

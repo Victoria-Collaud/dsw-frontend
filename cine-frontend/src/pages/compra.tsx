@@ -3,11 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { crearCompra, getAsientosOcupados, Metodopago } from '../services/compraServices';
 import { getFuncionPorId } from '../services/funcionesServices';
-import Loader from '../components/Loader';
-
 import { getAsientosDeSala } from '../services/salaServices.ts';
 import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
 import '../pages/Compra.css';
+import Loader from '../components/Loader';
 import { useAlerta } from '../hooks/useAlerta.ts';
 
 
@@ -18,7 +17,7 @@ export default function Compra() {
 
   const idFuncionNum = Number(funcionId); 
   const idFuncionValido = Number.isFinite(idFuncionNum) && idFuncionNum > 0; 
-const [metodoPago, setMetodoPago] = useState<Metodopago>(Metodopago.MERCADO_PAGO);
+  const [metodoPago, setMetodoPago] = useState<Metodopago>(Metodopago.MERCADO_PAGO);
   const [asientosSeleccionados, setAsientosSeleccionados] = useState<string[]>([]);
   const usuario = obtenerUsuarioDesdeToken();
   const { alertaExito, alertaError, alertaAdvertencia } = useAlerta();
@@ -36,7 +35,7 @@ const [metodoPago, setMetodoPago] = useState<Metodopago>(Metodopago.MERCADO_PAGO
 
   const numSala = funcion?.sala?.NumSala; 
 
-  //  Consulta de asientos de la sala (espera a numSala)
+  // Consulta de asientos de la sala (espera a numSala)
   const {
     data: asientosDisponibles = [],
     isLoading: cargandoAsientosSala,
@@ -136,7 +135,7 @@ const [metodoPago, setMetodoPago] = useState<Metodopago>(Metodopago.MERCADO_PAGO
       return;
     }
 
-    // ✨ Dispara la mutación en vez de llamar directo a crearCompra con try/catch/setExito
+    // Dispara la mutación en vez de llamar directo a crearCompra con try/catch/setExito
     compraMutation.mutate({
       MetodoPago: metodoPago,
       AsientosElegidos: asientosSeleccionados,

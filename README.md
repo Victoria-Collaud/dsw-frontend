@@ -7,7 +7,7 @@ El frontend está construido con React y TypeScript, utilizando Vite como empaqu
 *   **Librerías Principales (Dependencies):**
     *   `react` y `react-dom`: Biblioteca principal para construir la interfaz de usuario.
     *   `react-router-dom`: Para manejar la navegación entre páginas sin recargar el navegador.
-    *   `sweetalert2`: Para mostrar alertas y modales elegantes (reemplazando los `alert()` nativos).
+    *   `sweetalert2`: Para mostrar alertas y modales (reemplazando los `alert()` nativos).
 *   **Herramientas de Desarrollo y testing (DevDependencies):**
     *   `vite`: Empaquetador y servidor de desarrollo ultrarrápido.
     *   `typescript`: Lenguaje que añade tipado estático a JavaScript.

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { login } from '../services/authServices'; // Ajusta la ruta a tu servicio si es necesario
+import { login } from '../services/authServices'; 
 import { useAlerta } from '../hooks/useAlerta.ts';
 import { useForm } from 'react-hook-form';
 import '../pages/Login.css'; 

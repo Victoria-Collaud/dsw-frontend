@@ -49,7 +49,7 @@ export function useAlerta() {
       color: '#fff',
     });
     
-    // devuelve true si el usuario hace clic en "Sí, eliminar"
+  // devuelve true si el usuario hace clic en "Sí, eliminar"
     return result.isConfirmed; 
   };
 

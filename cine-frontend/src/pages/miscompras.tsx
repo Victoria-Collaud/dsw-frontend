@@ -35,7 +35,7 @@ export default function MisCompras() {
         Mis Compras:
       </h1>
 
-      {error && <p className="mis-compras-error">No se pudieron obtener tus compras.</p>} {/* ✨ */}
+      {error && <p className="mis-compras-error">No se pudieron obtener tus compras.</p>} 
 
       {compras.length === 0 && !error ? (
         <div className="mis-compras-vacio">
@@ -141,7 +141,7 @@ export default function MisCompras() {
         </div>
       )}
 
-      {/* MODAL PARA VER LOS QR */}
+      {/* PARA VER LOS QR */}
       {qrSeleccionado && (
         <div
           onClick={() => setQrSeleccionado(null)}

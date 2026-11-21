@@ -15,7 +15,7 @@ export interface Pelicula {
   Activa?: boolean
 }
 
-// 2. Interfaz para CREAR (lo que envías al backend)
+// Interfaz para CREAR (lo que envías al backend)
 export interface CreargroPelicula {
   TituloPelicula: string;
   Sinopsis: string;
@@ -37,7 +37,7 @@ export async function getPeliculas(): Promise<Pelicula[]> {
 
 // Obtener peliculas activas para la cartelera pública
 export async function getPeliculasActivas(): Promise<Pelicula[]> {
-  const res = await fetchApi(`${API_URL}/peliculas/activas`); // Ajustá la ruta según tu backend
+  const res = await fetchApi(`${API_URL}/peliculas/activas`); 
   if (!res.ok) throw new Error('Error al obtener películas activas');
   const json = await res.json();
   return json.data || json;
@@ -79,6 +79,7 @@ export async function deletePelicula(id: number): Promise<void> {
   }
 }
 
+// Actualizar una película existente
 export async function updatePelicula(id: number, pelicula: CreargroPelicula): Promise<Pelicula> {
   const res = await fetchApi(`${API_URL}/peliculas/${id}`, {
     method: 'PUT',
@@ -91,10 +92,11 @@ export async function updatePelicula(id: number, pelicula: CreargroPelicula): Pr
   return await res.json();
 }
 
+// Obtener todas las películas activas para la cartelera pública
 export async function buscarPeliculaPorTitulo(titulo: string): Promise<Pelicula[]> {
   const res = await fetchApi(`${API_URL}/peliculas/buscar?titulo=${encodeURIComponent(titulo)}`, {
   });
-  // Si el backend devuelve 404 porque no encontró nada, devolvemos array vacío
+
   if (res.status === 404) return [];
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
@@ -104,6 +106,7 @@ export async function buscarPeliculaPorTitulo(titulo: string): Promise<Pelicula[
   return json.data || json;
 }
 
+// Obtener una película por su ID
 export async function getPeliculaPorId(id: number): Promise<Pelicula> {
   const res = await fetchApi(`${API_URL}/peliculas/${id}`, {
   });

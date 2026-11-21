@@ -2,7 +2,6 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query'; 
 import { getGeneros } from '../services/generosServices';
-
 import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
 import '../components/Navbar.css';
 
@@ -11,7 +10,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [busqueda, setBusqueda] = useState('');
-  const [mostrarInfo, setMostrarInfo] = useState(false); // Estado para info
+  const [mostrarInfo, setMostrarInfo] = useState(false); 
 
   // Leemos el usuario con el token
   const usuario = obtenerUsuarioDesdeToken();
@@ -174,7 +173,7 @@ export default function Navbar() {
 
       </nav>
 
-      {/* Modal de Información ("Más info") */}
+      {/* Botón de "Más info" */}
       {mostrarInfo && (
         <div className="navbar-modal-overlay">
           <div className="navbar-modal-content">

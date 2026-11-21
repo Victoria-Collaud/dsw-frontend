@@ -39,6 +39,7 @@ export async function deleteGenero(id: number): Promise<void> {
   }
 }
 
+// Actualizar un género existente
 export async function updateGenero(id: number, genero: Genero): Promise<Genero> {
   const res = await fetchApi(`${API_URL}/generos/${id}`, {
     method: 'PUT',

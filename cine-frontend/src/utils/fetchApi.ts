@@ -5,7 +5,7 @@ export function cerrarSesionPorExpiracion() {
   localStorage.removeItem('usuario');
 
   if (window.location.pathname === '/login') return;
-  if (Swal.isVisible()) return; // 👈 Evita que se muestren dos Swal al mismo tiempo
+  if (Swal.isVisible()) return; // Evita que se muestren dos Swal al mismo tiempo
 
   Swal.fire({
     title: 'Sesión expirada',
@@ -38,7 +38,7 @@ export async function fetchApi(url: string, options: RequestInit = {}) {
   if (response.status === 401 || response.status === 403) {
     if (!url.includes('/login')) {
       
-      //  CORTAMOS LA EJECUCIÓN DE INMEDIATO
+      // CORTAMOS LA EJECUCIÓN DE INMEDIATO
       // Si ya hay un Swal en pantalla, no hacemos nada más para no pisarlo
       if (Swal.isVisible()) {
         throw new Error('Error de autenticación múltiple');

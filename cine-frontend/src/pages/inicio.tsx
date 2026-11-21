@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query'; // ✨
+import { useQuery } from '@tanstack/react-query'; 
 import { getPeliculasActivas } from '../services/peliculaServices';
 import type { Pelicula } from '../services/peliculaServices';
 import { getGeneros } from '../services/generosServices';
@@ -131,7 +131,6 @@ export default function Inicio() {
             onClick={() => setMostrarAvisoCompra(false)}
             className="inicio-aviso-cerrar"
           >
-            ✕
           </button>
         </div>
       )}

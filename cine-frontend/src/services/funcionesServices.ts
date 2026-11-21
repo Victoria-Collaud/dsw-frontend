@@ -12,6 +12,7 @@ const getHeaders = () => {
   };
 };
 
+// Interfaz para leer
 export interface Funcion {
   
   IdFuncion?: number;
@@ -23,6 +24,7 @@ export interface Funcion {
   CapacidadDisponible?: number; 
 }
 
+// Interfaz para crear o actualizar una función
 export interface CrearFuncionDTO {
   Idioma: string;
   Fecha: string;
@@ -42,6 +44,7 @@ export async function getFuncionesDePelicula(idPelicula: number): Promise<Funcio
   return json.data || json; 
 }
 
+// Función para crear una función
 export async function createFuncion(funcion: Funcion): Promise<Funcion> {
   const body = {
     Idioma: funcion.Idioma,
@@ -62,6 +65,7 @@ export async function createFuncion(funcion: Funcion): Promise<Funcion> {
   return await res.json();
 }
 
+// Función para eliminar funciones
 export async function deleteFuncion(id: number): Promise<void> {
   const res = await fetchApi(`${API_URL}/funciones/${id}`, {
     method: 'DELETE',
@@ -73,6 +77,7 @@ export async function deleteFuncion(id: number): Promise<void> {
   }
 }
 
+// Función para actualizar funciones
 export async function updateFuncion(id: number, funcion: CrearFuncionDTO): Promise<Funcion> {
   // Formateamos la fecha para que el backend la entienda
   const body = {
@@ -94,6 +99,7 @@ export async function updateFuncion(id: number, funcion: CrearFuncionDTO): Promi
   return await res.json();
 }
 
+// Función para obtener funciones por ID
 export async function getFuncionPorId(id: number): Promise<Funcion> {
   const res = await fetchApi(`${API_URL}/funciones/${id}`, {
     headers: getHeaders()

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getPeliculas, createPelicula, deletePelicula, updatePelicula, cambiarEstadoPelicula } from '../../services/peliculaServices.ts'
 import type { Pelicula } from '../../services/peliculaServices.ts'
-//import type { FormEvent } from 'react'
 import Loader from '../../components/Loader';
 import './AdminPelicula.css'
 import { useAlerta } from '../../hooks/useAlerta';
@@ -19,18 +18,9 @@ interface PeliculaFormData {
 
 export default function AdminPeliculas() {
   const [peliculas, setPeliculas] = useState<Pelicula[]>([])
-  //const [tituloPelicula, setTituloPelicula] = useState('')
-  //const [sinopsis, setSinopsis] = useState('')
-  //const [duracion, setDuracion] = useState<string>('')
-  //const [clasificacion, setClasificacion] = useState('')
-  //const [codGenero, setCodGenero] = useState<string>('')
-  //const [cartelera, setCartelera] = useState('')
-  //const [trailer, setTrailer] = useState('')
   const [peliculaEditando, setPeliculaEditando] = useState<number | null>(null)
   const [busqueda, setBusqueda] = useState('')
-  //const [error, setError] = useState('')
   const [cargando, setCargando] = useState(true);
-
   const { alertaConfirmacion, alertaExito, alertaError } = useAlerta();
 
   const { 
@@ -133,7 +123,7 @@ export default function AdminPeliculas() {
       pelicula.Activa 
         ? `"${pelicula.TituloPelicula}" dejará de aparecer en la cartelera.`
         : `"${pelicula.TituloPelicula}" volverá a aparecer en la cartelera.`,
-        'Si, archivar'
+        'Confirmar'
     );
     if (!confirmado) return;
     try {

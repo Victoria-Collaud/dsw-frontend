@@ -4,12 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { getPeliculasActivas, buscarPeliculaPorTitulo } from '../services/peliculaServices';
 import type { Pelicula } from '../services/peliculaServices';
 import { getGeneros } from '../services/generosServices';
-
-import Loader from '../components/Loader';
 import { getFuncionesDePelicula, type Funcion } from '../services/funcionesServices.ts';
+import Loader from '../components/Loader';
 import '../pages/Peliculas.css';
 
-// Función auxiliar para filtrar por género (Manejando si es objeto o número) 
+// Función auxiliar para filtrar por género (Maneja si es objeto o número) 
 const coincideGenero = (peli: Pelicula, filtro: string) => {
   if (typeof peli.genero === 'object' && peli.genero !== null) {
     return String((peli.genero as { CodGenero: number }).CodGenero) === filtro;
@@ -75,7 +74,7 @@ export default function Peliculas() {
     },
   });
 
-  //  Funciones futuras y con capacidad para las películas obtenidas
+  // Funciones futuras y con capacidad para las películas obtenidas
   const idsPeliculas = peliculas
     .map((p) => p.IdPelicula)
     .filter((id): id is number => id !== undefined);

@@ -11,7 +11,7 @@ interface FiltroFechaData {
 }
 
 export default function AdminCompras() {
-  //  Consulta de auditoría de compras con TanStack Query
+  // Consulta de auditoría de compras con TanStack Query
   const {
     data: compras = [],
     isLoading: cargando,

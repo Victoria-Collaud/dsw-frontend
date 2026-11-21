@@ -16,12 +16,14 @@ import Registro from './pages/registro.tsx';
 import MisCompras from './pages/miscompras.tsx';
 import ErrorBoundary from './components/ErrorBoundary';
 import './App.css'; 
+
 export default function App() {
+
   return (
     <BrowserRouter>
       <Navbar />
       <main style={{ padding: '20px' }}>
-        {/* 🛡️ El ErrorBoundary envuelve a todo el sistema de rutas de una sola vez */}
+        {/* El ErrorBoundary envuelve a todo el sistema de rutas de una sola vez */}
         <ErrorBoundary>
           <Routes>
             <Route path="/" element={<Inicio />} />

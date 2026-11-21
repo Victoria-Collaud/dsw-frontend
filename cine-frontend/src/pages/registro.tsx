@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { registrarUsuario } from '../services/usuarioServices';
-import '../pages/Registro.css';
 import { useAlerta } from '../hooks/useAlerta.ts';
 import { useForm, useWatch } from 'react-hook-form';
+import '../pages/Registro.css';
 
 interface RegistroFormData {
   EmailUsuario: string;

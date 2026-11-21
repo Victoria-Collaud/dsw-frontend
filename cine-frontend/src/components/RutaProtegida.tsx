@@ -12,10 +12,10 @@ export default function RutaProtegida({ rolRequerido }: RutaProtegidaProps) {
   const location = useLocation();
   // Si no hay token o usuario, lo mandamos al login
   if (!token || !usuario) {
-    // Le pasamos la ruta a la que intentaba ir
+  // Le pasamos la ruta a la que intentaba ir
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  //  Si no es admin lo mandamos al inicio
+  // Si no es admin lo mandamos al inicio
   if (rolRequerido && usuario.rol !== rolRequerido) {
     return <Navigate to="/" replace />; // O a una página de "No autorizado"
   }

@@ -41,9 +41,11 @@ export async function crearCompra(compra: CrearCompraDTO): Promise<Compra> {
   if (!compra.CantEntradas || compra.CantEntradas < 1) {
     throw new Error('Debes seleccionar al menos 1 entrada.');
   }
+
   if (compra.CantEntradas > 5) {
     throw new Error('Solo puedes comprar un máximo de 5 entradas por transacción.');
   }
+
   const res = await fetchApi(`${API_URL}/compras`, {
     method: 'POST',
     body: JSON.stringify(compra)
@@ -55,6 +57,7 @@ export async function crearCompra(compra: CrearCompraDTO): Promise<Compra> {
   return await res.json();
 }
 
+// Obtener todas las compras realizadas
 export async function getCompras(): Promise<Compra[]> {
   const res = await fetchApi(`${API_URL}/compras`);
   
@@ -76,6 +79,7 @@ export async function getMisCompras(): Promise<Compra[]> {
   return json.data || json;
 }
 
+// asientos ocupados
 export async function getAsientosOcupados(IdFuncion: number): Promise<string[]> {
   const res = await fetchApi(`${API_URL}/compras/funcion/${IdFuncion}/asientos`);
   if (!res.ok) throw new Error('Error al obtener asientos ocupados');
