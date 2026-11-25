@@ -1,10 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  cambiarEstadoPelicula,
+  createPelicula,
+  deletePelicula,
   getPeliculas,
   getPeliculasActivas,
   buscarPeliculaPorTitulo,
   getPeliculaPorId,
+  updatePelicula,
+  type CreargroPelicula,
 } from '../services/peliculaServices';
+
+const PELICULAS_QUERY_KEY = ['peliculas'] as const;
 
 // Cartelera activa o búsqueda por título
 export function usePeliculas(busqueda: string = '') {
@@ -26,6 +33,43 @@ export function useTodasLasPeliculas() {
   return useQuery({
     queryKey: ['peliculas', 'todas'],
     queryFn: getPeliculas,
+  });
+}
+
+export function useCrearPelicula() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (pelicula: CreargroPelicula) => createPelicula(pelicula),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: PELICULAS_QUERY_KEY }),
+  });
+}
+
+export function useActualizarPelicula() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, pelicula }: { id: number; pelicula: CreargroPelicula }) =>
+      updatePelicula(id, pelicula),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: PELICULAS_QUERY_KEY }),
+  });
+}
+
+export function useEliminarPelicula() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => deletePelicula(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: PELICULAS_QUERY_KEY }),
+  });
+}
+
+export function useCambiarEstadoPelicula() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => cambiarEstadoPelicula(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: PELICULAS_QUERY_KEY }),
   });
 }
 

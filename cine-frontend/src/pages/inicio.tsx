@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query'; 
-import { getPeliculasActivas } from '../services/peliculaServices';
+import { usePeliculas } from '../hooks/usePeliculas';
 import type { Pelicula } from '../services/peliculaServices';
-import { getGeneros } from '../services/generosServices';
-
-import { getFuncionesDePelicula, type Funcion } from '../services/funcionesServices.ts';
+import { useGeneros } from '../hooks/useGeneros';
+import { useFuncionesDisponiblesPorPeliculas } from '../hooks/useFunciones';
 import Loader from '../components/Loader';
 import '../pages/Inicio.css';
 
@@ -24,22 +22,14 @@ export default function Inicio() {
     }
   }, [location, navigate]);
 
-  // Películas activas con useQuery
+  
   const {
     data: peliculas = [],
     isLoading: cargandoPeliculas,
     isError: errorPeliculas,
-  } = useQuery({
-    queryKey: ['peliculas', 'activas', { busqueda: '' }],
-    queryFn: getPeliculasActivas,
-  });
+  } = usePeliculas();
 
-  //  Géneros con useQuery
-  const { data: generos = [] } = useQuery({
-    queryKey: ['generos'],
-    queryFn: getGeneros,
-    staleTime: 1000 * 60 * 15,
-  });
+  const { data: generos = [] } = useGeneros();
 
   //  Funciones futuras y con capacidad para las películas visibles (primeras 8)
   const peliculasVisibles = peliculas.slice(0, 8);
@@ -50,40 +40,7 @@ export default function Inicio() {
   const {
     data: funcionesPorPelicula = {},
     isLoading: cargandoFunciones,
-  } = useQuery({
-    queryKey: ['funciones', 'inicio', idsVisibles],
-    enabled: idsVisibles.length > 0,
-    queryFn: async () => {
-      const ahora = new Date();
-      const resultados = await Promise.all(
-        peliculasVisibles.map(async (peli) => {
-          if (peli.IdPelicula === undefined) {
-            return { id: undefined, funcs: [] as Funcion[] };
-          }
-          try {
-            const funcs = await getFuncionesDePelicula(peli.IdPelicula);
-            const funcionesValidas = funcs.filter((func) => {
-             const fechaHora = new Date(`${func.Fecha.split('T')[0]}T${func.Horario}`);
-            const esFutura = fechaHora > ahora;
-             const tieneCapacidad = (func.CapacidadDisponible ?? 0) > 0;
-              return esFutura && tieneCapacidad;
-            });
-            return { id: peli.IdPelicula, funcs: funcionesValidas };
-          } catch {
-            return { id: peli.IdPelicula, funcs: [] as Funcion[] };
-          }
-        })
-      );
-
-      const dict: Record<number, Funcion[]> = {};
-      resultados.forEach((r) => {
-        if (r.id !== undefined) {
-          dict[r.id] = r.funcs;
-        }
-      });
-      return dict;
-    },
-  });
+  } = useFuncionesDisponiblesPorPeliculas(idsVisibles);
 
   const obtenerNombreGenero = (
     genero: Pelicula['genero']

@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query'; 
-import { getPeliculasActivas, buscarPeliculaPorTitulo } from '../services/peliculaServices';
+import { usePeliculas } from '../hooks/usePeliculas';
 import type { Pelicula } from '../services/peliculaServices';
-import { getGeneros } from '../services/generosServices';
-import { getFuncionesDePelicula, type Funcion } from '../services/funcionesServices.ts';
+import { useGeneros } from '../hooks/useGeneros';
+import { useFuncionesDisponiblesPorPeliculas } from '../hooks/useFunciones';
 import Loader from '../components/Loader';
 import '../pages/Peliculas.css';
 
@@ -36,86 +35,30 @@ export default function Peliculas() {
     return () => clearTimeout(timer);
   }, [textoBusqueda]);
 
-  // Géneros con useQuery
-  const { data: generos = [] } = useQuery({
-    queryKey: ['generos'],
-    queryFn: getGeneros,
-    staleTime: 1000 * 60 * 15,
-  });
+  const { data: generos = [] } = useGeneros();
 
-  //Películas según búsqueda y filtro de género
   const {
     data: peliculas = [],
     isLoading: cargandoPeliculas,
     isError: errorPeliculas,
-  } = useQuery({
-    queryKey: ['peliculas', 'cartelera', { busqueda: textoDebounced.trim(), genero: filtroGenero }],
-    queryFn: async () => {
-      const termino = textoDebounced.trim();
+  } = usePeliculas(textoDebounced);
 
-      if (termino !== '' && filtroGenero !== '') {
-        const data = await buscarPeliculaPorTitulo(termino);
-        return data
-          .filter((p) => coincideGenero(p, filtroGenero))
-          .filter((p) => p.Activa !== false);
-      }
-
-      if (termino !== '') {
-        const data = await buscarPeliculaPorTitulo(termino);
-        return data.filter((p) => p.Activa !== false);
-      }
-
-      if (filtroGenero !== '') {
-        const todas = await getPeliculasActivas();
-        return todas.filter((p) => coincideGenero(p, filtroGenero));
-      }
-
-      return getPeliculasActivas();
-    },
-  });
+  const peliculasMostradas = useMemo(
+    () => peliculas
+      .filter((peli) => peli.Activa !== false)
+      .filter((peli) => filtroGenero === '' || coincideGenero(peli, filtroGenero)),
+    [peliculas, filtroGenero]
+  );
 
   // Funciones futuras y con capacidad para las películas obtenidas
-  const idsPeliculas = peliculas
+  const idsPeliculas = peliculasMostradas
     .map((p) => p.IdPelicula)
     .filter((id): id is number => id !== undefined);
 
   const {
     data: funcionesPorPelicula = {},
     isLoading: cargandoFunciones,
-  } = useQuery({
-    queryKey: ['funciones', 'peliculas', idsPeliculas],
-    enabled: idsPeliculas.length > 0,
-    queryFn: async () => {
-      const ahora = new Date();
-      const resultados = await Promise.all(
-        peliculas.map(async (peli) => {
-          if (peli.IdPelicula === undefined) {
-            return { id: undefined, funcs: [] as Funcion[] };
-          }
-          try {
-            const funcs = await getFuncionesDePelicula(peli.IdPelicula);
-            const funcionesValidas = funcs.filter((func) => {
-              const fechaHora = new Date(`${func.Fecha.split('T')[0]}T${func.Horario}`);
-              const esFutura = fechaHora > ahora;
-              const tieneCapacidad = (func.CapacidadDisponible ?? 0) > 0;
-              return esFutura && tieneCapacidad;
-            });
-            return { id: peli.IdPelicula, funcs: funcionesValidas };
-          } catch {
-            return { id: peli.IdPelicula, funcs: [] as Funcion[] };
-          }
-        })
-      );
-
-      const dict: Record<number, Funcion[]> = {};
-      resultados.forEach((r) => {
-        if (r.id !== undefined) {
-          dict[r.id] = r.funcs;
-        }
-      });
-      return dict;
-    },
-  });
+  } = useFuncionesDisponiblesPorPeliculas(idsPeliculas);
 
   const obtenerNombreGenero = (genero: Pelicula['genero']) => {
     if (typeof genero === 'object' && genero !== null) {
@@ -125,12 +68,7 @@ export default function Peliculas() {
     if (!gen) return 'Género desconocido';
     return gen.NombreGenero;
   };
-
-  // Filtramos para mostrar (asegura respuesta instantánea al cambiar el select de género)
-  const peliculasMostradas = useMemo(() => {
-    if (filtroGenero === '') return peliculas;
-    return peliculas.filter((peli) => coincideGenero(peli, filtroGenero));
-  }, [peliculas, filtroGenero]);
+  
 
   const cargando = cargandoPeliculas || (idsPeliculas.length > 0 && cargandoFunciones); 
 

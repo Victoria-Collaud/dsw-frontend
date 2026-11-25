@@ -1,10 +1,16 @@
-import { useState, useEffect } from 'react'
-import { getPeliculas, createPelicula, deletePelicula, updatePelicula, cambiarEstadoPelicula } from '../../services/peliculaServices.ts'
+import { useState } from 'react'
 import type { Pelicula } from '../../services/peliculaServices.ts'
 import Loader from '../../components/Loader';
 import './AdminPelicula.css'
 import { useAlerta } from '../../hooks/useAlerta';
 import { useForm } from 'react-hook-form';
+import {
+  useActualizarPelicula,
+  useCambiarEstadoPelicula,
+  useCrearPelicula,
+  useEliminarPelicula,
+  useTodasLasPeliculas,
+} from '../../hooks/usePeliculas';
 
 interface PeliculaFormData {
   TituloPelicula: string;
@@ -17,11 +23,20 @@ interface PeliculaFormData {
 }
 
 export default function AdminPeliculas() {
-  const [peliculas, setPeliculas] = useState<Pelicula[]>([])
+
   const [peliculaEditando, setPeliculaEditando] = useState<number | null>(null)
   const [busqueda, setBusqueda] = useState('')
-  const [cargando, setCargando] = useState(true);
+
   const { alertaConfirmacion, alertaExito, alertaError } = useAlerta();
+  const {
+    data: peliculas = [],
+    isLoading: cargando,
+    isError: errorCarga,
+  } = useTodasLasPeliculas();
+  const crearPeliculaMutation = useCrearPelicula();
+  const actualizarPeliculaMutation = useActualizarPelicula();
+  const eliminarPeliculaMutation = useEliminarPelicula();
+  const cambiarEstadoPeliculaMutation = useCambiarEstadoPelicula();
 
   const { 
     register, 
@@ -29,26 +44,10 @@ export default function AdminPeliculas() {
     reset, 
     setValue 
   } = useForm<PeliculaFormData>({
-  });
 
-  useEffect(() => {
-    cargarPeliculas()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+   });
 
-  async function cargarPeliculas() {
-    
-    setCargando(true);
-    try {
-      const data = await getPeliculas()
-      setPeliculas(data)
-    } catch  {
-      alertaError('Error de conexión', 'No se pudieron obtener las películas. Por favor, intentá nuevamente.');
-    } finally {
-      setCargando(false); 
-  } }
-
-  function limpiarFormulario() {
+function limpiarFormulario() {
     reset(); 
     setPeliculaEditando(null)
   }
@@ -82,15 +81,18 @@ export default function AdminPeliculas() {
         Cartelera: data.Cartelera,
         Trailer: data.Trailer
       }
-      if (peliculaEditando) {
-        await updatePelicula(peliculaEditando, peliculaData)
+      if (peliculaEditando !== null) {
+        await actualizarPeliculaMutation.mutateAsync({
+          id: peliculaEditando,
+          pelicula: peliculaData,
+        });
         alertaExito('¡Actualizada!', 'La película fue actualizada correctamente.'); 
       } else {
-        await createPelicula(peliculaData)
+        await crearPeliculaMutation.mutateAsync(peliculaData);
         alertaExito('¡Creada!', 'La película fue creada correctamente.'); 
       }
       limpiarFormulario()
-      cargarPeliculas()
+
     } catch (err) {
       console.error(err)
       const mensajeError = err instanceof Error ? err.message : 'Error al guardar la película.';
@@ -99,7 +101,7 @@ export default function AdminPeliculas() {
   }
 
    async function handleDelete(id?: number, tituloPelicula?: string) {
-    if (!id) return;
+    if (id === undefined) return;
     const confirmado = await alertaConfirmacion(
       '¿Estás seguro?', 
       `¿Seguro que querés eliminar la película "${tituloPelicula || 'seleccionada'}"?`,
@@ -107,9 +109,9 @@ export default function AdminPeliculas() {
     );
     if (!confirmado) return;
     try {
-      await deletePelicula(id);
+      await eliminarPeliculaMutation.mutateAsync(id);
       alertaExito('¡Eliminado!', 'La película ha sido eliminada correctamente.');
-      cargarPeliculas();
+
     } catch (error) {
       console.error('Error al borrar la película', error);
       const mensajeError = error instanceof Error ? error.message : 'No se pudo eliminar la película.';
@@ -127,13 +129,14 @@ export default function AdminPeliculas() {
     );
     if (!confirmado) return;
     try {
-      await cambiarEstadoPelicula(pelicula.IdPelicula!);
+      await cambiarEstadoPeliculaMutation.mutateAsync(pelicula.IdPelicula!);
       alertaExito(
         '¡Listo!', 
         `La película fue ${pelicula.Activa ? 'archivada' : 'desarchivada'}.`
       );
-      cargarPeliculas();
+
     } catch (error) {
+      console.error('Error al cambiar el estado de la película', error);
       const mensajeError = error instanceof Error ? error.message : 'No se pudo cambiar el estado.';
       alertaError('Error', mensajeError);
     }
@@ -144,7 +147,7 @@ export default function AdminPeliculas() {
   )
 
   if (cargando) {
-      return <Loader mensaje="Cargando funciones..." />;
+      return <Loader mensaje="Cargando películas..." />;
     }
 
   return (
@@ -156,11 +159,16 @@ export default function AdminPeliculas() {
         </h2>
       </div>
 
+      {errorCarga && (
+        <p className="admin-pelicula-empty">
+          No se pudieron obtener las películas. Por favor, intentá nuevamente.
+        </p>
+      )}
 
       {/* Formulario */}
       <form onSubmit={handleSubmit(onSubmit)} className="admin-pelicula-form">
         <h3 className="admin-pelicula-form-title">
-          {peliculaEditando ? ' Editar Película' : ' Agregar Nueva Película'}
+          {peliculaEditando !== null ? ' Editar Película' : ' Agregar Nueva Película'}
         </h3>
 
         <div className="admin-pelicula-field">
@@ -235,12 +243,17 @@ export default function AdminPeliculas() {
         <div className="admin-pelicula-actions">
           <button 
             type="submit" 
+            disabled={crearPeliculaMutation.isPending || actualizarPeliculaMutation.isPending}
             className="admin-pelicula-btn-submit"
           >
-            {peliculaEditando ? 'Guardar Cambios' : 'Crear Película'}
+            {crearPeliculaMutation.isPending || actualizarPeliculaMutation.isPending
+              ? 'Guardando...'
+              : peliculaEditando !== null
+              ? 'Guardar Cambios'
+              : 'Crear Película'}
           </button>
           
-          {peliculaEditando && (
+          {peliculaEditando !== null && (
             <button 
               type="button" 
               onClick={limpiarFormulario}
@@ -307,6 +320,7 @@ export default function AdminPeliculas() {
                 {/* BOTÓN ARCHIVAR/DESARCHIVAR */}
                 <button 
                   onClick={() => handleArchivar(p)}
+                  disabled={cambiarEstadoPeliculaMutation.isPending}
                   className={`admin-pelicula-btn-archivar ${p.Activa ? 'activa' : 'inactiva'}`}
                 >
                   {p.Activa ? 'Archivar' : 'Desarchivar'}
@@ -320,6 +334,7 @@ export default function AdminPeliculas() {
                 </button>
                 <button 
                   onClick={() => handleDelete(p.IdPelicula, p.TituloPelicula)}
+                  disabled={eliminarPeliculaMutation.isPending}
                   className="admin-pelicula-btn-delete"
                 >
                   Eliminar

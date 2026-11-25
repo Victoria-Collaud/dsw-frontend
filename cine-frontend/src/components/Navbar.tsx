@@ -23,14 +23,20 @@ export default function Navbar() {
     '/login',
     '/miscompras',
     '/admin',
-    '/compra',
+    '/registro',
+    '/comprar',
     '/admin/funciones',
     '/admin/peliculas',
     '/admin/salas',
     '/admin/compras',
     '/admin/generos', 
+    
+
+    
   ];
-  const ocultarBuscador = rutasSinBuscador.includes(location.pathname);
+const ocultarBuscador = rutasSinBuscador.some(ruta => 
+    location.pathname.startsWith(ruta)
+  );
 
   //  Géneros cacheados con TanStack Query 
   const { data: generos = [] } = useQuery({

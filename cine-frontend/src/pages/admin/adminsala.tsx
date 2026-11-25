@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
-import { getallSala, createSala, deleteSala, updateSala} from '../../services/salaServices'
+import { useState } from 'react'
 import type { Sala } from '../../services/salaServices'
 import Loader from '../../components/Loader'
 import './AdminSala.css'
 import { useAlerta } from '../../hooks/useAlerta'
 import { useForm } from 'react-hook-form'
+import { useActualizarSala, useCrearSala, useEliminarSala, useSalas } from '../../hooks/useSalas'
 
 interface SalaFormData {
   NumSala: number;
@@ -15,10 +15,18 @@ interface SalaFormData {
 }
 
 export default function AdminSalas() {
-  const [salas, setSalas] = useState<Sala[]>([])
+
   const [salaEditando, setSalaEditando] = useState<number | null>(null)
-  const [cargando, setCargando] = useState(true);
+
   const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
+  const {
+    data: salas = [],
+    isLoading: cargando,
+    isError: errorCarga,
+  } = useSalas();
+  const crearSalaMutation = useCrearSala();
+  const actualizarSalaMutation = useActualizarSala();
+  const eliminarSalaMutation = useEliminarSala();
 
   const { 
     register, 
@@ -28,25 +36,9 @@ export default function AdminSalas() {
   } = useForm<SalaFormData>({
   });
 
-  useEffect(() => {
-    cargarSalas()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Función para obtener las salas desde el backend
-  async function cargarSalas() {
-    setCargando(true);
-    try {
-      const data = await getallSala()
-      setSalas(data)
-    }catch (error) {
-      console.log('Error al buscar las salas', error)
-      alertaError('Error de conexión', 'No se pudieron obtener las salas. Por favor, intentá nuevamente.');
-    } finally {
-      setCargando(false); 
-  } }
 
  //  LIMPIAR EL FORMULARIO con reset
+
   function limpiarFormulario() {
     reset();
     setSalaEditando(null);
@@ -80,15 +72,15 @@ export default function AdminSalas() {
         TipoAsientos: data.TipoAsientos,
         PrecioSala: Number(data.PrecioSala)
       }
-      if (salaEditando) {
-        await updateSala(salaEditando, salaData)
+      if (salaEditando !== null) {
+        await actualizarSalaMutation.mutateAsync({ numSala: salaEditando, sala: salaData });
         alertaExito('¡Actualizada!', 'La sala fue actualizada correctamente.');
       } else {
-        await createSala(salaData)
+        await crearSalaMutation.mutateAsync(salaData);
         alertaExito('¡Creada!', 'La sala fue creada correctamente.');
       }
       limpiarFormulario()
-      cargarSalas()
+      
     } catch (error) {
       console.log('Error al guardar la sala', error)
       const mensajeError = error instanceof Error ? error.message : 'Error al guardar la sala.';
@@ -105,9 +97,8 @@ async function handleDelete(NumSala: number) {
     );
     if (!confirmado) return;
     try {
-      await deleteSala(NumSala);
+      await eliminarSalaMutation.mutateAsync(NumSala);
       alertaExito('¡Eliminada!', 'La sala ha sido eliminada correctamente.');
-      cargarSalas();
     } catch (error) {
       console.error('Error al borrar la sala', error);
       const mensajeError = error instanceof Error ? error.message : 'No se pudo eliminar la sala.';
@@ -116,7 +107,7 @@ async function handleDelete(NumSala: number) {
   }
 
 if (cargando) {
-      return <Loader mensaje="Cargando funciones..." />;
+      return <Loader mensaje="Cargando salas..." />;
     }
     
  return (
@@ -128,10 +119,16 @@ if (cargando) {
         </h2>
       </div>
 
+      {errorCarga && (
+        <p className="admin-salas-empty">
+          No se pudieron obtener las salas. Por favor, intentá nuevamente.
+        </p>
+      )}
+
 {/* Formulario de Alta/Edición de Sala */}
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: '#141414', border: '1px solid #222', padding: '25px', borderRadius: '4px', marginBottom: '30px' }}>
         <h3 style={{ fontSize: '1.1rem', color: '#fff', margin: '0 0 10px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          {salaEditando ? ` Editar Sala #${salaEditando}` : ' Agregar Nueva Sala'}
+          {salaEditando !== null ? ` Editar Sala #${salaEditando}` : ' Agregar Nueva Sala'}
         </h3>
         
         <div className="admin-salas-field">
@@ -193,12 +190,17 @@ if (cargando) {
         <div className="admin-salas-actions">
           <button 
             type="submit" 
+            disabled={crearSalaMutation.isPending || actualizarSalaMutation.isPending}
             className="admin-salas-btn-submit"
           >
-            {salaEditando ? 'Guardar Cambios' : 'Crear Sala'}
+            {crearSalaMutation.isPending || actualizarSalaMutation.isPending
+              ? 'Guardando...'
+              : salaEditando !== null
+              ? 'Guardar Cambios'
+              : 'Crear Sala'}
           </button>
           
-          {salaEditando && (
+          {salaEditando !== null && (
             <button 
               type="button" 
               onClick={limpiarFormulario}
@@ -242,6 +244,7 @@ if (cargando) {
 
                 <button
                   onClick={() => handleDelete(sala.NumSala)}
+                  disabled={eliminarSalaMutation.isPending}
                   className="admin-salas-btn-delete"
                 >
                   Eliminar

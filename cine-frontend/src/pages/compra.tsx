@@ -1,9 +1,9 @@
 import { useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { crearCompra, getAsientosOcupados, Metodopago } from '../services/compraServices';
-import { getFuncionPorId } from '../services/funcionesServices';
-import { getAsientosDeSala } from '../services/salaServices.ts';
+import { Metodopago } from '../services/compraServices';
+import { useFuncionPorId } from '../hooks/useFunciones';
+import { useAsientosDeSala } from '../hooks/useSalas';
+import { useAsientosOcupados, useCrearCompra } from '../hooks/useCompras';
 import { obtenerUsuarioDesdeToken } from '../utils/auth.ts';
 import '../pages/Compra.css';
 import Loader from '../components/Loader';
@@ -13,7 +13,6 @@ import { useAlerta } from '../hooks/useAlerta.ts';
 export default function Compra() {
   const { funcionId } = useParams<{ funcionId: string }>();
   const navigate = useNavigate();
-  const queryClient = useQueryClient(); 
 
   const idFuncionNum = Number(funcionId); 
   const idFuncionValido = Number.isFinite(idFuncionNum) && idFuncionNum > 0; 
@@ -21,61 +20,25 @@ export default function Compra() {
   const [asientosSeleccionados, setAsientosSeleccionados] = useState<string[]>([]);
   const usuario = obtenerUsuarioDesdeToken();
   const { alertaExito, alertaError, alertaAdvertencia } = useAlerta();
+  const compraMutation = useCrearCompra(idFuncionNum);
 
- 
   const {
     data: funcion,
     isLoading: cargandoFuncion,
     isError: errorFuncion,
-  } = useQuery({
-    queryKey: ['funciones', 'detalle', idFuncionNum],
-    queryFn: () => getFuncionPorId(idFuncionNum),
-    enabled: idFuncionValido,
-  });
+  } = useFuncionPorId(idFuncionValido ? idFuncionNum : undefined);
 
   const numSala = funcion?.sala?.NumSala; 
 
-  // Consulta de asientos de la sala (espera a numSala)
   const {
     data: asientosDisponibles = [],
     isLoading: cargandoAsientosSala,
-  } = useQuery({
-    queryKey: ['salas', 'asientos', numSala],
-    queryFn: () => getAsientosDeSala(numSala!),
-    enabled: Boolean(numSala),
-  });
+  } = useAsientosDeSala(numSala);
 
-  // Consulta de asientos ocupados de la función
   const {
     data: asientosOcupados = [],
     isLoading: cargandoOcupados,
-  } = useQuery({
-    queryKey: ['compras', 'asientosOcupados', idFuncionNum],
-    queryFn: () => getAsientosOcupados(idFuncionNum),
-    enabled: idFuncionValido,
-  });
-
-  
-  const compraMutation = useMutation({
-    mutationFn: crearCompra,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['compras', 'asientosOcupados', idFuncionNum] });
-      queryClient.invalidateQueries({ queryKey: ['funciones'] });
-      queryClient.invalidateQueries({ queryKey: ['misCompras'] });
-
-      setAsientosSeleccionados([]);
-      alertaExito('¡Compra exitosa!', 'Redirigiendo a la cartelera...');
-      setTimeout(() => {
-        navigate('/', { state: { compraExitosa: true } });
-      }, 2000);
-    },
-    onError: (err: unknown) => {
-      console.error(err);
-      const mensajeError =
-        err instanceof Error ? err.message : 'Hubo un error al procesar la compra.';
-      alertaError('Error al comprar', mensajeError);
-    },
-  });
+  } = useAsientosOcupados(idFuncionValido ? idFuncionNum : undefined);
 
   function toggleAsiento(asiento: string) {
     if (asientosOcupados.includes(asiento)) return;
@@ -112,7 +75,7 @@ export default function Compra() {
   const total = asientosSeleccionados.length * precioUnitario;
   const procesandoCompra = compraMutation.isPending || compraMutation.isSuccess; 
 
-  function handleComprar(e: React.FormEvent) {
+  async function handleComprar(e: React.FormEvent) {
     e.preventDefault();
     if (!usuario || !usuario.idUsuario) {
       alertaError('Sesión requerida', 'Tenés que iniciar sesión para comprar.');
@@ -135,14 +98,25 @@ export default function Compra() {
       return;
     }
 
-    // Dispara la mutación en vez de llamar directo a crearCompra con try/catch/setExito
-    compraMutation.mutate({
-      MetodoPago: metodoPago,
-      AsientosElegidos: asientosSeleccionados,
-      CantEntradas: asientosSeleccionados.length,
-      IdUsuario: usuario.idUsuario,
-      IdFuncion: idFuncionNum,
-    });
+    try {
+      await compraMutation.mutateAsync({
+        MetodoPago: metodoPago,
+        AsientosElegidos: asientosSeleccionados,
+        CantEntradas: asientosSeleccionados.length,
+        IdUsuario: usuario.idUsuario,
+        IdFuncion: idFuncionNum,
+      });
+      setAsientosSeleccionados([]);
+      alertaExito('¡Compra exitosa!', 'Redirigiendo a la cartelera...');
+      setTimeout(() => {
+        navigate('/', { state: { compraExitosa: true } });
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      const mensajeError =
+        err instanceof Error ? err.message : 'Hubo un error al procesar la compra.';
+      alertaError('Error al comprar', mensajeError);
+    }
   }
 
  return (

@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getPeliculaPorId } from '../services/peliculaServices';
-import { getGeneros } from '../services/generosServices';
-import { getFuncionesDePelicula } from '../services/funcionesServices';
+import { usePeliculaPorId } from '../hooks/usePeliculas';
+import { useFuncionesDePelicula } from '../hooks/useFunciones';
+import { useGeneros } from '../hooks/useGeneros';
 import '../pages/DetallePelicula.css';
 
 export default function DetallePelicula() {
@@ -15,26 +14,14 @@ export default function DetallePelicula() {
     data: pelicula,
     isLoading: cargandoPelicula,
     isError: errorPelicula,
-  } = useQuery({
-    queryKey: ['peliculas', 'detalle', idPelicula],
-    queryFn: () => getPeliculaPorId(idPelicula),
-    enabled: idValido,
-  });
+  } = usePeliculaPorId(idValido ? idPelicula : undefined);
 
   const {
     data: funciones = [],
     isLoading: cargandoFunciones,
-  } = useQuery({
-    queryKey: ['funciones', 'pelicula', idPelicula],
-    queryFn: () => getFuncionesDePelicula(idPelicula),
-    enabled: idValido,
-  });
+  } = useFuncionesDePelicula(idValido ? idPelicula : undefined);
 
-  const { data: generos = [] } = useQuery({
-    queryKey: ['generos'],
-    queryFn: getGeneros,
-    staleTime: 1000 * 60 * 15,
-  });
+  const { data: generos = [] } = useGeneros();
 
   const generoNombre = useMemo(() => {
     if (!pelicula) return 'Desconocido';

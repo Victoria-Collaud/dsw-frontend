@@ -1,13 +1,12 @@
 import { useState } from 'react'; 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'; 
-import { createFuncion, deleteFuncion, getFuncionesDePelicula, updateFuncion } from '../../services/funcionesServices';
 import type { Funcion } from '../../services/funcionesServices';
-import { getPeliculas } from '../../services/peliculaServices';
-import { getallSala } from '../../services/salaServices';
 import Loader from '../../components/Loader';
 import './AdminFunciones.css';
 import { useAlerta } from '../../hooks/useAlerta';
 import { useForm } from 'react-hook-form';
+import { useFuncionesDePelicula, useActualizarFuncion, useCrearFuncion, useEliminarFuncion } from '../../hooks/useFunciones';
+import { useTodasLasPeliculas } from '../../hooks/usePeliculas';
+import { useSalas } from '../../hooks/useSalas';
 
 interface FuncionFormData {
   Idioma: string;
@@ -22,7 +21,6 @@ interface BusquedaFormData {
 }
 
 export default function AdminFunciones() {
-  const queryClient = useQueryClient(); 
   const [peliculaBuscadaId, setPeliculaBuscadaId] = useState<number | null>(null); 
   const [funcionEditando, setFuncionEditando] = useState<number | null>(null);
   const { alertaConfirmacion, alertaExito, alertaError, alertaAdvertencia } = useAlerta();
@@ -39,89 +37,31 @@ export default function AdminFunciones() {
     handleSubmit: handleSubmitBusqueda,
   } = useForm<BusquedaFormData>();
 
-  // Películas y salas con useQuery 
   const {
     data: peliculas = [],
     isLoading: cargandoPeliculas,
     isError: errorPeliculas,
-  } = useQuery({
-    queryKey: ['peliculas', 'todas'],
-    queryFn: getPeliculas,
-  });
+  } = useTodasLasPeliculas();
 
   const {
     data: salas = [],
     isLoading: cargandoSalas,
     isError: errorSalas,
-  } = useQuery({
-    queryKey: ['salas'],
-    queryFn: getallSala,
-  });
+  } = useSalas();
 
-  // Funciones de la película buscada
   const {
     data: funciones = [],
     isLoading: cargandoFunciones,
     isError: errorFunciones,
-  } = useQuery({
-    queryKey: ['funciones', 'pelicula', peliculaBuscadaId],
-    queryFn: () => getFuncionesDePelicula(peliculaBuscadaId!),
-    enabled: peliculaBuscadaId !== null && peliculaBuscadaId > 0,
-  });
+  } = useFuncionesDePelicula(peliculaBuscadaId ?? undefined);
+  const crearFuncionMutation = useCrearFuncion();
+  const actualizarFuncionMutation = useActualizarFuncion();
+  const eliminarFuncionMutation = useEliminarFuncion();
 
   const peliculaBuscada =
     peliculaBuscadaId !== null
       ? peliculas.find((p) => p.IdPelicula === peliculaBuscadaId) || null
       : null; 
-
-  //  Mutación para crear o actualizar función
-  const guardarFuncionMutation = useMutation({
-    mutationFn: async ({
-      idEditando,
-      funcionData,
-    }: {
-      idEditando: number | null;
-      funcionData: Omit<Funcion, 'IdFuncion'>;
-    }) => {
-      if (idEditando) {
-        return updateFuncion(idEditando, funcionData);
-      }
-      return createFuncion(funcionData);
-    },
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['funciones'] });
-      if (peliculaBuscadaId !== null) {
-        queryClient.invalidateQueries({ queryKey: ['funciones', 'pelicula', peliculaBuscadaId] });
-      }
-      limpiarFormulario();
-      if (variables.idEditando) {
-        alertaExito('¡Actualizada!', 'La función fue actualizada exitosamente.');
-      } else {
-        alertaExito('¡Creada!', 'La función fue creada exitosamente.');
-      }
-    },
-    onError: (err: unknown) => {
-      console.error('Error al guardar la función', err);
-      const mensajeError = err instanceof Error ? err.message : 'No se pudo guardar la función.';
-      alertaError('Error', mensajeError);
-    },
-  });
-
-  //  Mutación para eliminar función
-  const eliminarFuncionMutation = useMutation({
-    mutationFn: (idFuncion: number) => deleteFuncion(idFuncion),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['funciones'] });
-      if (peliculaBuscadaId !== null) {
-        queryClient.invalidateQueries({ queryKey: ['funciones', 'pelicula', peliculaBuscadaId] });
-      }
-      alertaExito('¡Eliminado!', 'La función ha sido eliminada correctamente.');
-    },
-    onError: (error: unknown) => {
-      console.error(error);
-      alertaError('Error', 'No se pudo eliminar la función.');
-    },
-  });
 
   // Función para limpiar el formulario
   function limpiarFormulario() {
@@ -141,7 +81,7 @@ export default function AdminFunciones() {
   }
 
   // Crear o Actualizar función
-    const onSubmitFuncion = (data: FuncionFormData) => { 
+  const onSubmitFuncion = async (data: FuncionFormData) => {
     const fechaHoraFuncion = new Date(`${data.Fecha}T${data.Horario}`);
     const ahora = new Date();
     if (fechaHoraFuncion < ahora) {
@@ -165,7 +105,23 @@ export default function AdminFunciones() {
       sala: salaSeleccionada,
     };
 
-    guardarFuncionMutation.mutate({ idEditando: funcionEditando, funcionData }); 
+    try {
+      if (funcionEditando !== null) {
+        await actualizarFuncionMutation.mutateAsync({
+          id: funcionEditando,
+          funcion: funcionData,
+        });
+        alertaExito('¡Actualizada!', 'La función fue actualizada exitosamente.');
+      } else {
+        await crearFuncionMutation.mutateAsync(funcionData);
+        alertaExito('¡Creada!', 'La función fue creada exitosamente.');
+      }
+      limpiarFormulario();
+    } catch (error) {
+      console.error('Error al guardar la función', error);
+      const mensajeError = error instanceof Error ? error.message : 'No se pudo guardar la función.';
+      alertaError('Error', mensajeError);
+    }
   };
 
   const onSubmitBusqueda = (data: BusquedaFormData) => { 
@@ -177,14 +133,20 @@ export default function AdminFunciones() {
   };
 
   async function handleDelete(IdFuncion?: number) {
-    if (!IdFuncion) return;
+    if (IdFuncion === undefined) return;
     const confirmado = await alertaConfirmacion(
       '¿Estás seguro?',
       '¿Seguro que querés eliminar esta función?',
       'Si, Eliminar'
     );
     if (!confirmado) return;
-    eliminarFuncionMutation.mutate(IdFuncion); 
+    try {
+      await eliminarFuncionMutation.mutateAsync(IdFuncion);
+      alertaExito('¡Eliminado!', 'La función ha sido eliminada correctamente.');
+    } catch (error) {
+      console.error(error);
+      alertaError('Error', 'No se pudo eliminar la función.');
+    }
   }
 
   const formatearFecha = (f: string) => {
@@ -219,7 +181,7 @@ export default function AdminFunciones() {
       {/* FORMULARIO DE CREACIÓN / EDICIÓN */}
       <form onSubmit={handleSubmitFuncion(onSubmitFuncion)} className="admin-funciones-form">
         <h3 className="admin-funciones-form-title">
-          {funcionEditando ? ` Editar Función #${funcionEditando}` : 'Agregar Nueva Función'}
+          {funcionEditando !== null ? ` Editar Función #${funcionEditando}` : 'Agregar Nueva Función'}
         </h3>
 
         <div className="admin-funciones-field">
@@ -283,16 +245,16 @@ export default function AdminFunciones() {
         <div className="admin-funciones-actions">
           <button
             type="submit"
-            disabled={guardarFuncionMutation.isPending} 
+            disabled={crearFuncionMutation.isPending || actualizarFuncionMutation.isPending}
             className="admin-funciones-btn-submit"
           >
-            {guardarFuncionMutation.isPending 
+            {crearFuncionMutation.isPending || actualizarFuncionMutation.isPending
               ? 'Guardando...'
-              : funcionEditando
+              : funcionEditando !== null
               ? 'Guardar Cambios'
               : 'Crear Función'}
           </button>
-          {funcionEditando && (
+          {funcionEditando !== null && (
             <button
               type="button"
               onClick={limpiarFormulario}
